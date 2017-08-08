@@ -4,7 +4,6 @@
 
 namespace esl
 {
-
 template < typename T >
 class delegate;
 
@@ -19,21 +18,24 @@ private:
 
   // method caller
   template < class T, R (T::*Mptr)(Params...) >
-  constexpr static R invoke_method(void* obj, Params... params) noexcept
+  constexpr static R invoke_method(void* obj, Params... params) noexcept(
+      noexcept((static_cast< T* >(obj)->*Mptr)(params...)))
   {
     return (static_cast< T* >(obj)->*Mptr)(params...);
   }
 
   // const method caller
   template < class T, R (T::*Mptr)(Params...) const >
-  constexpr static R invoke_method(void* obj, Params... params) noexcept
+  constexpr static R invoke_method(void* obj, Params... params) noexcept(
+      noexcept((static_cast< T* >(obj)->*Mptr)(params...)))
   {
     return (static_cast< T* >(obj)->*Mptr)(params...);
   }
 
   // function caller
   template < R (*Fptr)(Params...) >
-  constexpr static R invoke_function(void*, Params... params) noexcept
+  constexpr static R invoke_function(void*, Params... params) noexcept(
+      noexcept((*Fptr)(params...)))
   {
     return (*Fptr)(params...);
   }
@@ -86,4 +88,3 @@ public:
 };
 
 }  // namespace esl
-
