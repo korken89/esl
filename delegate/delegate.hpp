@@ -9,6 +9,7 @@
 
 namespace esl
 {
+
 template < typename T >
 class delegate;
 
@@ -18,11 +19,19 @@ class delegate< R(Params...) >
 private:
   using CallbackType = R (*)(void* callee, Params...);
 
+  using FunctionPtr = R (*)(Params...);
+
+  template < typename Object >
+  using MethodPtr = R (Object::*)(Params...);
+
+  template < typename Object >
+  using ConstMethodPtr = R (Object::*)(Params...) const;
+
   void* obj_;
   CallbackType cb_;
 
   // method caller
-  template < typename Object, R (Object::*Mptr)(Params...) >
+  template < typename Object, MethodPtr< Object > Mptr >
   constexpr static R invoke_method(void* obj, Params... params) noexcept(
       noexcept((static_cast< Object* >(obj)->*Mptr)(params...)))
   {
@@ -30,7 +39,7 @@ private:
   }
 
   // const method caller
-  template < typename Object, R (Object::*Mptr)(Params...) const >
+  template < typename Object, ConstMethodPtr< Object > Mptr >
   constexpr static R invoke_method(void* obj, Params... params) noexcept(
       noexcept((static_cast< Object* >(obj)->*Mptr)(params...)))
   {
@@ -38,7 +47,7 @@ private:
   }
 
   // function caller
-  template < R (*Fptr)(Params...) >
+  template < FunctionPtr Fptr >
   constexpr static R invoke_function(void*, Params... params) noexcept(
       noexcept((*Fptr)(params...)))
   {
@@ -52,21 +61,21 @@ public:
   }
 
   // from method
-  template < typename Object, R (Object::*Mptr)(Params...) >
+  template < typename Object, MethodPtr< Object > Mptr >
   constexpr static delegate from_method(Object& obj) noexcept
   {
     return delegate(&obj, &invoke_method< Object, Mptr >);
   }
 
   // from const method
-  template < typename Object, R (Object::*Mptr)(Params...) const >
+  template < typename Object, ConstMethodPtr< Object > Mptr >
   constexpr static delegate from_method(Object& obj) noexcept
   {
     return delegate(&obj, &invoke_method< Object, Mptr >);
   }
 
   // from function
-  template < R (*Fptr)(Params...) >
+  template < FunctionPtr Fptr >
   constexpr static delegate from_function() noexcept
   {
     return delegate(nullptr, &invoke_function< Fptr >);
