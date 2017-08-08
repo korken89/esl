@@ -54,12 +54,13 @@ private:
     return (*Fptr)(params...);
   }
 
-public:
+  // constructor
   constexpr delegate(void* obj, CallbackType callback) noexcept : obj_(obj),
                                                                   cb_(callback)
   {
   }
 
+public:
   // from method
   template < typename Object, MethodPtr< Object > Mptr >
   constexpr static delegate from_method(Object& obj) noexcept
