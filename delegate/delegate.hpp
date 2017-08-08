@@ -22,19 +22,19 @@ private:
   CallbackType cb_;
 
   // method caller
-  template < class T, R (T::*Mptr)(Params...) >
+  template < typename Object, R (Object::*Mptr)(Params...) >
   constexpr static R invoke_method(void* obj, Params... params) noexcept(
-      noexcept((static_cast< T* >(obj)->*Mptr)(params...)))
+      noexcept((static_cast< Object* >(obj)->*Mptr)(params...)))
   {
-    return (static_cast< T* >(obj)->*Mptr)(params...);
+    return (static_cast< Object* >(obj)->*Mptr)(params...);
   }
 
   // const method caller
-  template < class T, R (T::*Mptr)(Params...) const >
+  template < typename Object, R (Object::*Mptr)(Params...) const >
   constexpr static R invoke_method(void* obj, Params... params) noexcept(
-      noexcept((static_cast< T* >(obj)->*Mptr)(params...)))
+      noexcept((static_cast< Object* >(obj)->*Mptr)(params...)))
   {
-    return (static_cast< T* >(obj)->*Mptr)(params...);
+    return (static_cast< Object* >(obj)->*Mptr)(params...);
   }
 
   // function caller
@@ -52,17 +52,17 @@ public:
   }
 
   // from method
-  template < class T, R (T::*Mptr)(Params...) >
-  constexpr static delegate from_method(T& obj) noexcept
+  template < typename Object, R (Object::*Mptr)(Params...) >
+  constexpr static delegate from_method(Object& obj) noexcept
   {
-    return delegate(&obj, &invoke_method< T, Mptr >);
+    return delegate(&obj, &invoke_method< Object, Mptr >);
   }
 
   // from const method
-  template < class T, R (T::*Mptr)(Params...) const >
-  constexpr static delegate from_method(T& obj) noexcept
+  template < typename Object, R (Object::*Mptr)(Params...) const >
+  constexpr static delegate from_method(Object& obj) noexcept
   {
-    return delegate(&obj, &invoke_method< T, Mptr >);
+    return delegate(&obj, &invoke_method< Object, Mptr >);
   }
 
   // from function
