@@ -1,3 +1,3 @@
-# A delegate implementation (aimed for embedded)
+# A delegate implementation
 
 See `test.cpp` for usage.
