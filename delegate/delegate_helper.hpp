@@ -9,20 +9,20 @@ namespace esl
 {
 
 // Helper to extract function signature
-template < class T >
+template < typename T >
 struct FunctionInfo;
 
-template < class R, class... A >
+template < typename R, typename... A >
 struct FunctionInfo< R (*)(A...) >  // function pointer
 {
   using Signature = R(A...);
 };
 
 // Helper to extract method signature + class type
-template < class T >
+template < typename T >
 struct MethodInfo;
 
-template < class C, class R, class... A >
+template < typename C, typename R, typename... A >
 struct MethodInfo< R (C::*)(A...) >  // method pointer
 {
   using ClassType = C;
@@ -30,7 +30,7 @@ struct MethodInfo< R (C::*)(A...) >  // method pointer
 };
 
 // Specialization for const methods
-template < class C, class R, class... A >
+template < typename C, typename R, typename... A >
 struct MethodInfo< R (C::*)(A...) const > : MethodInfo< R (C::*)(A...) >
 {
 };
