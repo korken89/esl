@@ -14,10 +14,10 @@ template < typename T >
 class delegate;
 
 template < typename R, typename... Params >
-class delegate< R(Params...) >
+class delegate< R(Params...) > final
 {
 private:
-  using CallbackType = R (*)(void* callee, Params...);
+  using CallbackType = R (*)(void*, Params...);
 
   using FunctionPtr = R (*)(Params...);
 
@@ -54,7 +54,7 @@ private:
     return (*Fptr)(params...);
   }
 
-  // constructor
+  // constructor - private so users must use factory functions
   constexpr delegate(void* obj, CallbackType callback) noexcept : obj_(obj),
                                                                   cb_(callback)
   {
@@ -79,6 +79,8 @@ public:
   template < FunctionPtr Fptr >
   constexpr static delegate from_function() noexcept
   {
+    static_assert(Fptr != nullptr, "Function pointer must not be null");
+
     return delegate(nullptr, &invoke_function< Fptr >);
   }
 
