@@ -61,6 +61,13 @@ private:
   }
 
 public:
+  // default constructors
+  delegate(const delegate< R(Params...) >&)                       = default;
+  delegate(delegate< R(Params...) >&&)                            = default;
+  delegate< R(Params...) >& operator=(const delegate< R(Params...) >&)
+                                                                  = default;
+  delegate< R(Params...) >& operator=(delegate< R(Params...) >&&) = default;
+
   // from method
   template < typename Object, MethodPtr< Object > Mptr >
   constexpr static delegate from_method(Object& obj) noexcept
