@@ -107,7 +107,7 @@ public:
 
   constexpr bool operator!=(const delegate& other) const noexcept
   {
-    return !((*this) == other);
+    return (obj_ != other.obj_) || (cb_ != other.cb_);
   }
 };
 
