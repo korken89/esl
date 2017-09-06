@@ -25,16 +25,16 @@ int wee(int i)
   return i*i;
 }
 
-using Callback = esl::delegate< int(int) >;
+using callback = esl::delegate< int(int) >;
 volatile int asd = 9;
 
 int main()
 {
   test a;
 
-  auto d1 = Callback::from_method<test, &test::meth>(a);
-  auto d2 = Callback::from_function<&wee>();
-  auto d3 = Callback::from_method<test, &test::meth2>(a);
+  auto d1 = callback::from<test, &test::meth>(a);
+  auto d2 = callback::from<wee>();
+  auto d3 = callback::from<test, &test::meth2>(a);
 
   std::cout << d1(4) + d2(7) + d3(asd) << '\n';
 

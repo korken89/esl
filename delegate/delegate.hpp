@@ -70,21 +70,21 @@ public:
 
   // from method
   template < typename Object, MethodPtr< Object > Mptr >
-  constexpr static delegate from_method(Object& obj) noexcept
+  constexpr static delegate from(Object& obj) noexcept
   {
     return delegate(&obj, &invoke_method< Object, Mptr >);
   }
 
   // from const method
   template < typename Object, ConstMethodPtr< Object > Mptr >
-  constexpr static delegate from_method(Object& obj) noexcept
+  constexpr static delegate from(Object& obj) noexcept
   {
     return delegate(&obj, &invoke_method< Object, Mptr >);
   }
 
   // from function
   template < FunctionPtr Fptr >
-  constexpr static delegate from_function() noexcept
+  constexpr static delegate from() noexcept
   {
     static_assert(Fptr != nullptr, "Function pointer must not be null");
 
