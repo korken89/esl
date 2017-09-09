@@ -61,12 +61,16 @@ private:
   }
 
 public:
+  // Base type
+  using base_type = delegate< R(Params...) >;
+
   // default constructors
-  delegate(const delegate< R(Params...) >&)                       = default;
-  delegate(delegate< R(Params...) >&&)                            = default;
-  delegate< R(Params...) >& operator=(const delegate< R(Params...) >&)
-                                                                  = default;
-  delegate< R(Params...) >& operator=(delegate< R(Params...) >&&) = default;
+  delegate(const base_type&) = default;
+  delegate(base_type&&)      = default;
+
+  // assignment operators
+  base_type& operator=(const base_type&)  = default;
+  base_type& operator=(base_type&&)       = default;
 
   // from method
   template < typename Object, MethodPtr< Object > Mptr >
