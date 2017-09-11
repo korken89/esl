@@ -25,7 +25,7 @@ struct singleton
 
 // Singleton helper
 template <class C>
-constexpr inline C& get_singleton()
+constexpr C& get_singleton()
 {
   return detail::singleton<C>::instance();
 }
