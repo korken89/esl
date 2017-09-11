@@ -118,6 +118,11 @@ public:
     return (curr_idx_ == 0);
   }
 
+  constexpr bool full() const noexcept
+  {
+    return (curr_idx_ >= N);
+  }
+
   //
   // Iterators
   //
