@@ -27,7 +27,7 @@ struct singleton
 template <class C>
 constexpr C& get_singleton()
 {
-  return detail::singleton<C>::instance();
+  return details::singleton<C>::instance();
 }
 
 }  // namespace esl
