@@ -60,9 +60,26 @@ private:
   {
   }
 
+  // error function
+  static R error_function(Params...)
+  {
+#ifdef ESL_DELEGATE_ERROR_HOOK
+    ESL_DELEGATE_ERROR_HOOK
+#endif
+
+    while(1);
+  }
+
 public:
   // Base type
   using base_type = delegate< R(Params...) >;
+
+
+  // basic constructor, link to error function
+  delegate()
+  {
+    *this = from< error_function >();
+  }
 
   // default constructors
   delegate(const base_type&) = default;
@@ -100,7 +117,16 @@ public:
   constexpr auto operator()(Args&&... params) const
       noexcept(noexcept((*cb_)(obj_, std::forward< Args >(params)...)))
   {
+    static_assert( sizeof...(Args) == sizeof...(Params),
+                   "Wrong number of parameters" );
+
     return (*cb_)(obj_, std::forward< Args >(params)...);
+  }
+
+  // checker for valid delegate
+  constexpr bool valid() const noexcept
+  {
+    return (cb_ != &invoke_function< error_function >);
   }
 
   // comparison operators

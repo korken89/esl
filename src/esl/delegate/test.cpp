@@ -6,7 +6,6 @@
 #include <iostream>
 #include "delegate.hpp"
 
-
 struct test
 {
   int meth(int i)
@@ -36,7 +35,14 @@ int main()
   auto d2 = callback::from<wee>();
   auto d3 = callback::from<test, &test::meth2>(a);
 
-  std::cout << d1(4) + d2(7) + d3(asd) << '\n';
+  callback c;
+
+  // c = d1;
+  if (c.valid())
+    std::cout << d1(4) + d2(7) + d3(asd) + c(2999) << '\n';
+  else
+    std::cout << d1(4) + d2(7) + d3(asd) << '\n';
+
 
   return 0;
 }
