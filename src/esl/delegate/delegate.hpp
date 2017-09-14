@@ -61,7 +61,7 @@ private:
   }
 
   // error function
-  static R error_function(Params...)
+  static R error_function(Params...) noexcept
   {
 #ifdef ESL_DELEGATE_ERROR_HOOK
     ESL_DELEGATE_ERROR_HOOK
