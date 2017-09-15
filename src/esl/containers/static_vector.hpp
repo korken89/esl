@@ -18,7 +18,7 @@ template < bool CheckBounds, typename ErrFun, typename T, std::size_t N >
 class static_vector_impl
 {
 protected:
-  std::array< T, N > buffer_ = {{0}};
+  std::array< T, N > buffer_;
   std::size_t curr_idx_ = 0;
 
 public:
