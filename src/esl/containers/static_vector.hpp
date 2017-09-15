@@ -8,7 +8,8 @@
 #include <cstdint>
 #include <type_traits>
 #include <array>
-#include "error_functions.hpp"
+
+#include "../helpers/error_functions.hpp"
 
 namespace esl
 {
