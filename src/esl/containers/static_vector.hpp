@@ -7,7 +7,7 @@
 
 #include <cstdint>
 #include <type_traits>
-#include <array>
+#include <cstring>
 
 #include "../helpers/error_functions.hpp"
 
@@ -114,6 +114,11 @@ public:
     return N;
   }
 
+  constexpr std::size_t free() const noexcept
+  {
+    return max_size() - size();
+  }
+
   constexpr bool empty() const noexcept
   {
     return (curr_idx_ == 0);
@@ -180,6 +185,22 @@ public:
 
     *reinterpret_cast< T * >(&buffer_[curr_idx_]) = obj;
     ++curr_idx_;
+  }
+
+  constexpr void push_back(const T *ptr, std::size_t n) noexcept
+  {
+    if (CheckBounds)
+      if (free() < n)
+        ErrFun{}("push_back: array too large");
+
+    std::memcpy(&buffer_[curr_idx_], ptr, n * sizeof(T));
+    curr_idx_ += n;
+  }
+
+  template < std::size_t S >
+  constexpr void push_back(const T (&buf)[S]) noexcept
+  {
+    push_back(buf, S);
   }
 
   constexpr void clear() noexcept
