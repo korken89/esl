@@ -18,7 +18,7 @@ template < bool CheckBounds, typename ErrFun, typename T, std::size_t N >
 class ring_buffer_impl
 {
 protected:
-  std::array< T, N > buffer_ = {{0}};
+  std::aligned_storage_t< sizeof(T), alignof(T) > buffer_[N];
   std::size_t head_idx_ = 0;
   std::size_t tail_idx_ = 0;
 
@@ -57,7 +57,7 @@ public:
       if (tail_idx_ == head_idx_)
         ErrFun{}("front on empty buffer");
 
-    return buffer_[tail_idx_];
+    return *reinterpret_cast< T * >(&buffer_[tail_idx_]);
   }
 
   constexpr T& front() noexcept
@@ -66,7 +66,7 @@ public:
       if (tail_idx_ == head_idx_)
         ErrFun{}("front on empty buffer");
 
-    return buffer_[tail_idx_];
+    return *reinterpret_cast< T * >(&buffer_[tail_idx_]);
   }
 
   constexpr T back() const noexcept
@@ -75,7 +75,7 @@ public:
       if (tail_idx_ == head_idx_)
         ErrFun{}("back on empty buffer");
 
-    return buffer_[head_idx_ - 1];
+    return *reinterpret_cast< T * >(&buffer_[head_idx_ - 1]);
   }
 
   constexpr T& back() noexcept
@@ -84,7 +84,7 @@ public:
       if (tail_idx_ == head_idx_)
         ErrFun{}("back on empty buffer");
 
-    return buffer_[head_idx_ - 1];
+    return *reinterpret_cast< T * >(&buffer_[head_idx_ - 1]);
   }
 
   //
@@ -131,7 +131,7 @@ public:
       if (size() == max_size())
         ErrFun{}("push_back on full buffer");
 
-    buffer_[head_idx_] = std::forward< T >(obj);
+    *reinterpret_cast< T * >(&buffer_[head_idx_]) = std::forward< T >(obj);
     increment_head();
   }
 
@@ -141,7 +141,7 @@ public:
       if (size() == max_size())
         ErrFun{}("push_back on full buffer");
 
-    buffer_[head_idx_] = obj;
+    *reinterpret_cast< T * >(&buffer_[head_idx_]) = obj;
     increment_head();
   }
 
@@ -156,20 +156,23 @@ public:
     if (space_left_head >= n)
     {
       // All will fit without the head_idx_ overflowing
+      // TODO: Change to memcpy
       while (n--)
-        buffer_[head_idx_++] = *ptr++;
+        *reinterpret_cast< T * >(&buffer_[head_idx_++]) = *ptr++;
     }
     else
     {
       // The head_idx_ will overflow, write in 2 steps
+      // TODO: Change to memcpy
       while (head_idx_ != N)
-        buffer_[head_idx_++] = *ptr++;
+        *reinterpret_cast< T * >(&buffer_[head_idx_++]) = *ptr++;
 
       n -= space_left_head;
       head_idx_ = 0;
 
       while (n--)
-        buffer_[head_idx_++] = *ptr++;
+        *reinterpret_cast< T * >(&buffer_[head_idx_++]) = *ptr++;
+
     }
   }
 

@@ -18,7 +18,7 @@ template < bool CheckBounds, typename ErrFun, typename T, std::size_t N >
 class static_vector_impl
 {
 protected:
-  std::array< T, N > buffer_;
+  std::aligned_storage_t< sizeof(T), alignof(T) > buffer_[N];
   std::size_t curr_idx_ = 0;
 
 public:
@@ -42,13 +42,13 @@ public:
   //
   // Element access
   //
-  constexpr T& operator[](std::size_t idx) noexcept
+  constexpr T &operator[](std::size_t idx) noexcept
   {
     if (CheckBounds)
       if (idx >= curr_idx_)
         ErrFun{}("operator[] out of bounds");
 
-    return buffer_[idx];
+    return *reinterpret_cast< T * >(&buffer_[idx]);
   }
 
   constexpr T operator[](std::size_t idx) const noexcept
@@ -57,7 +57,7 @@ public:
       if (idx >= curr_idx_)
         ErrFun{}("operator[] out of bounds");
 
-    return buffer_[idx];
+    return *reinterpret_cast< T * >(&buffer_[idx]);
   }
 
   constexpr T front() const noexcept
@@ -66,16 +66,16 @@ public:
       if (curr_idx_ == 0)
         ErrFun{}("front on zero sized");
 
-    return buffer_[0];
+    return *reinterpret_cast< T * >(&buffer_[0]);
   }
 
-  constexpr T& front() noexcept
+  constexpr T &front() noexcept
   {
     if (CheckBounds)
       if (curr_idx_ == 0)
         ErrFun{}("front on zero sized");
 
-    return buffer_[0];
+    return *reinterpret_cast< T * >(&buffer_[0]);
   }
 
   constexpr T back() const noexcept
@@ -84,21 +84,21 @@ public:
       if (curr_idx_ == 0)
         ErrFun{}("back on zero sized");
 
-    return buffer_[curr_idx_ - 1];
+    return *reinterpret_cast< T * >(&buffer_[curr_idx_ - 1]);
   }
 
-  constexpr T& back() noexcept
+  constexpr T &back() noexcept
   {
     if (CheckBounds)
       if (curr_idx_ == 0)
         ErrFun{}("back on zero sized");
 
-    return buffer_[curr_idx_ - 1];
+    return *reinterpret_cast< T * >(&buffer_[curr_idx_ - 1]);
   }
 
   constexpr auto data() const noexcept
   {
-    return buffer_.data();
+    return reinterpret_cast< T * >(&buffer_[0]);
   }
 
   //
@@ -129,54 +129,57 @@ public:
   //
   constexpr auto begin() noexcept
   {
-    return buffer_.begin();
+    return reinterpret_cast< T * >(buffer_[0]);
   }
 
   constexpr auto end() noexcept
   {
-    return buffer_.begin() + curr_idx_;
+    return reinterpret_cast< T * >(buffer_[curr_idx_]);
   }
 
   constexpr auto cbegin() const noexcept
   {
-    return buffer_.cbegin();
+    return reinterpret_cast< const T * >(buffer_[0]);
   }
 
   constexpr auto cend() const noexcept
   {
-    return buffer_.cbegin() + curr_idx_;
+    return reinterpret_cast< const T * >(buffer_[curr_idx_]);
   }
 
   //
   // Modifiers
   //
   template < typename... Args >
-  constexpr void emplace_back(Args&&... args) noexcept
+  constexpr void emplace_back(Args &&... args) noexcept
   {
     if (CheckBounds)
       if (curr_idx_ >= N)
         ErrFun{}("emplace_back out of bounds");
 
     // Use placement new
-    new (&buffer_[curr_idx_++]) T(std::forward< Args >(args)...);
+    new (&buffer_[curr_idx_]) T(std::forward< Args >(args)...);
+    ++curr_idx_;
   }
 
-  constexpr void push_back(T&& obj) noexcept
+  constexpr void push_back(T &&obj) noexcept
   {
     if (CheckBounds)
       if (curr_idx_ >= N)
         ErrFun{}("push_back out of bounds");
 
-    buffer_[curr_idx_++] = std::forward< T >(obj);
+    *reinterpret_cast< T * >(&buffer_[curr_idx_]) = std::forward< T >(obj);
+    ++curr_idx_;
   }
 
-  constexpr void push_back(T const& obj) noexcept
+  constexpr void push_back(T const &obj) noexcept
   {
     if (CheckBounds)
       if (curr_idx_ >= N)
         ErrFun{}("push_back out of bounds");
 
-    buffer_[curr_idx_++] = obj;
+    *reinterpret_cast< T * >(&buffer_[curr_idx_]) = obj;
+    ++curr_idx_;
   }
 
   constexpr void clear() noexcept
@@ -190,7 +193,7 @@ public:
       if (curr_idx_ == 0)
         ErrFun{}("pop_back on zero size");
 
-    curr_idx_--;
+    --curr_idx_;
   }
 };
 
@@ -198,7 +201,7 @@ template < typename T, std::size_t N >
 using static_vector = static_vector_impl< false, error_functions::noop, T, N >;
 
 template < typename T, std::size_t N >
-using static_vector_debug = static_vector_impl< true, error_functions::halt, T, N >;
+using static_vector_debug =
+    static_vector_impl< true, error_functions::halt, T, N >;
 
-} // namespace esl
-
+}  // namespace esl
