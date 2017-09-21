@@ -4,6 +4,7 @@
 
 * Fast and light weight
 * No usage of dynamic memory allocation
+* No default constructor, there is no such thing as an empty delegate
 
 ## Usage
 
