@@ -11,7 +11,11 @@ Designed for C++14 or higher.
 
 Uses the Boost Software License 1.0
 
+## Status
+
+[![Build Status](https://travis-ci.org/korken89/esl.svg?branch=master)](https://travis-ci.org/korken89/esl)
+
+
 ## TODO
 
-* Add tests
 * Add documentation
