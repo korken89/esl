@@ -60,26 +60,9 @@ private:
   {
   }
 
-  // error function
-  static R error_function(Params...) noexcept
-  {
-#ifdef ESL_DELEGATE_ERROR_HOOK
-    ESL_DELEGATE_ERROR_HOOK
-#endif
-
-    while(1);
-  }
-
 public:
   // Base type
   using base_type = delegate< R(Params...) >;
-
-
-  // basic constructor, link to error function
-  delegate()
-  {
-    *this = from< error_function >();
-  }
 
   // default constructors
   delegate(const base_type&) = default;
