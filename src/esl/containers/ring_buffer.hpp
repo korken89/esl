@@ -110,6 +110,11 @@ public:
     return (head_idx_ == tail_idx_);
   }
 
+  constexpr bool full() const noexcept
+  {
+    return (size() == max_size());
+  }
+
   //
   // Modifiers
   //
@@ -117,7 +122,7 @@ public:
   constexpr void emplace_back(Args&&... args) noexcept
   {
     if (CheckBounds)
-      if (size() == max_size())
+      if (full())
         ErrFun{}("emplace_back on full buffer");
 
     // Use placement new
@@ -128,7 +133,7 @@ public:
   constexpr void push_back(T&& obj) noexcept
   {
     if (CheckBounds)
-      if (size() == max_size())
+      if (full())
         ErrFun{}("push_back on full buffer");
 
     *reinterpret_cast< T * >(&buffer_[head_idx_]) = std::forward< T >(obj);
