@@ -106,12 +106,6 @@ public:
     return (*cb_)(obj_, std::forward< Args >(params)...);
   }
 
-  // checker for valid delegate
-  constexpr bool valid() const noexcept
-  {
-    return (cb_ != &invoke_function< error_function >);
-  }
-
   // comparison operators
   constexpr bool operator==(const delegate& other) const noexcept
   {
