@@ -129,22 +129,22 @@ public:
   //
   constexpr auto begin() noexcept
   {
-    return reinterpret_cast< T * >(buffer_[0]);
+    return reinterpret_cast< T * >(&buffer_[0]);
   }
 
   constexpr auto end() noexcept
   {
-    return reinterpret_cast< T * >(buffer_[curr_idx_]);
+    return reinterpret_cast< T * >(&buffer_[curr_idx_]);
   }
 
   constexpr auto cbegin() const noexcept
   {
-    return reinterpret_cast< const T * >(buffer_[0]);
+    return reinterpret_cast< const T * >(&buffer_[0]);
   }
 
   constexpr auto cend() const noexcept
   {
-    return reinterpret_cast< const T * >(buffer_[curr_idx_]);
+    return reinterpret_cast< const T * >(&buffer_[curr_idx_]);
   }
 
   //

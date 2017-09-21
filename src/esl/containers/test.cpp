@@ -25,22 +25,28 @@ void test()
   cout << "front: " << buf.front() << '\n';
   cout << "back: " << buf.back() << '\n';
   cout << "size: " << buf.size() << '\n';
+  cout << "pop!\n\n";
   buf.pop();
 
   cout << "front: " << buf.front() << '\n';
   cout << "back: " << buf.back() << '\n';
   cout << "size: " << buf.size() << '\n';
+  cout << "pop!\n\n";
   buf.pop();
 
   cout << "front: " << buf.front() << '\n';
   cout << "back: " << buf.back() << '\n';
   cout << "size: " << buf.size() << '\n';
+  cout << "pop!\n\n";
   buf.pop();
 
   cout << "front: " << buf.front() << '\n';
   cout << "back: " << buf.back() << '\n';
   cout << "size: " << buf.size() << '\n';
+  cout << "pop!\n\n";
   buf.pop();
+
+  cout << "size: " << buf.size() << "\n\n";
 
   constexpr const int a[3] = {5, 6, 7};
   buf.push_back(a);
