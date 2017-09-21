@@ -7,7 +7,7 @@
 
 #include <cstdint>
 #include <type_traits>
-#include <array>
+#include <cstring>
 
 #include "../helpers/error_functions.hpp"
 
@@ -57,7 +57,7 @@ public:
       if (tail_idx_ == head_idx_)
         ErrFun{}("front on empty buffer");
 
-    return *reinterpret_cast< T * >(&buffer_[tail_idx_]);
+    return *reinterpret_cast< T* >(&buffer_[tail_idx_]);
   }
 
   constexpr T& front() noexcept
@@ -66,7 +66,7 @@ public:
       if (tail_idx_ == head_idx_)
         ErrFun{}("front on empty buffer");
 
-    return *reinterpret_cast< T * >(&buffer_[tail_idx_]);
+    return *reinterpret_cast< T* >(&buffer_[tail_idx_]);
   }
 
   constexpr T back() const noexcept
@@ -75,7 +75,7 @@ public:
       if (tail_idx_ == head_idx_)
         ErrFun{}("back on empty buffer");
 
-    return *reinterpret_cast< T * >(&buffer_[head_idx_ - 1]);
+    return *reinterpret_cast< T* >(&buffer_[head_idx_ - 1]);
   }
 
   constexpr T& back() noexcept
@@ -84,7 +84,7 @@ public:
       if (tail_idx_ == head_idx_)
         ErrFun{}("back on empty buffer");
 
-    return *reinterpret_cast< T * >(&buffer_[head_idx_ - 1]);
+    return *reinterpret_cast< T* >(&buffer_[head_idx_ - 1]);
   }
 
   //
@@ -136,7 +136,7 @@ public:
       if (full())
         ErrFun{}("push_back on full buffer");
 
-    *reinterpret_cast< T * >(&buffer_[head_idx_]) = std::forward< T >(obj);
+    *reinterpret_cast< T* >(&buffer_[head_idx_]) = std::forward< T >(obj);
     increment_head();
   }
 
@@ -146,7 +146,7 @@ public:
       if (size() == max_size())
         ErrFun{}("push_back on full buffer");
 
-    *reinterpret_cast< T * >(&buffer_[head_idx_]) = obj;
+    *reinterpret_cast< T* >(&buffer_[head_idx_]) = obj;
     increment_head();
   }
 
@@ -161,23 +161,18 @@ public:
     if (space_left_head >= n)
     {
       // All will fit without the head_idx_ overflowing
-      // TODO: Change to memcpy
-      while (n--)
-        *reinterpret_cast< T * >(&buffer_[head_idx_++]) = *ptr++;
+      std::memcpy(&buffer_[head_idx_], ptr, n * sizeof(T));
+      head_idx_ += n;
     }
     else
     {
       // The head_idx_ will overflow, write in 2 steps
-      // TODO: Change to memcpy
-      while (head_idx_ != N)
-        *reinterpret_cast< T * >(&buffer_[head_idx_++]) = *ptr++;
+      std::memcpy(&buffer_[head_idx_], ptr, space_left_head * sizeof(T));
 
       n -= space_left_head;
-      head_idx_ = 0;
 
-      while (n--)
-        *reinterpret_cast< T * >(&buffer_[head_idx_++]) = *ptr++;
-
+      std::memcpy(&buffer_[0], ptr, n * sizeof(T));
+      head_idx_ = n;
     }
   }
 
@@ -209,4 +204,4 @@ using ring_buffer = ring_buffer_impl< false, error_functions::noop, T, N >;
 template < typename T, std::size_t N >
 using ring_buffer_debug = ring_buffer_impl< true, error_functions::halt, T, N >;
 
-} // namespace esl
+}  // namespace esl
