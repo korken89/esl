@@ -1,0 +1,41 @@
+dist: trusty
+sudo: false
+language: cpp
+
+# More complete test matrix
+matrix:
+  include:
+    - os: linux
+      compiler: gcc
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['g++-5', 'libgtest-dev']
+      env: TOOLSET=g++-5
+
+    - os: linux
+      compiler: gcc
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['g++-6', 'libgtest-dev']
+      env: TOOLSET=g++-6
+
+
+# Prepare build
+before_script:
+  #  NOTE gtest install workaround
+  - cd /usr/src/gtest
+  - sudo cmake . -DBUILD_SHARED_LIBS=ON
+  - sudo make
+  - sudo mv libgtest* /usr/lib/
+  - cd "${TRAVIS_BUILD_DIR}"
+  # -- workaround end
+  - cd test
+  - mkdir build
+  - cd build
+  - cmake .. -DCMAKE_CXX_COMPILER=$TOOLSET
+
+script:
+  - make VERBOSE=1
+  - make test
