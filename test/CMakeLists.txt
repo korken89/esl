@@ -37,8 +37,12 @@ add_executable(test_ring_buffer src/test_ring_buffer.cpp)
 target_link_libraries(test_ring_buffer ${GTEST_BOTH_LIBRARIES})
 
 add_executable(test_delegate src/test_delegate.cpp)
-target_link_libraries(test_delegate  ${GTEST_BOTH_LIBRARIES})
+target_link_libraries(test_delegate ${GTEST_BOTH_LIBRARIES})
+
+add_executable(test_singleton src/test_singleton.cpp)
+target_link_libraries(test_singleton ${GTEST_BOTH_LIBRARIES})
 
 add_test(NAME static_vector COMMAND test_static_vector)
 add_test(NAME ring_buffer COMMAND test_delegate)
 add_test(NAME delegate COMMAND test_delegate)
+add_test(NAME singleton COMMAND test_singleton)
