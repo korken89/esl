@@ -132,6 +132,33 @@ TEST(test_static_vector, test_access)
   ASSERT_EQ(7, vec[4]);
 }
 
+TEST(test_static_vector, test_access_and_modify)
+{
+  esl::static_vector< int, 5 > vec;
+
+  vec.push_back(1);
+  vec.push_back(2);
+  vec.push_back(3);
+  ASSERT_EQ(1, vec[0]);
+  ASSERT_EQ(2, vec[1]);
+  ASSERT_EQ(3, vec[2]);
+
+  vec[0] = 10;
+  vec[1]++;
+  vec[2] += 10;
+  ASSERT_EQ(10, vec[0]);
+  ASSERT_EQ(3, vec[1]);
+  ASSERT_EQ(13, vec[2]);
+
+  vec.front() -= 3;
+  vec.back() = 0;
+  ASSERT_EQ(7, vec[0]);
+  ASSERT_EQ(0, vec[2]);
+
+  *vec.data() = 12;
+  ASSERT_EQ(12, vec[0]);
+}
+
 TEST(test_static_vector, test_algorithm)
 {
   esl::static_vector< int, 5 > vec;
