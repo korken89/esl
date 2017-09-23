@@ -137,6 +137,10 @@ TEST(test_ring_buffer, test_access)
   ASSERT_EQ(3, buf.back());
 
   buf.pop();
+  ASSERT_EQ(0, buf.size());
+  ASSERT_EQ(4, buf.free());
+  ASSERT_EQ(true, buf.empty());
+  ASSERT_EQ(false, buf.full());
 
   constexpr const int a[3] = {5, 6, 7};
   buf.push_back(a);
