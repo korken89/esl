@@ -96,7 +96,7 @@ public:
     return *reinterpret_cast< T * >(&buffer_[curr_idx_ - 1]);
   }
 
-  constexpr auto data() const noexcept
+  constexpr auto data() noexcept
   {
     return reinterpret_cast< T * >(&buffer_[0]);
   }
