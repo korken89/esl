@@ -25,7 +25,7 @@ TEST(test_ring_buffer, test_pop)
   buf.pop();
 }
 
-TEST(test_ring_buffer, test_size)
+TEST(test_ring_buffer, test_size_free_empty_full)
 {
   esl::ring_buffer< int, 5 > buf;
 
@@ -84,6 +84,34 @@ TEST(test_ring_buffer, test_size)
   ASSERT_EQ(true, buf.full());
 }
 
+TEST(test_ring_buffer, test_clear)
+{
+  esl::ring_buffer< int, 5 > buf;
+
+  ASSERT_EQ(0, buf.size());
+  ASSERT_EQ(4, buf.free());
+  ASSERT_EQ(true, buf.empty());
+  ASSERT_EQ(false, buf.full());
+
+  buf.push_back(1);
+  ASSERT_EQ(1, buf.size());
+  ASSERT_EQ(3, buf.free());
+  ASSERT_EQ(false, buf.empty());
+  ASSERT_EQ(false, buf.full());
+
+  buf.push_back(2);
+  ASSERT_EQ(2, buf.size());
+  ASSERT_EQ(2, buf.free());
+  ASSERT_EQ(false, buf.empty());
+  ASSERT_EQ(false, buf.full());
+
+  buf.clear();
+  ASSERT_EQ(0, buf.size());
+  ASSERT_EQ(4, buf.free());
+  ASSERT_EQ(true, buf.empty());
+  ASSERT_EQ(false, buf.full());
+}
+
 TEST(test_ring_buffer, test_access)
 {
   esl::ring_buffer< int, 5 > buf;
@@ -114,6 +142,25 @@ TEST(test_ring_buffer, test_access)
   buf.push_back(a);
   ASSERT_EQ(5, buf.front());
   ASSERT_EQ(7, buf.back());
+}
+
+
+TEST(test_ring_buffer, test_access_and_modify)
+{
+  esl::ring_buffer< int, 5 > buf;
+
+  buf.push_back(1);
+  ASSERT_EQ(1, buf.front());
+  ASSERT_EQ(1, buf.back());
+
+  buf.push_back(2);
+  ASSERT_EQ(1, buf.front());
+  ASSERT_EQ(2, buf.back());
+
+  buf.front() = 10;
+  buf.back() -= 2;
+  ASSERT_EQ(10, buf.front());
+  ASSERT_EQ(0, buf.back());
 }
 
 int main(int argc, char *argv[])
