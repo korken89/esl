@@ -51,22 +51,22 @@ public:
     return *reinterpret_cast< T * >(&buffer_[idx]);
   }
 
-  constexpr T operator[](std::size_t idx) const noexcept
+  constexpr const T &operator[](std::size_t idx) const noexcept
   {
     if (CheckBounds)
       if (idx >= curr_idx_)
         ErrFun{}("operator[] out of bounds");
 
-    return *reinterpret_cast< T * >(&buffer_[idx]);
+    return *reinterpret_cast< const T * >(&buffer_[idx]);
   }
 
-  constexpr T front() const noexcept
+  constexpr const T &front() const noexcept
   {
     if (CheckBounds)
       if (curr_idx_ == 0)
         ErrFun{}("front on zero sized");
 
-    return *reinterpret_cast< T * >(&buffer_[0]);
+    return *reinterpret_cast< const T * >(&buffer_[0]);
   }
 
   constexpr T &front() noexcept
@@ -78,13 +78,13 @@ public:
     return *reinterpret_cast< T * >(&buffer_[0]);
   }
 
-  constexpr T back() const noexcept
+  constexpr const T &back() const noexcept
   {
     if (CheckBounds)
       if (curr_idx_ == 0)
         ErrFun{}("back on zero sized");
 
-    return *reinterpret_cast< T * >(&buffer_[curr_idx_ - 1]);
+    return *reinterpret_cast< const T * >(&buffer_[curr_idx_ - 1]);
   }
 
   constexpr T &back() noexcept

@@ -13,7 +13,6 @@
 
 namespace esl
 {
-
 template < bool CheckBounds, typename ErrFun, typename T, std::size_t N >
 class ring_buffer_impl
 {
@@ -51,13 +50,13 @@ public:
   //
   // Element access
   //
-  constexpr T front() const noexcept
+  constexpr const T& front() const noexcept
   {
     if (CheckBounds)
       if (tail_idx_ == head_idx_)
         ErrFun{}("front on empty buffer");
 
-    return *reinterpret_cast< T* >(&buffer_[tail_idx_]);
+    return *reinterpret_cast< const T* >(&buffer_[tail_idx_]);
   }
 
   constexpr T& front() noexcept
@@ -69,13 +68,13 @@ public:
     return *reinterpret_cast< T* >(&buffer_[tail_idx_]);
   }
 
-  constexpr T back() const noexcept
+  constexpr const T& back() const noexcept
   {
     if (CheckBounds)
       if (tail_idx_ == head_idx_)
         ErrFun{}("back on empty buffer");
 
-    return *reinterpret_cast< T* >(&buffer_[head_idx_ - 1]);
+    return *reinterpret_cast< const T* >(&buffer_[head_idx_ - 1]);
   }
 
   constexpr T& back() noexcept
