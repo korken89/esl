@@ -43,6 +43,6 @@ add_executable(test_singleton src/test_singleton.cpp)
 target_link_libraries(test_singleton ${GTEST_BOTH_LIBRARIES})
 
 add_test(NAME static_vector COMMAND test_static_vector)
-add_test(NAME ring_buffer COMMAND test_delegate)
+add_test(NAME ring_buffer COMMAND test_ring_buffer)
 add_test(NAME delegate COMMAND test_delegate)
 add_test(NAME singleton COMMAND test_singleton)
