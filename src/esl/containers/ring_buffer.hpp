@@ -170,7 +170,7 @@ public:
 
       n -= space_left_head;
 
-      std::memcpy(&buffer_[0], ptr, n * sizeof(T));
+      std::memcpy(&buffer_[0], (ptr + space_left_head), n * sizeof(T));
       head_idx_ = n;
     }
   }
