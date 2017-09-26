@@ -8,12 +8,13 @@
 #include <cstdint>
 #include <type_traits>
 #include <cstring>
+#include <array>
+#include <utility>
 
 #include "../helpers/error_functions.hpp"
 
 namespace esl
 {
-
 template < bool CheckBounds, typename ErrFun, typename T, std::size_t N >
 class static_vector_impl
 {
@@ -201,6 +202,13 @@ public:
   constexpr void push_back(const T (&buf)[S]) noexcept
   {
     push_back(buf, S);
+  }
+
+  template < bool B, typename F, typename T2, std::size_t M >
+  constexpr void push_back(
+      const static_vector_impl< B, F, T2, M > &v) noexcept
+  {
+    push_back(v.cbegin(), v.size());
   }
 
   constexpr void clear() noexcept

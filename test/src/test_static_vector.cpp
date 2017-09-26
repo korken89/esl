@@ -77,8 +77,11 @@ TEST(test_static_vector, test_size)
   ASSERT_EQ(false, vec.empty());
   ASSERT_EQ(false, vec.full());
 
-  vec.push_back(3);
-  vec.push_back(7);
+  esl::static_vector< int, 10 > b;
+  b.push_back(3);
+  b.push_back(7);
+
+  vec.push_back(b);
   ASSERT_EQ(5, vec.size());
   ASSERT_EQ(0, vec.free());
   ASSERT_EQ(false, vec.empty());
