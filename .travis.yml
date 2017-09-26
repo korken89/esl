@@ -37,5 +37,5 @@ before_script:
   - cmake .. -DCMAKE_CXX_COMPILER=$TOOLSET
 
 script:
-  - make VERBOSE=1
-  - make test
+  - make -j2
+  - make -j2 test
