@@ -8,13 +8,17 @@
 #include <cstdint>
 #include <type_traits>
 #include <cstring>
+#include <array>
+#include <utility>
 
 #include "../helpers/error_functions.hpp"
 
 namespace esl
 {
-template < bool CheckBounds, typename ErrFun, typename T, std::size_t N >
-class ring_buffer_impl
+
+template < typename T, std::size_t N, bool CheckBounds = false,
+           typename ErrFun = error_functions::noop >
+class ring_buffer
 {
 protected:
   std::aligned_storage_t< sizeof(T), alignof(T) > buffer_[N];
@@ -43,7 +47,7 @@ public:
   //
   // Constructor
   //
-  constexpr ring_buffer_impl() noexcept
+  constexpr ring_buffer() noexcept
   {
   }
 
@@ -53,7 +57,7 @@ public:
   constexpr const T& front() const noexcept
   {
     if (CheckBounds)
-      if (tail_idx_ == head_idx_)
+      if (empty())
         ErrFun{}("front on empty buffer");
 
     return *reinterpret_cast< const T* >(&buffer_[tail_idx_]);
@@ -62,7 +66,7 @@ public:
   constexpr T& front() noexcept
   {
     if (CheckBounds)
-      if (tail_idx_ == head_idx_)
+      if (empty())
         ErrFun{}("front on empty buffer");
 
     return *reinterpret_cast< T* >(&buffer_[tail_idx_]);
@@ -71,7 +75,7 @@ public:
   constexpr const T& back() const noexcept
   {
     if (CheckBounds)
-      if (tail_idx_ == head_idx_)
+      if (empty())
         ErrFun{}("back on empty buffer");
 
     return *reinterpret_cast< const T* >(&buffer_[head_idx_ - 1]);
@@ -80,7 +84,7 @@ public:
   constexpr T& back() noexcept
   {
     if (CheckBounds)
-      if (tail_idx_ == head_idx_)
+      if (empty())
         ErrFun{}("back on empty buffer");
 
     return *reinterpret_cast< T* >(&buffer_[head_idx_ - 1]);
@@ -142,7 +146,7 @@ public:
   constexpr void push_back(T const& obj) noexcept
   {
     if (CheckBounds)
-      if (size() == max_size())
+      if (full())
         ErrFun{}("push_back on full buffer");
 
     *reinterpret_cast< T* >(&buffer_[head_idx_]) = obj;
@@ -152,7 +156,7 @@ public:
   constexpr void push_back(const T* ptr, std::size_t n) noexcept
   {
     if (CheckBounds)
-      if (max_size() - size() < n)
+      if (free() < n)
         ErrFun{}("push_back: array too large");
 
     const auto space_left_head = N - head_idx_;
@@ -190,17 +194,11 @@ public:
   constexpr void pop()
   {
     if (CheckBounds)
-      if (tail_idx_ == head_idx_)
+      if (empty())
         ErrFun{}("pop on empty buffer");
 
     increment_tail();
   }
 };
-
-template < typename T, std::size_t N >
-using ring_buffer = ring_buffer_impl< false, error_functions::noop, T, N >;
-
-template < typename T, std::size_t N >
-using ring_buffer_debug = ring_buffer_impl< true, error_functions::halt, T, N >;
 
 }  // namespace esl
