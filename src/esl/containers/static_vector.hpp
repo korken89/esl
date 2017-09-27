@@ -48,7 +48,7 @@ public:
   constexpr T &operator[](std::size_t idx) noexcept
   {
     if (CheckBounds)
-      if (idx >= curr_idx_)
+      if (idx >= size())
         ErrFun{}("operator[] out of bounds");
 
     return *reinterpret_cast< T * >(&buffer_[idx]);
@@ -57,7 +57,7 @@ public:
   constexpr const T &operator[](std::size_t idx) const noexcept
   {
     if (CheckBounds)
-      if (idx >= curr_idx_)
+      if (idx >= size())
         ErrFun{}("operator[] out of bounds");
 
     return *reinterpret_cast< const T * >(&buffer_[idx]);
@@ -66,8 +66,8 @@ public:
   constexpr const T &front() const noexcept
   {
     if (CheckBounds)
-      if (curr_idx_ == 0)
-        ErrFun{}("front on zero sized");
+      if (empty())
+        ErrFun{}("front on empty vector");
 
     return *reinterpret_cast< const T * >(&buffer_[0]);
   }
@@ -75,8 +75,8 @@ public:
   constexpr T &front() noexcept
   {
     if (CheckBounds)
-      if (curr_idx_ == 0)
-        ErrFun{}("front on zero sized");
+      if (empty())
+        ErrFun{}("front on empty vector");
 
     return *reinterpret_cast< T * >(&buffer_[0]);
   }
@@ -84,8 +84,8 @@ public:
   constexpr const T &back() const noexcept
   {
     if (CheckBounds)
-      if (curr_idx_ == 0)
-        ErrFun{}("back on zero sized");
+      if (empty())
+        ErrFun{}("back on empty vector");
 
     return *reinterpret_cast< const T * >(&buffer_[curr_idx_ - 1]);
   }
@@ -93,8 +93,8 @@ public:
   constexpr T &back() noexcept
   {
     if (CheckBounds)
-      if (curr_idx_ == 0)
-        ErrFun{}("back on zero sized");
+      if (empty())
+        ErrFun{}("back on empty vector");
 
     return *reinterpret_cast< T * >(&buffer_[curr_idx_ - 1]);
   }
@@ -162,8 +162,8 @@ public:
   constexpr void emplace_back(Args &&... args) noexcept
   {
     if (CheckBounds)
-      if (curr_idx_ >= N)
-        ErrFun{}("emplace_back out of bounds");
+      if (full())
+        ErrFun{}("emplace_back on full vector");
 
     // Use placement new
     new (&buffer_[curr_idx_]) T(std::forward< Args >(args)...);
@@ -173,8 +173,8 @@ public:
   constexpr void push_back(T &&obj) noexcept
   {
     if (CheckBounds)
-      if (curr_idx_ >= N)
-        ErrFun{}("push_back out of bounds");
+      if (full())
+        ErrFun{}("push_back on full vector");
 
     *reinterpret_cast< T * >(&buffer_[curr_idx_]) = std::forward< T >(obj);
     ++curr_idx_;
@@ -183,8 +183,8 @@ public:
   constexpr void push_back(T const &obj) noexcept
   {
     if (CheckBounds)
-      if (curr_idx_ >= N)
-        ErrFun{}("push_back out of bounds");
+      if (full())
+        ErrFun{}("push_back on full vector");
 
     *reinterpret_cast< T * >(&buffer_[curr_idx_]) = obj;
     ++curr_idx_;
@@ -220,8 +220,8 @@ public:
   constexpr void pop_back()
   {
     if (CheckBounds)
-      if (curr_idx_ == 0)
-        ErrFun{}("pop_back on zero size");
+      if (empty())
+        ErrFun{}("pop_back on empty vector");
 
     --curr_idx_;
   }
