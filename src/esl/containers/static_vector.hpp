@@ -15,8 +15,10 @@
 
 namespace esl
 {
-template < bool CheckBounds, typename ErrFun, typename T, std::size_t N >
-class static_vector_impl
+
+template < typename T, std::size_t N, bool CheckBounds = false,
+           typename ErrFun = error_functions::noop >
+class static_vector
 {
 protected:
   std::aligned_storage_t< sizeof(T), alignof(T) > buffer_[N];
@@ -36,7 +38,7 @@ public:
   //
   // Constructor
   //
-  constexpr static_vector_impl() noexcept
+  constexpr static_vector() noexcept
   {
   }
 
@@ -205,8 +207,7 @@ public:
   }
 
   template < bool B, typename F, typename T2, std::size_t M >
-  constexpr void push_back(
-      const static_vector_impl< B, F, T2, M > &v) noexcept
+  constexpr void push_back(const static_vector< T2, M, B, F > &v) noexcept
   {
     push_back(v.cbegin(), v.size());
   }
@@ -225,12 +226,5 @@ public:
     --curr_idx_;
   }
 };
-
-template < typename T, std::size_t N >
-using static_vector = static_vector_impl< false, error_functions::noop, T, N >;
-
-template < typename T, std::size_t N >
-using static_vector_debug =
-    static_vector_impl< true, error_functions::halt, T, N >;
 
 }  // namespace esl
