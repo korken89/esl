@@ -5,7 +5,7 @@
 
 #include <algorithm>
 #include <gtest/gtest.h>
-#include <esl/containers/ring_buffer.hpp>
+#include <esl/esl.hpp>
 
 TEST(test_ring_buffer, test_push_back)
 {

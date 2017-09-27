@@ -4,7 +4,7 @@
 //          http://www.boost.org/LICENSE_1_0.txt)
 
 #include <gtest/gtest.h>
-#include <esl/helpers/singleton.hpp>
+#include <esl/esl.hpp>
 
 struct foo
 {

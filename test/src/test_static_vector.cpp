@@ -3,9 +3,9 @@
 //    (See accompanying file LICENSE.md or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
 
-#include <gtest/gtest.h>
 #include <algorithm>
-#include <esl/containers/static_vector.hpp>
+#include <gtest/gtest.h>
+#include <esl/esl.hpp>
 
 int i = 11;
 

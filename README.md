@@ -7,6 +7,14 @@ Active WIP.
 
 Designed for C++14 or higher.
 
+## Include
+
+To use this library, add `./src` to your includes and:
+
+```C++
+#include <esl/esl.hpp>
+```
+
 ## License
 
 Uses the Boost Software License 1.0
