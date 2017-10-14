@@ -15,3 +15,4 @@
 
 // Helpers
 #include <esl/helpers/singleton.hpp>
+#include <esl/helpers/flag_enum.hpp>

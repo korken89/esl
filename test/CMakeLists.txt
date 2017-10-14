@@ -42,7 +42,11 @@ target_link_libraries(test_delegate ${GTEST_BOTH_LIBRARIES})
 add_executable(test_singleton src/test_singleton.cpp)
 target_link_libraries(test_singleton ${GTEST_BOTH_LIBRARIES})
 
+add_executable(test_flag_enum src/test_flag_enum.cpp)
+target_link_libraries(test_flag_enum ${GTEST_BOTH_LIBRARIES})
+
 add_test(NAME static_vector COMMAND test_static_vector)
 add_test(NAME ring_buffer COMMAND test_ring_buffer)
 add_test(NAME delegate COMMAND test_delegate)
 add_test(NAME singleton COMMAND test_singleton)
+add_test(NAME flag_enum COMMAND test_flag_enum)
