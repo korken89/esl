@@ -30,11 +30,11 @@ matrix:
       env: TOOLSET=g++-7
 
     - os: linux
-      compiler: clang
+      compiler: gcc
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-trusty-4.0']
-          packages: ['clang-4.0', 'libgtest-dev']
+          packages: ['g++-6', 'clang-4.0', 'libgtest-dev']
       env: TOOLSET=clang++-4.0
 
 
