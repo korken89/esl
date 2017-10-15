@@ -21,6 +21,22 @@ matrix:
           packages: ['g++-6', 'libgtest-dev']
       env: TOOLSET=g++-6
 
+    - os: linux
+      compiler: gcc
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['g++-7', 'libgtest-dev']
+      env: TOOLSET=g++-7
+
+    - os: linux
+      compiler: clang
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-trusty-4.0']
+          packages: ['clang-4.0', 'libgtest-dev']
+      env: TOOLSET=clang++-4.0
+
 
 # Prepare build
 before_script:
