@@ -16,7 +16,13 @@ enum class test_flags
 
 TEST(test_enum_flags, constructor_and_access_test)
 {
+#if defined(__GNUG__) && (__GNUC__ == 5)
+  // GCC 5 get an internal compiler error
+  esl::flag_enum<test_flags> f;
+  f.set(test_flags::A, test_flags::C);
+#else
   esl::flag_enum<test_flags> f(test_flags::A, test_flags::C);
+#endif
 
   ASSERT_EQ(true,  f[test_flags::A]);
   ASSERT_EQ(false, f[test_flags::B]);
