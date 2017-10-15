@@ -15,4 +15,5 @@
 
 // Helpers
 #include <esl/helpers/singleton.hpp>
+#include <esl/helpers/unsafe_flag.hpp>
 #include <esl/helpers/flag_enum.hpp>

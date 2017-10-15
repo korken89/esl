@@ -9,6 +9,7 @@
 #include <type_traits>
 #include <bitset>
 #include <initializer_list>
+#include <esl/helpers/unsafe_flag.hpp>
 
 namespace esl
 {
@@ -36,7 +37,7 @@ class flag_enum
 {
 private:
   // Bitset with the same size as the enum
-  std::bitset< sizeof(Enum) * 8 > flags_;
+  unsafe_flag< sizeof(Enum) * 8 > flags_;
 
 public:
   static_assert(std::is_enum< Enum >::value,
