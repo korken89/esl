@@ -2,45 +2,11 @@ dist: trusty
 sudo: false
 language: cpp
 
-# More complete test matrix
-matrix:
-  include:
-    - os: linux
-      compiler: gcc
-      addons:
-        apt:
-          sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-5', 'libgtest-dev']
-      env: TOOLSET=g++-5
-
-    - os: linux
-      compiler: gcc
-      addons:
-        apt:
-          sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-6', 'libgtest-dev']
-      env: TOOLSET=g++-6
-
-    - os: linux
-      compiler: gcc
-      addons:
-        apt:
-          sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-7', 'libgtest-dev']
-      env: TOOLSET=g++-7
-
-    - os: linux
-      compiler: gcc
-      addons:
-        apt:
-          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-trusty-4.0']
-          packages: ['g++-6', 'clang-4.0', 'libgtest-dev']
-      env: TOOLSET=clang++-4.0
-
-
+#
 # Prepare build
+#
 before_script:
-  #  NOTE gtest install workaround
+  # NOTE: gtest install workaround
   - cd /usr/src/gtest
   - sudo cmake . -DBUILD_SHARED_LIBS=ON
   - sudo make
@@ -49,8 +15,87 @@ before_script:
   # -- workaround end
   - mkdir build
   - cd build
-  - cmake .. -DCMAKE_CXX_COMPILER=$TOOLSET
 
-script:
-  - make -j2
-  - make -j2 test
+#
+# More complete test matrix
+#
+matrix:
+  include:
+
+    #
+    # Testing for white spaces
+    #
+    - os: linux
+      env:
+        - TEST="Whitespace Checker"
+      script:
+        - |
+          if [[ -n $(git diff --check HEAD^) ]]; then
+            echo "Remove whitespaces before submitting..."
+            echo ""
+            echo "Git check results:"
+            echo ""
+            git diff --check HEAD^
+            exit -1
+          fi
+
+    #
+    # Testing gcc 5
+    #
+    - os: linux
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['g++-5', 'libgtest-dev']
+      env:
+        - TEST="g++-5"
+      script:
+        - cmake .. -DCMAKE_CXX_COMPILER=g++-5
+        - make -j2
+        - make -j2 test
+
+    #
+    # Testing gcc 6
+    #
+    - os: linux
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['g++-6', 'libgtest-dev']
+      env:
+        - TEST="g++-6"
+      script:
+        - cmake .. -DCMAKE_CXX_COMPILER=g++-6
+        - make -j2
+        - make -j2 test
+
+    #
+    # Testing gcc 7
+    #
+    - os: linux
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['g++-7', 'libgtest-dev']
+      env:
+        - TEST="g++-7"
+      script:
+        - cmake .. -DCMAKE_CXX_COMPILER=g++-7
+        - make -j2
+        - make -j2 test
+
+    #
+    # Testing clang 5
+    #
+    - os: linux
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-trusty-4.0']
+          packages: ['g++-6', 'clang-4.0', 'libgtest-dev']
+      env:
+        - TEST="clang++-4.0"
+      script:
+        - cmake .. -DCMAKE_CXX_COMPILER=clang++-4.0
+        - make -j2
+        - make -j2 test
+
