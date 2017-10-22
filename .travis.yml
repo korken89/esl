@@ -47,7 +47,6 @@ before_script:
   - sudo mv libgtest* /usr/lib/
   - cd "${TRAVIS_BUILD_DIR}"
   # -- workaround end
-  - cd test
   - mkdir build
   - cd build
   - cmake .. -DCMAKE_CXX_COMPILER=$TOOLSET
