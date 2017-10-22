@@ -34,12 +34,12 @@ matrix:
         - TEST="Whitespace Checker"
       script:
         - |
-          if [[ -n $(git diff --check HEAD^) ]]; then
+          if [[ -n $(git diff-tree --check $(git hash-object -t tree /dev/null) HEAD) ]]; then
             echo "Remove whitespaces before submitting..."
             echo ""
             echo "Git check results:"
             echo ""
-            git diff --check HEAD^
+            git diff-tree --check $(git hash-object -t tree /dev/null) HEAD
             exit -1
           fi
 
