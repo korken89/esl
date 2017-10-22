@@ -26,6 +26,10 @@ matrix:
     # Testing for white spaces
     #
     - os: linux
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['libgtest-dev']
       env:
         - TEST="Whitespace Checker"
       script:
