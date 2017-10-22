@@ -29,4 +29,3 @@ struct halt
 
 } // namespace error_functions
 } // namespace esl
-

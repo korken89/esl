@@ -102,4 +102,3 @@ matrix:
         - cmake .. -DCMAKE_CXX_COMPILER=clang++-4.0
         - make -j2
         - make -j2 test
-
