@@ -191,7 +191,7 @@ public:
     tail_idx_ = 0;
   }
 
-  constexpr void pop()
+  constexpr void pop() noexcept
   {
     if (CheckBounds)
       if (empty())
