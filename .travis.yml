@@ -89,7 +89,7 @@ matrix:
         - make -j2 test
 
     #
-    # Testing clang 5
+    # Testing clang 4
     #
     - os: linux
       addons:
@@ -100,5 +100,20 @@ matrix:
         - TEST="clang++-4.0"
       script:
         - cmake .. -DCMAKE_CXX_COMPILER=clang++-4.0
+        - make -j2
+        - make -j2 test
+
+    #
+    # Testing clang 5
+    #
+    - os: linux
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-trusty-5.0']
+          packages: ['g++-6', 'clang-5.0', 'libgtest-dev']
+      env:
+        - TEST="clang++-5.0"
+      script:
+        - cmake .. -DCMAKE_CXX_COMPILER=clang++-5.0
         - make -j2
         - make -j2 test
