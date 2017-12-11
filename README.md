@@ -3,6 +3,10 @@
 My collection of good to have algorithms, containers, etc, for embedded use.
 Active WIP.
 
+## Status
+
+[![Build Status](https://travis-ci.org/korken89/esl.svg?branch=master)](https://travis-ci.org/korken89/esl) [![LICENSE](https://img.shields.io/badge/LICENSE-BSL%201.0-blue.svg)](LICENSE.md)
+
 ## Standard
 
 Designed for C++14 or higher.
@@ -38,10 +42,6 @@ Currently there is a `singleton` helper and a `flag_enum` helper, see the local 
 ## License
 
 Uses the Boost Software License 1.0
-
-## Status
-
-[![Build Status](https://travis-ci.org/korken89/esl.svg?branch=master)](https://travis-ci.org/korken89/esl)
 
 
 ## TODO
