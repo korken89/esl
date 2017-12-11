@@ -27,3 +27,7 @@ Uses the Boost Software License 1.0
 ## TODO
 
 * Add documentation
+
+## IDEAS
+
+* Add a script that checks the map file for linked in libs that are not allowed such as double functions
