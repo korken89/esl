@@ -10,23 +10,10 @@
 #include <bitset>
 #include <initializer_list>
 #include <esl/helpers/unsafe_flag.hpp>
+#include <esl/helpers/utils.hpp>
 
 namespace esl
 {
-namespace details
-{
-
-// Meta function to check if all bools in a pack is true
-template< bool... > struct bool_pack;
-
-template< bool... Bools >
-using all_true = std::is_same<
-                    bool_pack< Bools..., true >,
-                    bool_pack< true, Bools... >
-                 >;
-
-} // namespace details
-
 //
 // A class to view an enum as a set of flags, stored as single bits.
 // Used to replace "flags |= some_flag" or "flags &= ~some_flag" type of code
