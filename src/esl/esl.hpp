@@ -9,6 +9,9 @@
 #include <esl/containers/ring_buffer.hpp>
 #include <esl/containers/static_vector.hpp>
 
+// Math
+#include <esl/math/vector.hpp>
+
 // Function/Method Delegate
 #include <esl/delegate/delegate.hpp>
 #include <esl/delegate/delegate_helper.hpp>
