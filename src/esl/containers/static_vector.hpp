@@ -104,6 +104,11 @@ public:
     return reinterpret_cast< T * >(&buffer_[0]);
   }
 
+  constexpr auto data() const noexcept
+  {
+    return reinterpret_cast< const T * >(&buffer_[0]);
+  }
+
   //
   // Capacity
   //

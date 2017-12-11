@@ -181,6 +181,19 @@ TEST(test_static_vector, test_algorithm)
   ASSERT_EQ(19, vec[4]);
 }
 
+void testfun(const esl::static_vector< int, 5 >& v)
+{
+  (void)v.data();
+  (void)v.front();
+  (void)v.back();
+}
+
+TEST(test_static_vector, test_const)
+{
+  esl::static_vector< int, 5 > vec;
+  testfun(vec);
+}
+
 int main(int argc, char *argv[])
 {
   ::testing::InitGoogleTest(&argc, argv);
