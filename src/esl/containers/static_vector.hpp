@@ -36,10 +36,15 @@ public:
   using const_iterator = typename base_type::const_iterator;
 
   //
-  // Constructor
+  // Constructor / Destructor
   //
   constexpr static_vector() noexcept
   {
+  }
+
+  ~static_vector() noexcept
+  {
+    clear(); // Calls all destructors
   }
 
   //
@@ -219,15 +224,19 @@ public:
 
   constexpr void clear() noexcept
   {
+    for (auto idx = 0; idx < curr_idx_; ++idx)
+      reinterpret_cast< T * >(&buffer_[idx])->~T();
+
     curr_idx_ = 0;
   }
 
-  constexpr void pop_back()
+  constexpr void pop_back() noexcept
   {
     if (CheckBounds)
       if (empty())
         ErrFun{}("pop_back on empty vector");
 
+    reinterpret_cast< T * >(&buffer_[curr_idx_])->~T();
     --curr_idx_;
   }
 };
