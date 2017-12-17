@@ -163,6 +163,7 @@ TEST(test_vector, test_vector_math)
   auto v7 = v2 / 2;
   auto v8 = v1.dot(v2);
   auto v9 = v1.cross(v2);
+  auto v10 = v1 + v2 + (v3 * 2).cross(v5);
 
   ASSERT_EQ(5, v3[0]);
   ASSERT_EQ(7, v3[1]);
@@ -191,6 +192,10 @@ TEST(test_vector, test_vector_math)
   ASSERT_EQ(-3, v9[0]);
   ASSERT_EQ(6, v9[1]);
   ASSERT_EQ(-3, v9[2]);
+
+  ASSERT_EQ(17, v10[0]);
+  ASSERT_EQ(-17, v10[1]);
+  ASSERT_EQ(21, v10[2]);
 }
 
 TEST(test_vector, test_vector_math_operators)
