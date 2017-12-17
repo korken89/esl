@@ -6,6 +6,8 @@
 #pragma once
 
 #include <utility>
+#include <type_traits>
+
 
 namespace esl
 {
@@ -33,17 +35,17 @@ private:
   // method caller
   template < typename Object, MethodPtr< Object > Mptr >
   constexpr static R invoke_method(void* obj, Params... params) noexcept(
-      noexcept((static_cast< Object* >(obj)->*Mptr)(params...)))
+      noexcept((static_cast< std::add_pointer_t<Object> >(obj)->*Mptr)(params...)))
   {
-    return (static_cast< Object* >(obj)->*Mptr)(params...);
+    return (static_cast< std::add_pointer_t<Object> >(obj)->*Mptr)(params...);
   }
 
   // const method caller
   template < typename Object, ConstMethodPtr< Object > Mptr >
   constexpr static R invoke_method(void* obj, Params... params) noexcept(
-      noexcept((static_cast< Object* >(obj)->*Mptr)(params...)))
+      noexcept((static_cast< std::add_pointer_t<Object> >(obj)->*Mptr)(params...)))
   {
-    return (static_cast< Object* >(obj)->*Mptr)(params...);
+    return (static_cast< std::add_pointer_t<Object> >(obj)->*Mptr)(params...);
   }
 
   // function caller
@@ -73,14 +75,14 @@ public:
   template < typename Object, MethodPtr< Object > Mptr >
   constexpr static auto from(Object& obj) noexcept
   {
-    return delegate(&obj, &invoke_method< Object, Mptr >);
+    return delegate(std::addressof(obj), &invoke_method< Object, Mptr >);
   }
 
   // from const method
   template < typename Object, ConstMethodPtr< Object > Mptr >
   constexpr static auto from(Object& obj) noexcept
   {
-    return delegate(&obj, &invoke_method< Object, Mptr >);
+    return delegate(std::addressof(obj), &invoke_method< Object, Mptr >);
   }
 
   // from function
