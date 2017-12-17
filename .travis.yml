@@ -7,7 +7,6 @@ language: cpp
 #
 before_script:
   # NOTE: gtest install workaround
-  - sudo apt-get install -y cmake cmake-data
   - cd /usr/src/gtest
   - sudo cmake . -DBUILD_SHARED_LIBS=ON
   - sudo make
@@ -30,7 +29,7 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test']
-          packages: ['libgtest-dev']
+          packages: ['libgtest-dev', 'cmake', 'cmake-data']
       env:
         - TEST="Whitespace Checker"
       script:
@@ -51,7 +50,7 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-5', 'libgtest-dev']
+          packages: ['g++-5', 'libgtest-dev', 'cmake', 'cmake-data']
       env:
         - TEST="g++-5"
       script:
@@ -66,7 +65,7 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-6', 'libgtest-dev']
+          packages: ['g++-6', 'libgtest-dev', 'cmake', 'cmake-data']
       env:
         - TEST="g++-6"
       script:
@@ -81,7 +80,7 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-7', 'libgtest-dev']
+          packages: ['g++-7', 'libgtest-dev', 'cmake', 'cmake-data']
       env:
         - TEST="g++-7"
       script:
@@ -96,7 +95,7 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-trusty-4.0']
-          packages: ['g++-6', 'clang-4.0', 'libgtest-dev']
+          packages: ['g++-6', 'clang-4.0', 'libgtest-dev', 'cmake', 'cmake-data']
       env:
         - TEST="clang++-4.0"
       script:
@@ -111,7 +110,7 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-trusty-5.0']
-          packages: ['g++-6', 'clang-5.0', 'libgtest-dev']
+          packages: ['g++-6', 'clang-5.0', 'libgtest-dev', 'cmake', 'cmake-data']
       env:
         - TEST="clang++-5.0"
       script:
