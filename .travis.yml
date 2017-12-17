@@ -7,6 +7,7 @@ language: cpp
 #
 before_script:
   # NOTE: gtest install workaround
+  - sudo apt-get install -y cmake cmake-data
   - cd /usr/src/gtest
   - sudo cmake . -DBUILD_SHARED_LIBS=ON
   - sudo make
