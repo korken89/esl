@@ -5,7 +5,7 @@
 
 #include <algorithm>
 #include <gtest/gtest.h>
-#include <esl/esl.hpp>
+#include <esl/containers/static_vector.hpp>
 
 int i = 11;
 
