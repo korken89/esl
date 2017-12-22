@@ -11,6 +11,9 @@
 
 namespace esl
 {
+//
+// Base class definition and defaults
+//
 template < typename, std::size_t Size, std::size_t Align = alignof(void*) >
 class delegate;
 
@@ -44,28 +47,22 @@ private:
   }
 
   //
-  // Variable template to generate a vtable
+  // Variable template to generate a vtable (C++14)
   //
   template < typename F >
-  constexpr static const vtable make_vtable =
-  {
-    caller< F >,
-    destroyer< F >
-  };
+  constexpr static const vtable make_vtable = {caller< F >, destroyer< F >};
 
 #else
 
-  // Constexpr lambdas available, collapse to a variable template (C++17)
+  // Constexpr lambdas available, collapse the variable template (C++17)
   template < typename F >
-  constexpr static const vtable make_vtable =
-  {
-    [](void* fun, Args... args) -> Ret { // caller
-      return (*static_cast< F* >(fun))(args...);
-    },
-    [](void* fun) { // destroyer
-      static_cast< F* >(fun)->~F();
-    }
-  };
+  constexpr static const vtable make_vtable = {
+      [](void* fun, Args... args) -> Ret {  // caller
+        return (*static_cast< F* >(fun))(args...);
+      },
+      [](void* fun) {  // destroyer
+        static_cast< F* >(fun)->~F();
+      }};
 
 #endif
 
@@ -75,13 +72,11 @@ private:
   const vtable vtable_;
   std::aligned_storage_t< Size, Align > storage_;
 
-
-
 public:
   // default constructors
   constexpr delegate(const delegate&) = default;
   constexpr delegate(delegate&&)      = default;
-  constexpr delegate()                = delete; // There is no empty delegate
+  constexpr delegate()                = delete;  // There is no empty delegate
 
   // assignment operators
   constexpr delegate& operator=(const delegate&) = default;
@@ -90,13 +85,14 @@ public:
   //
   // Explicit construction
   //
-  template < typename F,
-             typename = std::enable_if_t< !std::is_same<std::decay_t<F>, delegate>::value > >
-  constexpr delegate(F&& fun) : vtable_{make_vtable< F >}
+  template < typename F, typename = std::enable_if_t< !std::is_same<
+                             std::decay_t< F >, delegate >::value > >
+  explicit constexpr delegate(F&& fun)
+      : vtable_{make_vtable< std::decay_t< F > >}
   {
-    static_assert(sizeof(F) <= Size,
+    static_assert(sizeof(std::decay_t< F >) <= Size,
                   "The callable does not fit inside the delegate");
-    new (&storage_) F(std::forward< F >(fun));
+    new (&storage_) F{std::forward< F >(fun)};
   }
 
   //
@@ -110,10 +106,10 @@ public:
   //
   // Call using operator()
   //
-  template <typename... Ts>
+  template < typename... Ts >
   constexpr Ret operator()(Ts&&... args)
   {
-    return vtable_.call(&storage_, std::forward< Args >(args)...);
+    return vtable_.call(&storage_, std::forward< Ts >(args)...);
   }
 
   //
@@ -133,41 +129,36 @@ public:
   template < typename Obj >
   constexpr static delegate from(Obj& obj, Ret (Obj::*mptr)(Args...))
   {
-    return delegate{[&obj, mptr](Args... args) -> Ret {
-      return (obj.*mptr)(args...);
-    }};
+    return delegate{
+        [&obj, mptr](Args... args) -> Ret { return (obj.*mptr)(args...); }};
   }
 
   template < typename Obj, Ret (Obj::*mptr)(Args...) >
   constexpr static delegate from(Obj& obj)
-  {    return delegate{[&obj](Args... args) -> Ret {
-      return (obj.*mptr)(args...);
-    }};
+  {
+    return delegate{
+        [&obj](Args... args) -> Ret { return (obj.*mptr)(args...); }};
   }
 
   // Const methods
   template < typename Obj >
   constexpr static delegate from(Obj& obj, Ret (Obj::*mptr)(Args...) const)
   {
-    return delegate{[&obj, mptr](Args... args) -> Ret {
-      return (obj.*mptr)(args...);
-    }};
+    return delegate{
+        [&obj, mptr](Args... args) -> Ret { return (obj.*mptr)(args...); }};
   }
 
   template < typename Obj, Ret (Obj::*mptr)(Args...) const >
   constexpr static delegate from(Obj& obj)
   {
-    return delegate{[&obj](Args... args) -> Ret {
-      return (obj.*mptr)(args...);
-    }};
+    return delegate{
+        [&obj](Args... args) -> Ret { return (obj.*mptr)(args...); }};
   }
 
   // Functions
   constexpr static delegate from(Ret (&fptr)(Args...))
   {
-    return delegate{[&fptr](Args... args) -> Ret {
-      return (fptr)(args...);
-    }};
+    return delegate{[&fptr](Args... args) -> Ret { return (fptr)(args...); }};
   }
 
   template < Ret (*fptr)(Args...) >
@@ -175,9 +166,7 @@ public:
   {
     static_assert(fptr != nullptr, "Function pointer must not be null");
 
-    return delegate{[](Args... args) -> Ret {
-      return (*fptr)(args...);
-    }};
+    return delegate{[](Args... args) -> Ret { return (*fptr)(args...); }};
   }
 };
 }  // end namespace esl
