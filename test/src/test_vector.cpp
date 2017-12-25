@@ -24,7 +24,7 @@ TEST(test_vector, test_make)
 
 TEST(test_vector, test_make_from_array)
 {
-  std::array< int, 3 > a{1, 2, 3};
+  std::array< int, 3 > a{{1, 2, 3}};
   esl::vector3i vec3(a);
 
   ASSERT_EQ(1, vec3[0]);
