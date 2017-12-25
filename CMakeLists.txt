@@ -6,8 +6,13 @@ project(esl)
 ########################################
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
-set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic -Werror")
+add_compile_options(-Wall -Wextra -Wpedantic -Werror)
 
+option(ENABLE_COVERAGE "Enable coverage reporting for gcc/clang" FALSE)
+
+if (ENABLE_COVERAGE)
+  add_compile_options(--coverage -O0)
+endif()
 
 ######################################
 # Find packages needed
@@ -33,7 +38,7 @@ enable_testing()
 #
 macro(perform_test str)
   add_executable(test_${str} test/src/test_${str}.cpp)
-  target_link_libraries(test_${str} ${GTEST_BOTH_LIBRARIES})
+  target_link_libraries(test_${str} ${GTEST_BOTH_LIBRARIES} --coverage)
   add_test(NAME ${str} COMMAND test_${str})
 endmacro(perform_test)
 
