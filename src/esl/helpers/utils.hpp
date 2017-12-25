@@ -23,7 +23,7 @@ using all_true =
 template < std::size_t... Is, typename F >
 constexpr void repeat_impl(std::index_sequence< Is... >, F&& fun)
 {
-  std::initializer_list< std::size_t >{(fun(Is), Is)...};
+  (void)std::initializer_list< std::size_t >{(fun(Is), Is)...};
 }
 
 }  // namespace details
