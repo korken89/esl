@@ -5,6 +5,11 @@
 
 #pragma once
 
+#include <type_traits>
+#include <cstdint>
+#include <memory>
+#include <utility>
+
 namespace esl
 {
 namespace details
