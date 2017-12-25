@@ -23,7 +23,7 @@ private:
     {
         std::uint32_t r = 0;
 
-        for (auto i = 0; i < N_bits; i++)
+        for (auto i = 0U; i < N_bits; i++)
             r |= (1 << (31 - i));
 
         return r;
@@ -44,7 +44,7 @@ public:
     // Set all flags
     constexpr void set() noexcept
     {
-        for (auto i = 0; i < N32 - 1; ++i)
+        for (auto i = 0U; i < N32 - 1; ++i)
             storage_[i] = 0xffffffff;
 
         storage_[N32 - 1] = top_mask;
@@ -59,7 +59,7 @@ public:
     // Reset all flags
     constexpr void reset() noexcept
     {
-        for (auto i = 0; i < N32; ++i)
+        for (auto i = 0U; i < N32; ++i)
             storage_[i] = 0;
     }
 
@@ -78,7 +78,7 @@ public:
     // Check if no flags are set
     constexpr bool none() const noexcept
     {
-        for (auto i = 0; i < N32; ++i)
+        for (auto i = 0U; i < N32; ++i)
              if (storage_[i] != 0)
                 return false;
 
@@ -88,7 +88,7 @@ public:
     // Check if all flags are set
     constexpr bool all() const noexcept
     {
-        for (auto i = 0; i < N32 - 1; ++i)
+        for (auto i = 0U; i < N32 - 1; ++i)
              if (storage_[i] != 0xffffffff)
                 return false;
 

@@ -224,7 +224,7 @@ public:
 
   constexpr void clear() noexcept
   {
-    for (auto idx = 0; idx < curr_idx_; ++idx)
+    for (auto idx = 0U; idx < curr_idx_; ++idx)
       reinterpret_cast< T * >(&buffer_[idx])->~T();
 
     curr_idx_ = 0;
