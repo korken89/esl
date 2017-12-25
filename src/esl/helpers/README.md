@@ -69,3 +69,23 @@ int main()
     return -1;
 }
 ```
+
+## `repeat`: Compile-time repeat
+
+Is used to repeat a call multiple times, can be used as compile-time loop unrolling.
+
+Example usage:
+
+```C++
+#include <esl/esl.hpp>
+#include <iostream>
+
+int main()
+{
+  esl::repeat([](auto idx) {
+    std::cout << "repeat index " << idx << "\n";
+  });
+
+  return 0;
+}
+```

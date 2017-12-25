@@ -35,7 +35,7 @@ Currently there is a `vector` implementation (in a mathematical sense), see the 
 
 #### Helper functions
 
-Currently there is a `singleton` helper and a `flag_enum` helper, see the local [README](src/esl/helpers/README.md) for more information and usage.
+Currently there is a `repeat` (compile-time loop unrolling), `singleton` helper and a `flag_enum` helper, see the local [README](src/esl/helpers/README.md) for more information and usage.
 
 ---
 
