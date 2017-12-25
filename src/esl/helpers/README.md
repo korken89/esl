@@ -82,7 +82,7 @@ Example usage:
 
 int main()
 {
-  esl::repeat([](auto idx) {
+  esl::repeat<10>([](auto idx) {
     std::cout << "repeat index " << idx << "\n";
   });
 
