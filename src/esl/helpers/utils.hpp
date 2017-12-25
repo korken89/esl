@@ -10,13 +10,31 @@ namespace esl
 namespace details
 {
 // Meta function to check if all bools in a pack is true
-template< bool... > struct bool_pack;
+template < bool... >
+struct bool_pack;
 
-template< bool... Bools >
-using all_true = std::is_same<
-                    bool_pack< Bools..., true >,
-                    bool_pack< true, Bools... >
-                 >;
+template < bool... Bools >
+using all_true =
+    std::is_same< bool_pack< Bools..., true >, bool_pack< true, Bools... > >;
 
-} // namespace details
-} // namespace esl
+//
+// Simple compile-time repeat implementation with index
+//
+template < std::size_t... Is, typename F >
+constexpr void repeat_impl(std::index_sequence< Is... >, F&& fun)
+{
+  std::initializer_list< std::size_t >{(fun(Is), Is)...};
+}
+
+}  // namespace details
+
+//
+// Simple compile-time repeat implementation with index
+//
+template < std::size_t N, typename F >
+constexpr void repeat(F&& fun)
+{
+  details::repeat_impl(std::make_index_sequence< N >{}, std::forward< F >(fun));
+}
+
+}  // namespace esl
