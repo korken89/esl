@@ -50,11 +50,11 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-5', 'libgtest-dev', 'cmake', 'cmake-data']
+          packages: ['g++-7', 'libgtest-dev', 'cmake', 'cmake-data']
       env:
         - TEST="Coverage"
       script:
-        - cmake .. -DCMAKE_CXX_COMPILER=g++-5 -DENABLE_COVERAGE:BOOL=TRUE
+        - cmake .. -DCMAKE_CXX_COMPILER=g++-7 -DENABLE_COVERAGE:BOOL=TRUE
         - make -j2
         - make -j2 test
         - bash <(curl -s https://codecov.io/bash) -x /usr/bin/gcov-5
@@ -70,7 +70,7 @@ matrix:
       env:
         - TEST="g++-5"
       script:
-        - cmake .. -DCMAKE_CXX_COMPILER=g++-5
+        - cmake .. -DCMAKE_CXX_COMPILER=g++-5 -DCMAKE_BUILD_TYPE=Debug
         - make -j2
         - make -j2 test
 
@@ -85,7 +85,7 @@ matrix:
       env:
         - TEST="g++-6"
       script:
-        - cmake .. -DCMAKE_CXX_COMPILER=g++-6
+        - cmake .. -DCMAKE_CXX_COMPILER=g++-6 -DCMAKE_BUILD_TYPE=Debug
         - make -j2
         - make -j2 test
 
@@ -98,9 +98,24 @@ matrix:
           sources: ['ubuntu-toolchain-r-test']
           packages: ['g++-7', 'libgtest-dev', 'cmake', 'cmake-data']
       env:
-        - TEST="g++-7"
+        - TEST="g++-7 (C++14)"
       script:
-        - cmake .. -DCMAKE_CXX_COMPILER=g++-7
+        - cmake .. -DCMAKE_CXX_COMPILER=g++-7 -DCMAKE_BUILD_TYPE=Debug
+        - make -j2
+        - make -j2 test
+
+    #
+    # Testing gcc 7
+    #
+    - os: linux
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['g++-7', 'libgtest-dev', 'cmake', 'cmake-data']
+      env:
+        - TEST="g++-7 (C++17)"
+      script:
+        - cmake .. -DCMAKE_CXX_COMPILER=g++-7 -DCMAKE_BUILD_TYPE=Debug -DENABLE_CPP17:BOOL=TRUE
         - make -j2
         - make -j2 test
 
@@ -115,7 +130,7 @@ matrix:
       env:
         - TEST="clang++-4.0"
       script:
-        - cmake .. -DCMAKE_CXX_COMPILER=clang++-4.0
+        - cmake .. -DCMAKE_CXX_COMPILER=clang++-4.0 -DCMAKE_BUILD_TYPE=Debug
         - make -j2
         - make -j2 test
 
@@ -128,8 +143,23 @@ matrix:
           sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-trusty-5.0']
           packages: ['g++-6', 'clang-5.0', 'libgtest-dev', 'cmake', 'cmake-data']
       env:
-        - TEST="clang++-5.0"
+        - TEST="clang++-5.0 (C++14)"
       script:
-        - cmake .. -DCMAKE_CXX_COMPILER=clang++-5.0
+        - cmake .. -DCMAKE_CXX_COMPILER=clang++-5.0 -DCMAKE_BUILD_TYPE=Debug
+        - make -j2
+        - make -j2 test
+
+    #
+    # Testing clang 5
+    #
+    - os: linux
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-trusty-5.0']
+          packages: ['g++-6', 'clang-5.0', 'libgtest-dev', 'cmake', 'cmake-data']
+      env:
+        - TEST="clang++-5.0 (C++17)"
+      script:
+        - cmake .. -DCMAKE_CXX_COMPILER=clang++-5.0 -DCMAKE_BUILD_TYPE=Debug -DENABLE_CPP17:BOOL=TRUE
         - make -j2
         - make -j2 test

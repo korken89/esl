@@ -4,14 +4,20 @@ project(esl)
 ########################################
 # Enable C++14 and other C++ flags
 ########################################
-set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 add_compile_options(-Wall -Wextra -Wpedantic -Werror)
 
 option(ENABLE_COVERAGE "Enable coverage reporting for gcc/clang" FALSE)
+option(ENABLE_CPP17 "Enable C++17 for gcc/clang" FALSE)
 
 if (ENABLE_COVERAGE)
   add_compile_options(--coverage -O0)
+endif()
+
+if (ENABLE_CPP17)
+  add_compile_options(-std=c++17)
+else()
+  set(CMAKE_CXX_STANDARD 14)
 endif()
 
 ######################################
