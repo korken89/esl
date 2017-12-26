@@ -5,116 +5,188 @@
 
 #pragma once
 
-#include <utility>
+#include <cstdint>
+#include <memory>
 #include <type_traits>
 
 namespace esl
 {
-template < typename T >
+//
+// Base class definition and defaults
+//
+template < typename, std::size_t Size, std::size_t Align = alignof(void*) >
 class delegate;
 
-template < typename R, typename... Params >
-class delegate< R(Params...) > final
+template < typename Ret, typename... Args, std::size_t Size, std::size_t Align >
+class delegate< Ret(Args...), Size, Align >
 {
 private:
-  using CallbackType = R (*)(void*, Params...);
-
-  using FunctionPtr = R (*)(Params...);
-
-  template < typename Object >
-  using MethodPtr = R (Object::*)(Params...);
-
-  template < typename Object >
-  using ConstMethodPtr = R (Object::*)(Params...) const;
-
-  void* obj_;
-  CallbackType cb_;
-
-  // method caller
-  template < typename Object, MethodPtr< Object > Mptr >
-  constexpr static R invoke_method(void* obj, Params... params) noexcept(
-      noexcept(
-          (static_cast< std::add_pointer_t< Object > >(obj)->*Mptr)(params...)))
+  //
+  // Local "vtable" definition
+  //
+  struct vtable
   {
-    return (static_cast< std::add_pointer_t< Object > >(obj)->*Mptr)(params...);
+    Ret (*call)(const void*, Args...);
+    void (*destroy)(const void*);
+  };
+
+// Check for constexpr lambdas
+#if !defined(__cpp_constexpr) || (__cpp_constexpr < 201603)
+
+  // No constexpr lambdas, use statics to populate the vtable
+  template < typename F >
+  constexpr static Ret caller(const void* fun, Args... args)
+  {
+    return (*static_cast< const F* >(fun))(args...);
   }
 
-  // const method caller
-  template < typename Object, ConstMethodPtr< Object > Mptr >
-  constexpr static R invoke_method(void* obj, Params... params) noexcept(
-      noexcept(
-          (static_cast< std::add_pointer_t< Object > >(obj)->*Mptr)(params...)))
+  template < typename F >
+  constexpr static void destroyer(const void* fun)
   {
-    return (static_cast< std::add_pointer_t< Object > >(obj)->*Mptr)(params...);
+    static_cast< const F* >(fun)->~F();
   }
 
-  // function caller
-  template < FunctionPtr Fptr >
-  constexpr static R invoke_function(void*, Params... params) noexcept(
-      noexcept((*Fptr)(params...)))
-  {
-    return (*Fptr)(params...);
-  }
+  //
+  // Variable template to generate a vtable (C++14)
+  //
+  template < typename F >
+  constexpr static const vtable make_vtable = {caller< F >, destroyer< F >};
 
-  // constructor - private so users must use factory functions
-  constexpr delegate(void* obj, CallbackType callback) noexcept : obj_(obj),
-                                                                  cb_(callback)
-  {
-  }
+  //template < typename F >
+  //constexpr auto make_vtable()
+  //{
+  //  vtable table = {&caller< F >, &destroyer< F >};
+
+  //  return table;
+  //}
+
+#else
+
+  // Constexpr lambdas available, collapse the variable template (C++17)
+  template < typename F >
+  constexpr static const vtable make_vtable = {
+      [](const void* fun, Args... args) -> Ret {  // caller
+        return (*static_cast< const F* >(fun))(args...);
+      },
+      [](const void* fun) {  // destroyer
+        static_cast< const F* >(fun)->~F();
+      }};
+
+#endif
+
+  //
+  // Storage
+  //
+  const vtable vtable_;
+  std::aligned_storage_t< Size, Align > storage_;
 
 public:
   // default constructors
-  delegate(const delegate&) = default;
-  delegate(delegate&&)      = default;
+  constexpr delegate(const delegate&) = default;
+  constexpr delegate(delegate&&)      = default;
+  constexpr delegate()                = delete;  // There is no empty delegate
 
   // assignment operators
-  delegate& operator=(const delegate&) = default;
-  delegate& operator=(delegate&&) = default;
+  constexpr delegate& operator=(const delegate&) = default;
+  constexpr delegate& operator=(delegate&&) = default;
 
-  // from method
-  template < typename Object, MethodPtr< Object > Mptr >
-  constexpr static auto from(Object& obj) noexcept
+  //
+  // Explicit construction
+  //
+  template < typename F, typename = std::enable_if_t< !std::is_same<
+                             std::decay_t< F >, delegate >::value > >
+  explicit constexpr delegate(F&& fun)
+      : vtable_{make_vtable< std::decay_t< F > >}
   {
-    return delegate(std::addressof(obj), &invoke_method< Object, Mptr >);
+    static_assert(sizeof(std::decay_t< F >) <= Size,
+                  "The callable does not fit inside the delegate");
+    new (&storage_) F{std::forward< F >(fun)};
   }
 
-  // from const method
-  template < typename Object, ConstMethodPtr< Object > Mptr >
-  constexpr static auto from(Object& obj) noexcept
+  //
+  // Delete stuff when done
+  //
+  ~delegate()
   {
-    return delegate(std::addressof(obj), &invoke_method< Object, Mptr >);
+    vtable_.destroy(&storage_);
   }
 
-  // from function
-  template < FunctionPtr Fptr >
-  constexpr static auto from() noexcept
+  //
+  // Call using operator()
+  //
+  template < typename... Ts >
+  constexpr Ret operator()(Ts&&... args) const
   {
-    static_assert(Fptr != nullptr, "Function pointer must not be null");
-
-    return delegate(nullptr, &invoke_function< Fptr >);
+    return vtable_.call(&storage_, std::forward< Ts >(args)...);
   }
 
-  // invoke delegate via operator ()
-  template < typename... Args >
-  constexpr auto operator()(Args&&... params) const
-      noexcept(noexcept((*cb_)(obj_, std::forward< Args >(params)...)))
+  //
+  // Operators
+  //
+  constexpr bool operator==(const delegate& other) const
   {
-    static_assert(sizeof...(Args) == sizeof...(Params),
-                  "Wrong number of parameters");
-
-    return (*cb_)(obj_, std::forward< Args >(params)...);
+    return (vtable_.call == other.vtable_.call) &&
+           (vtable_.destroy == other.vtable_.destroy);
   }
 
-  // comparison operators
-  constexpr bool operator==(const delegate& other) const noexcept
+  constexpr bool operator!=(const delegate& other) const
   {
-    return (obj_ == other.obj_) && (cb_ == other.cb_);
+    return !(*this == other);
   }
 
-  constexpr bool operator!=(const delegate& other) const noexcept
+  //
+  // Helpers to create delegates
+  //
+
+  // Make from Methods
+  template < typename Obj >
+  constexpr static delegate from(Obj& obj, Ret (Obj::*mptr)(Args...))
   {
-    return (obj_ != other.obj_) || (cb_ != other.cb_);
+    return delegate{
+        [&obj, mptr](Args... args) -> Ret { return (obj.*mptr)(args...); }};
+  }
+
+  template < typename Obj, Ret (Obj::*mptr)(Args...) >
+  constexpr static delegate from(Obj& obj)
+  {
+    return delegate{
+        [&obj](Args... args) -> Ret { return (obj.*mptr)(args...); }};
+  }
+
+  // Make from Const methods
+  template < typename Obj >
+  constexpr static delegate from(Obj& obj, Ret (Obj::*mptr)(Args...) const)
+  {
+    return delegate{
+        [&obj, mptr](Args... args) -> Ret { return (obj.*mptr)(args...); }};
+  }
+
+  template < typename Obj, Ret (Obj::*mptr)(Args...) const >
+  constexpr static delegate from(Obj& obj)
+  {
+    return delegate{
+        [&obj](Args... args) -> Ret { return (obj.*mptr)(args...); }};
+  }
+
+  // Make from Functions
+  constexpr static delegate from(Ret (&fptr)(Args...))
+  {
+    return delegate{[&fptr](Args... args) -> Ret { return (fptr)(args...); }};
+  }
+
+  template < Ret (*fptr)(Args...) >
+  constexpr static delegate from()
+  {
+    static_assert(fptr != nullptr, "Function pointer must not be null");
+
+    return delegate{[](Args... args) -> Ret { return (*fptr)(args...); }};
   }
 };
+}  // end namespace esl
 
-}  // namespace esl
+// For Cortex-M, sizeof(void*) bytes local storage is enough for function
+// pointers and method pointers that are know at compile time.
+// For runtime method pointers, 3*sizeof(void*) is needed, or if
+// larger captures are desired more can be used.
+
+// using my_delegate = esl::delegate< void(int), sizeof(void *) >;

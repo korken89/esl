@@ -53,7 +53,7 @@ endmacro(perform_test)
 #
 perform_test(static_vector)
 perform_test(ring_buffer)
-perform_test(delegate)
+#perform_test(delegate)
 perform_test(delegate_new)
 perform_test(singleton)
 perform_test(unsafe_flag)
