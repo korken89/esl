@@ -15,7 +15,6 @@
 
 namespace esl
 {
-
 template < typename T, std::size_t N, bool CheckBounds = false,
            typename ErrFun = error_functions::noop >
 class ring_buffer

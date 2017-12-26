@@ -15,7 +15,6 @@
 
 namespace esl
 {
-
 template < typename T, std::size_t N, bool CheckBounds = false,
            typename ErrFun = error_functions::noop >
 class static_vector
@@ -44,7 +43,7 @@ public:
 
   ~static_vector() noexcept
   {
-    clear(); // Calls all destructors
+    clear();  // Calls all destructors
   }
 
   //
