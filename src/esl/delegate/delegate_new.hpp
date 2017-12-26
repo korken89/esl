@@ -26,8 +26,8 @@ private:
   //
   struct vtable
   {
-    Ret (*call)(void*, Args...);
-    void (*destroy)(void*);
+    Ret (*call)(const void*, Args...);
+    void (*destroy)(const void*);
   };
 
 // Check for constexpr lambdas
@@ -35,15 +35,15 @@ private:
 
   // No constexpr lambdas, use statics to populate the vtable
   template < typename F >
-  constexpr static Ret caller(void* fun, Args... args)
+  constexpr static Ret caller(const void* fun, Args... args)
   {
-    return (*static_cast< F* >(fun))(args...);
+    return (*static_cast< const F* >(fun))(args...);
   }
 
   template < typename F >
-  constexpr static void destroyer(void* fun)
+  constexpr static void destroyer(const void* fun)
   {
-    static_cast< F* >(fun)->~F();
+    static_cast< const F* >(fun)->~F();
   }
 
   //
@@ -57,11 +57,11 @@ private:
   // Constexpr lambdas available, collapse the variable template (C++17)
   template < typename F >
   constexpr static const vtable make_vtable = {
-      [](void* fun, Args... args) -> Ret {  // caller
-        return (*static_cast< F* >(fun))(args...);
+      [](const void* fun, Args... args) -> Ret {  // caller
+        return (*static_cast< const F* >(fun))(args...);
       },
-      [](void* fun) {  // destroyer
-        static_cast< F* >(fun)->~F();
+      [](const void* fun) {  // destroyer
+        static_cast< const F* >(fun)->~F();
       }};
 
 #endif
@@ -107,7 +107,7 @@ public:
   // Call using operator()
   //
   template < typename... Ts >
-  constexpr Ret operator()(Ts&&... args)
+  constexpr Ret operator()(Ts&&... args) const
   {
     return vtable_.call(&storage_, std::forward< Ts >(args)...);
   }
@@ -125,7 +125,7 @@ public:
   // Helpers to create delegates
   //
 
-  // Methods
+  // Make from Methods
   template < typename Obj >
   constexpr static delegate from(Obj& obj, Ret (Obj::*mptr)(Args...))
   {
@@ -140,7 +140,7 @@ public:
         [&obj](Args... args) -> Ret { return (obj.*mptr)(args...); }};
   }
 
-  // Const methods
+  // Make from Const methods
   template < typename Obj >
   constexpr static delegate from(Obj& obj, Ret (Obj::*mptr)(Args...) const)
   {
@@ -155,7 +155,7 @@ public:
         [&obj](Args... args) -> Ret { return (obj.*mptr)(args...); }};
   }
 
-  // Functions
+  // Make from Functions
   constexpr static delegate from(Ret (&fptr)(Args...))
   {
     return delegate{[&fptr](Args... args) -> Ret { return (fptr)(args...); }};
@@ -171,24 +171,9 @@ public:
 };
 }  // end namespace esl
 
-//
-// Test code
-//
-// struct foo
-// {
-//   void bar(int i) const
-//   {
-//     (void)i;
-//   }
-// };
-//
-// void bar(int i)
-// {
-//   (void)i;
-// }
-
-// For Cortex-M, 4 bytes local storage is enough for function pointers
-// and method pointers that are know at compile time.
-// For runtime method pointers, 12 is needed, or if
+// For Cortex-M, sizeof(void*) bytes local storage is enough for function
+// pointers and method pointers that are know at compile time.
+// For runtime method pointers, 3*sizeof(void*) is needed, or if
 // larger captures are desired more can be used.
+
 // using my_delegate = esl::delegate< void(int), sizeof(void *) >;
