@@ -173,12 +173,14 @@ TEST(test_static_vector, test_algorithm)
   vec.push_back(-10);
 
   std::sort(vec.begin(), vec.end());
+  int sum = std::accumulate(vec.cbegin(), vec.cend(), 0);
 
   ASSERT_EQ(-10, vec[0]);
   ASSERT_EQ(1, vec[1]);
   ASSERT_EQ(13, vec[2]);
   ASSERT_EQ(18, vec[3]);
   ASSERT_EQ(19, vec[4]);
+  ASSERT_EQ(41, sum);
 }
 
 void testfun(const esl::static_vector< int, 5 >& v)

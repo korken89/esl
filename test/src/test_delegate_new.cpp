@@ -94,6 +94,23 @@ TEST(test_delegate_new, const_ref_test)
   callback_test(d2);
 }
 
+TEST(test_delegate_new, comparison_test)
+{
+  bar a;
+
+  auto d = callback::from< bar, &bar::const_foo >(a);
+  auto d2 = callback::from(a, &bar::const_foo);
+
+  ASSERT_EQ(true, d == d);
+  ASSERT_EQ(false, d != d);
+
+  ASSERT_EQ(true, d2 == d2);
+  ASSERT_EQ(false, d2 != d2);
+
+  ASSERT_EQ(false, d == d2);
+  ASSERT_EQ(true, d != d2);
+}
+
 int main(int argc, char *argv[])
 {
   ::testing::InitGoogleTest(&argc, argv);

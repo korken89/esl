@@ -121,6 +121,11 @@ public:
            (vtable_.destroy == other.vtable_.destroy);
   }
 
+  constexpr bool operator!=(const delegate& other) const
+  {
+    return !(*this == other);
+  }
+
   //
   // Helpers to create delegates
   //
