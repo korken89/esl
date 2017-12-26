@@ -47,18 +47,18 @@ private:
   }
 
   //
-  // Variable template to generate a vtable (C++14)
+  // Variable template to generate a vtable (C++14) -- is not working in Clang
+  // and seems to be a compiler bug
   //
+  // template < typename F >
+  // constexpr static const vtable make_vtable = {caller< F >, destroyer< F >};
+
   template < typename F >
-  constexpr static const vtable make_vtable = {caller< F >, destroyer< F >};
-
-  //template < typename F >
-  //constexpr auto make_vtable()
-  //{
-  //  vtable table = {&caller< F >, &destroyer< F >};
-
-  //  return table;
-  //}
+  constexpr auto make_vtable()
+  {
+    vtable table = {caller< F >, destroyer< F >};
+    return table;
+  }
 
 #else
 
@@ -96,7 +96,11 @@ public:
   template < typename F, typename = std::enable_if_t< !std::is_same<
                              std::decay_t< F >, delegate >::value > >
   explicit constexpr delegate(F&& fun)
+#if !defined(__cpp_constexpr) || (__cpp_constexpr < 201603)
+      : vtable_{make_vtable< std::decay_t< F > >()}
+#else
       : vtable_{make_vtable< std::decay_t< F > >}
+#endif
   {
     static_assert(sizeof(std::decay_t< F >) <= Size,
                   "The callable does not fit inside the delegate");
