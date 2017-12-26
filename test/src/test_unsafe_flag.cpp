@@ -81,6 +81,10 @@ TEST(test_unsafe_flag, all_test)
   f.set();
 
   ASSERT_EQ(true, f.all());
+
+  f.reset(0);
+
+  ASSERT_EQ(false, f.all());
 }
 
 TEST(test_unsafe_flag, none_test)
@@ -90,6 +94,10 @@ TEST(test_unsafe_flag, none_test)
   f.none();
 
   ASSERT_EQ(true, f.none());
+
+  f.set(0);
+
+  ASSERT_EQ(false, f.none());
 }
 
 

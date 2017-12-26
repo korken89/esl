@@ -15,6 +15,28 @@ TEST(test_ring_buffer, test_push_back)
 
   buf.push_back(1);
   buf.push_back(i);
+
+  ASSERT_EQ(1, buf.front());
+  ASSERT_EQ(100, buf.back());
+
+  constexpr const int a[] = {6, 7};
+  buf.push_back(a);
+
+  ASSERT_EQ(1, buf.front());
+  ASSERT_EQ(7, buf.back());
+}
+
+TEST(test_ring_buffer, test_emplace_back)
+{
+  int i = 100;
+
+  esl::ring_buffer< int, 5 > buf;
+
+  buf.emplace_back(1);
+  buf.emplace_back(i);
+
+  ASSERT_EQ(1, buf.front());
+  ASSERT_EQ(100, buf.back());
 }
 
 TEST(test_ring_buffer, test_pop)
