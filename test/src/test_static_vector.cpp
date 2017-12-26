@@ -4,6 +4,7 @@
 //          http://www.boost.org/LICENSE_1_0.txt)
 
 #include <algorithm>
+#include <numeric>
 #include <gtest/gtest.h>
 #include <esl/containers/static_vector.hpp>
 
