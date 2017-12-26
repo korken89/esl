@@ -50,11 +50,11 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-7', 'libgtest-dev', 'cmake', 'cmake-data']
+          packages: ['g++-5', 'libgtest-dev', 'cmake', 'cmake-data']
       env:
         - TEST="Coverage"
       script:
-        - cmake .. -DCMAKE_CXX_COMPILER=g++-7 -DENABLE_COVERAGE:BOOL=TRUE
+        - cmake .. -DCMAKE_CXX_COMPILER=g++-5 -DENABLE_COVERAGE:BOOL=TRUE
         - make -j2
         - ctest -j2 -VV
         - bash <(curl -s https://codecov.io/bash) -x /usr/bin/gcov-5
@@ -87,7 +87,7 @@ matrix:
       script:
         - cmake .. -DCMAKE_CXX_COMPILER=g++-6 -DCMAKE_BUILD_TYPE=Debug
         - make -j2
-        - make -j2 test
+        - ctest -j2 -VV
 
     #
     # Testing gcc 7
