@@ -62,15 +62,29 @@ private:
 
 #else
 
-  // Constexpr lambdas available, collapse the variable template (C++17)
   template < typename F >
-  constexpr static const vtable make_vtable = {
+  constexpr auto make_vtable()
+  {
+    vtable table = {
       [](const void* fun, Args... args) -> Ret {  // caller
         return (*static_cast< const F* >(fun))(args...);
       },
       [](const void* fun) {  // destroyer
         static_cast< const F* >(fun)->~F();
       }};
+
+    return table;
+  }
+
+  // Constexpr lambdas available, collapse the variable template (C++17)
+  //template < typename F >
+  //constexpr static const vtable make_vtable = {
+  //    [](const void* fun, Args... args) -> Ret {  // caller
+  //      return (*static_cast< const F* >(fun))(args...);
+  //    },
+  //    [](const void* fun) {  // destroyer
+  //      static_cast< const F* >(fun)->~F();
+  //    }};
 
 #endif
 
@@ -96,11 +110,7 @@ public:
   template < typename F, typename = std::enable_if_t< !std::is_same<
                              std::decay_t< F >, delegate >::value > >
   explicit constexpr delegate(F&& fun)
-#if !defined(__cpp_constexpr) || (__cpp_constexpr < 201603)
       : vtable_{make_vtable< std::decay_t< F > >()}
-#else
-      : vtable_{make_vtable< std::decay_t< F > >}
-#endif
   {
     static_assert(sizeof(std::decay_t< F >) <= Size,
                   "The callable does not fit inside the delegate");
