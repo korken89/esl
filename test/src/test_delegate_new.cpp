@@ -26,6 +26,22 @@ int foo(int i)
 
 using callback = esl::delegate< int(int), 3 * sizeof(void*) >;
 
+TEST(test_delegate_new, constructor_test)
+{
+  auto d = callback([](int i){ return i + 10; });
+
+  ASSERT_EQ(15, d(5));
+
+  int k = 1;
+  auto d2 = callback([&k](int i){ return i + 10 + k; });
+
+  ASSERT_EQ(16, d2(5));
+
+  auto d3 = callback(d);
+
+  ASSERT_EQ(15, d3(5));
+}
+
 TEST(test_delegate_new, function_test)
 {
   int i  = 9;
@@ -79,9 +95,15 @@ void callback_test(const callback& cb)
 {
   int i = 9;
 
+  auto d = callback(cb);
+
   ASSERT_EQ(25, cb(5));
   ASSERT_EQ(100, cb(10));
   ASSERT_EQ(81, cb(i));
+
+  ASSERT_EQ(25, d(5));
+  ASSERT_EQ(100, d(10));
+  ASSERT_EQ(81, d(i));
 }
 
 TEST(test_delegate_new, const_ref_test)

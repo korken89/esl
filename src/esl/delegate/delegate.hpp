@@ -9,12 +9,18 @@
 #include <memory>
 #include <type_traits>
 
+// For Cortex-M, sizeof(void*) bytes local storage is enough for function
+// pointers and method pointers that are know at compile time.
+// For runtime method pointers, 3*sizeof(void*) is needed, or if
+// larger captures are desired more can be used.
+
 namespace esl
 {
 //
 // Base class definition and defaults
 //
-template < typename, std::size_t Size, std::size_t Align = alignof(void*) >
+template < typename, std::size_t Size = sizeof(void*),
+           std::size_t Align = alignof(void*) >
 class delegate;
 
 template < typename Ret, typename... Args, std::size_t Size, std::size_t Align >
@@ -90,8 +96,8 @@ public:
   //
   // Explicit construction
   //
-  template < typename F, typename = std::enable_if_t< !std::is_same<
-                             std::decay_t< F >, delegate >::value > >
+  template < typename F, typename = std::enable_if_t<
+                             !std::is_convertible< F, delegate >::value > >
   explicit constexpr delegate(F&& fun)
       : vtable_{make_vtable< std::decay_t< F > >()}
   {
@@ -190,10 +196,3 @@ public:
   }
 };
 }  // end namespace esl
-
-// For Cortex-M, sizeof(void*) bytes local storage is enough for function
-// pointers and method pointers that are know at compile time.
-// For runtime method pointers, 3*sizeof(void*) is needed, or if
-// larger captures are desired more can be used.
-
-// using my_delegate = esl::delegate< void(int), sizeof(void *) >;
