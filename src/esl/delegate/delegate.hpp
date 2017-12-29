@@ -72,7 +72,7 @@ private:
   //
   // Storage
   //
-  const vtable vtable_;
+  vtable vtable_;
   std::aligned_storage_t< Size, Align > storage_;
 
 public:

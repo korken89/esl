@@ -25,6 +25,7 @@ int foo(int i)
 }
 
 using callback = esl::delegate< int(int), 3 * sizeof(void*) >;
+
 TEST(test_delegate_new, function_test)
 {
   int i  = 9;
@@ -109,6 +110,22 @@ TEST(test_delegate_new, comparison_test)
 
   ASSERT_EQ(false, d == d2);
   ASSERT_EQ(true, d != d2);
+}
+
+TEST(test_delegate_new, copy_test)
+{
+  bar a;
+
+  auto d = callback::from< bar, &bar::const_foo >(a);
+  auto d2 = callback::from(a, &bar::const_foo);
+
+  ASSERT_EQ(25, d(5));
+  ASSERT_EQ(25, d2(5));
+
+  d = d2;
+
+  ASSERT_EQ(25, d(5));
+  ASSERT_EQ(25, d2(5));
 }
 
 int main(int argc, char *argv[])
