@@ -140,15 +140,17 @@ public:
   template < typename Obj >
   constexpr static delegate from(Obj& obj, Ret (Obj::*mptr)(Args...)) noexcept
   {
-    return delegate{
-        [&obj, mptr](Args... args) -> Ret { return (obj.*mptr)(args...); }};
+    return delegate{[&obj, mptr](Args... args) -> Ret {
+      return (obj.*mptr)(args...);  // call method
+    }};
   }
 
   template < typename Obj, Ret (Obj::*mptr)(Args...) >
   constexpr static delegate from(Obj& obj) noexcept
   {
-    return delegate{
-        [&obj](Args... args) -> Ret { return (obj.*mptr)(args...); }};
+    return delegate{[&obj](Args... args) -> Ret {
+      return (obj.*mptr)(args...);  // call method
+    }};
   }
 
   // Make from Const methods
@@ -156,21 +158,25 @@ public:
   constexpr static delegate from(Obj& obj,
                                  Ret (Obj::*mptr)(Args...) const) noexcept
   {
-    return delegate{
-        [&obj, mptr](Args... args) -> Ret { return (obj.*mptr)(args...); }};
+    return delegate{[&obj, mptr](Args... args) -> Ret {
+      return (obj.*mptr)(args...);  // call method
+    }};
   }
 
   template < typename Obj, Ret (Obj::*mptr)(Args...) const >
   constexpr static delegate from(Obj& obj) noexcept
   {
-    return delegate{
-        [&obj](Args... args) -> Ret { return (obj.*mptr)(args...); }};
+    return delegate{[&obj](Args... args) -> Ret {
+      return (obj.*mptr)(args...);  // call method
+    }};
   }
 
   // Make from Functions
   constexpr static delegate from(Ret (&fptr)(Args...)) noexcept
   {
-    return delegate{[&fptr](Args... args) -> Ret { return (fptr)(args...); }};
+    return delegate{[&fptr](Args... args) -> Ret {
+      return (fptr)(args...);  // call function
+    }};
   }
 
   template < Ret (*fptr)(Args...) >
@@ -178,7 +184,9 @@ public:
   {
     static_assert(fptr != nullptr, "Function pointer must not be null");
 
-    return delegate{[](Args... args) -> Ret { return (*fptr)(args...); }};
+    return delegate{[](Args... args) -> Ret {
+      return (*fptr)(args...);  // call function
+    }};
   }
 };
 }  // end namespace esl
