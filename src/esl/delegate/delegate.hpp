@@ -46,45 +46,26 @@ private:
     static_cast< const F* >(fun)->~F();
   }
 
-  //
-  // Variable template to generate a vtable (C++14) -- is not working in Clang
-  // and seems to be a compiler bug
-  //
-  // template < typename F >
-  // constexpr static const vtable make_vtable = {caller< F >, destroyer< F >};
-
   template < typename F >
-  constexpr auto make_vtable()
+  constexpr vtable make_vtable() const
   {
-    vtable table = {caller< F >, destroyer< F >};
-    return table;
+    return {caller< F >, destroyer< F >};
   }
 
 #else
 
+  // Constexpr lambdas, use lambdas to populate the vtable
   template < typename F >
-  constexpr auto make_vtable()
+  constexpr vtable make_vtable() const
   {
-    vtable table = {
+    return {
       [](const void* fun, Args... args) -> Ret {  // caller
         return (*static_cast< const F* >(fun))(args...);
       },
       [](const void* fun) {  // destroyer
         static_cast< const F* >(fun)->~F();
       }};
-
-    return table;
   }
-
-  // Constexpr lambdas available, collapse the variable template (C++17)
-  //template < typename F >
-  //constexpr static const vtable make_vtable = {
-  //    [](const void* fun, Args... args) -> Ret {  // caller
-  //      return (*static_cast< const F* >(fun))(args...);
-  //    },
-  //    [](const void* fun) {  // destroyer
-  //      static_cast< const F* >(fun)->~F();
-  //    }};
 
 #endif
 
