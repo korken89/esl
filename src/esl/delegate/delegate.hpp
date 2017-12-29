@@ -47,24 +47,26 @@ private:
   }
 
   template < typename F >
-  constexpr vtable make_vtable() const
+  constexpr vtable make_vtable() const noexcept
   {
-    return {caller< F >, destroyer< F >};
+    return {
+        caller< F >,    // caller
+        destroyer< F >  // destroyer
+    };
   }
 
 #else
 
   // Constexpr lambdas, use lambdas to populate the vtable
   template < typename F >
-  constexpr vtable make_vtable() const
+  constexpr vtable make_vtable() const noexcept
   {
-    return {
-      [](const void* fun, Args... args) -> Ret {  // caller
-        return (*static_cast< const F* >(fun))(args...);
-      },
-      [](const void* fun) {  // destroyer
-        static_cast< const F* >(fun)->~F();
-      }};
+    return {[](const void* fun, Args... args) -> Ret {  // caller
+              return (*static_cast< const F* >(fun))(args...);
+            },
+            [](const void* fun) {  // destroyer
+              static_cast< const F* >(fun)->~F();
+            }};
   }
 
 #endif
@@ -95,6 +97,7 @@ public:
   {
     static_assert(sizeof(std::decay_t< F >) <= Size,
                   "The callable does not fit inside the delegate");
+
     new (&storage_) F{std::forward< F >(fun)};
   }
 
@@ -118,13 +121,13 @@ public:
   //
   // Operators
   //
-  constexpr bool operator==(const delegate& other) const
+  constexpr bool operator==(const delegate& other) const noexcept
   {
     return (vtable_.call == other.vtable_.call) &&
            (vtable_.destroy == other.vtable_.destroy);
   }
 
-  constexpr bool operator!=(const delegate& other) const
+  constexpr bool operator!=(const delegate& other) const noexcept
   {
     return !(*this == other);
   }
@@ -135,14 +138,14 @@ public:
 
   // Make from Methods
   template < typename Obj >
-  constexpr static delegate from(Obj& obj, Ret (Obj::*mptr)(Args...))
+  constexpr static delegate from(Obj& obj, Ret (Obj::*mptr)(Args...)) noexcept
   {
     return delegate{
         [&obj, mptr](Args... args) -> Ret { return (obj.*mptr)(args...); }};
   }
 
   template < typename Obj, Ret (Obj::*mptr)(Args...) >
-  constexpr static delegate from(Obj& obj)
+  constexpr static delegate from(Obj& obj) noexcept
   {
     return delegate{
         [&obj](Args... args) -> Ret { return (obj.*mptr)(args...); }};
@@ -150,27 +153,28 @@ public:
 
   // Make from Const methods
   template < typename Obj >
-  constexpr static delegate from(Obj& obj, Ret (Obj::*mptr)(Args...) const)
+  constexpr static delegate from(Obj& obj,
+                                 Ret (Obj::*mptr)(Args...) const) noexcept
   {
     return delegate{
         [&obj, mptr](Args... args) -> Ret { return (obj.*mptr)(args...); }};
   }
 
   template < typename Obj, Ret (Obj::*mptr)(Args...) const >
-  constexpr static delegate from(Obj& obj)
+  constexpr static delegate from(Obj& obj) noexcept
   {
     return delegate{
         [&obj](Args... args) -> Ret { return (obj.*mptr)(args...); }};
   }
 
   // Make from Functions
-  constexpr static delegate from(Ret (&fptr)(Args...))
+  constexpr static delegate from(Ret (&fptr)(Args...)) noexcept
   {
     return delegate{[&fptr](Args... args) -> Ret { return (fptr)(args...); }};
   }
 
   template < Ret (*fptr)(Args...) >
-  constexpr static delegate from()
+  constexpr static delegate from() noexcept
   {
     static_assert(fptr != nullptr, "Function pointer must not be null");
 
