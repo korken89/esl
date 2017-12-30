@@ -56,7 +56,8 @@ public:
 
   ~static_vector() noexcept
   {
-    clear();  // Calls all destructors
+    for (auto idx = 0U; idx < curr_idx_; ++idx)
+      reinterpret_cast< T * >(&buffer_[idx])->~T();
   }
 
   //
