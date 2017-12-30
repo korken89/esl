@@ -17,6 +17,19 @@ namespace esl
 {
 template < typename T, std::size_t N, bool CheckBounds = false,
            typename ErrFun = error_functions::noop >
+class ring_buffer;
+
+template <typename>
+struct is_ring_buffer : std::false_type
+{
+};
+
+template <typename T, std::size_t N, bool B, typename ErrFun>
+struct is_ring_buffer< ring_buffer<T, N, B, ErrFun> > : std::true_type
+{
+};
+
+template < typename T, std::size_t N, bool CheckBounds, typename ErrFun >
 class ring_buffer
 {
 protected:
@@ -132,23 +145,15 @@ public:
     increment_head();
   }
 
-  constexpr void push_back(T&& obj) noexcept
+  template < typename T1, typename = std::enable_if_t<
+                              !is_ring_buffer< std::decay_t< T1 > >::value > >
+  constexpr void push_back(T1&& val) noexcept
   {
     if (CheckBounds)
       if (full())
         ErrFun{}("push_back on full buffer");
 
-    *reinterpret_cast< T* >(&buffer_[head_idx_]) = std::forward< T >(obj);
-    increment_head();
-  }
-
-  constexpr void push_back(T const& obj) noexcept
-  {
-    if (CheckBounds)
-      if (full())
-        ErrFun{}("push_back on full buffer");
-
-    *reinterpret_cast< T* >(&buffer_[head_idx_]) = obj;
+    *reinterpret_cast< T* >(&buffer_[head_idx_]) = std::forward< T1 >(val);
     increment_head();
   }
 

@@ -17,6 +17,19 @@ namespace esl
 {
 template < typename T, std::size_t N, bool CheckBounds = false,
            typename ErrFun = error_functions::noop >
+class static_vector;
+
+template <typename>
+struct is_static_vector : std::false_type
+{
+};
+
+template <typename T, std::size_t N, bool B, typename ErrFun>
+struct is_static_vector< static_vector<T, N, B, ErrFun> > : std::true_type
+{
+};
+
+template < typename T, std::size_t N, bool CheckBounds, typename ErrFun >
 class static_vector
 {
 protected:
@@ -179,23 +192,15 @@ public:
     ++curr_idx_;
   }
 
-  constexpr void push_back(T &&obj) noexcept
+  template < typename T1, typename = std::enable_if_t<
+                              !is_static_vector< std::decay_t< T1 > >::value > >
+  constexpr void push_back(T1 &&val) noexcept
   {
     if (CheckBounds)
       if (full())
         ErrFun{}("push_back on full vector");
 
-    *reinterpret_cast< T * >(&buffer_[curr_idx_]) = std::forward< T >(obj);
-    ++curr_idx_;
-  }
-
-  constexpr void push_back(T const &obj) noexcept
-  {
-    if (CheckBounds)
-      if (full())
-        ErrFun{}("push_back on full vector");
-
-    *reinterpret_cast< T * >(&buffer_[curr_idx_]) = obj;
+    *reinterpret_cast< T * >(&buffer_[curr_idx_]) = std::forward< T1 >(val);
     ++curr_idx_;
   }
 
