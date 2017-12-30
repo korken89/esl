@@ -19,13 +19,13 @@ template < typename T, std::size_t N, bool CheckBounds = false,
            typename ErrFun = error_functions::noop >
 class static_vector;
 
-template <typename>
+template < typename >
 struct is_static_vector : std::false_type
 {
 };
 
-template <typename T, std::size_t N, bool B, typename ErrFun>
-struct is_static_vector< static_vector<T, N, B, ErrFun> > : std::true_type
+template < typename T, std::size_t N, bool B, typename ErrFun >
+struct is_static_vector< static_vector< T, N, B, ErrFun > > : std::true_type
 {
 };
 

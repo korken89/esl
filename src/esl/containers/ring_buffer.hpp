@@ -19,13 +19,13 @@ template < typename T, std::size_t N, bool CheckBounds = false,
            typename ErrFun = error_functions::noop >
 class ring_buffer;
 
-template <typename>
+template < typename >
 struct is_ring_buffer : std::false_type
 {
 };
 
-template <typename T, std::size_t N, bool B, typename ErrFun>
-struct is_ring_buffer< ring_buffer<T, N, B, ErrFun> > : std::true_type
+template < typename T, std::size_t N, bool B, typename ErrFun >
+struct is_ring_buffer< ring_buffer< T, N, B, ErrFun > > : std::true_type
 {
 };
 
