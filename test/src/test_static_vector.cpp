@@ -7,12 +7,21 @@
 #include <numeric>
 #include <gtest/gtest.h>
 #include <esl/containers/static_vector.hpp>
+#include <stdexcept>
+
+struct test_throw
+{
+  void operator()(const char* msg) const
+  {
+    throw std::runtime_error(msg);
+  }
+};
 
 int i = 11;
 
 TEST(test_static_vector, test_push_back)
 {
-  esl::static_vector< int, 5 > vec;
+  esl::static_vector< int, 5, true, test_throw > vec;
 
   vec.push_back(1);
   vec.emplace_back(2);
@@ -20,7 +29,7 @@ TEST(test_static_vector, test_push_back)
 
 TEST(test_static_vector, test_pop_back)
 {
-  esl::static_vector< int, 5 > vec;
+  esl::static_vector< int, 5, true, test_throw > vec;
 
   vec.push_back(1);
   vec.pop_back();
@@ -28,7 +37,7 @@ TEST(test_static_vector, test_pop_back)
 
 TEST(test_static_vector, test_size)
 {
-  esl::static_vector< int, 5 > vec;
+  esl::static_vector< int, 5, true, test_throw > vec;
 
   ASSERT_EQ(0, vec.size());
   ASSERT_EQ(5, vec.free());
@@ -78,7 +87,7 @@ TEST(test_static_vector, test_size)
   ASSERT_EQ(false, vec.empty());
   ASSERT_EQ(false, vec.full());
 
-  esl::static_vector< int, 10 > b;
+  esl::static_vector< int, 10, true, test_throw > b;
   b.push_back(3);
   b.push_back(7);
 
@@ -97,7 +106,7 @@ TEST(test_static_vector, test_size)
 
 TEST(test_static_vector, test_access)
 {
-  esl::static_vector< int, 5 > vec;
+  esl::static_vector< int, 5, true, test_throw > vec;
 
   vec.push_back(1);
   ASSERT_EQ(1, vec[0]);
@@ -138,7 +147,7 @@ TEST(test_static_vector, test_access)
 
 TEST(test_static_vector, test_access_and_modify)
 {
-  esl::static_vector< int, 5 > vec;
+  esl::static_vector< int, 5, true, test_throw > vec;
 
   vec.push_back(1);
   vec.push_back(2);
@@ -165,7 +174,7 @@ TEST(test_static_vector, test_access_and_modify)
 
 TEST(test_static_vector, test_algorithm)
 {
-  esl::static_vector< int, 5 > vec;
+  esl::static_vector< int, 5, true, test_throw > vec;
 
   vec.push_back(19);
   vec.push_back(13);
@@ -184,16 +193,22 @@ TEST(test_static_vector, test_algorithm)
   ASSERT_EQ(41, sum);
 }
 
-void testfun(const esl::static_vector< int, 5 >& v)
+void testfun(const esl::static_vector< int, 5, true, test_throw >& v)
 {
   (void)v.data();
   (void)v.front();
   (void)v.back();
+  (void)v[0];
 }
 
 TEST(test_static_vector, test_const)
 {
-  esl::static_vector< int, 5 > vec;
+  esl::static_vector< int, 5, true, test_throw > vec;
+
+  vec.push_back(19);
+  vec.push_back(13);
+  vec.push_back(18);
+
   testfun(vec);
 }
 

@@ -63,7 +63,7 @@ public:
   //
   // Element access
   //
-  constexpr T &operator[](std::size_t idx) noexcept
+  constexpr T &operator[](std::size_t idx) noexcept(noexcept(ErrFun{}("")))
   {
     if (CheckBounds)
       if (idx >= size())
@@ -72,7 +72,8 @@ public:
     return *reinterpret_cast< T * >(&buffer_[idx]);
   }
 
-  constexpr const T &operator[](std::size_t idx) const noexcept
+  constexpr const T &operator[](std::size_t idx) const
+      noexcept(noexcept(ErrFun{}("")))
   {
     if (CheckBounds)
       if (idx >= size())
@@ -81,7 +82,7 @@ public:
     return *reinterpret_cast< const T * >(&buffer_[idx]);
   }
 
-  constexpr const T &front() const noexcept
+  constexpr const T &front() const noexcept(noexcept(ErrFun{}("")))
   {
     if (CheckBounds)
       if (empty())
@@ -90,7 +91,7 @@ public:
     return *reinterpret_cast< const T * >(&buffer_[0]);
   }
 
-  constexpr T &front() noexcept
+  constexpr T &front() noexcept(noexcept(ErrFun{}("")))
   {
     if (CheckBounds)
       if (empty())
@@ -99,7 +100,7 @@ public:
     return *reinterpret_cast< T * >(&buffer_[0]);
   }
 
-  constexpr const T &back() const noexcept
+  constexpr const T &back() const noexcept(noexcept(ErrFun{}("")))
   {
     if (CheckBounds)
       if (empty())
@@ -108,7 +109,7 @@ public:
     return *reinterpret_cast< const T * >(&buffer_[curr_idx_ - 1]);
   }
 
-  constexpr T &back() noexcept
+  constexpr T &back() noexcept(noexcept(ErrFun{}("")))
   {
     if (CheckBounds)
       if (empty())
@@ -182,7 +183,7 @@ public:
   // Modifiers
   //
   template < typename... Args >
-  constexpr void emplace_back(Args &&... args) noexcept
+  constexpr void emplace_back(Args &&... args) noexcept(noexcept(ErrFun{}("")))
   {
     if (CheckBounds)
       if (full())
@@ -195,7 +196,7 @@ public:
 
   template < typename T1, typename = std::enable_if_t<
                               !is_static_vector< std::decay_t< T1 > >::value > >
-  constexpr void push_back(T1 &&val) noexcept
+  constexpr void push_back(T1 &&val) noexcept(noexcept(ErrFun{}("")))
   {
     if (CheckBounds)
       if (full())
@@ -205,7 +206,8 @@ public:
     ++curr_idx_;
   }
 
-  constexpr void push_back(const T *ptr, std::size_t n) noexcept
+  constexpr void push_back(const T *ptr,
+                           std::size_t n) noexcept(noexcept(ErrFun{}("")))
   {
     if (CheckBounds)
       if (free() < n)
@@ -216,13 +218,14 @@ public:
   }
 
   template < std::size_t S >
-  constexpr void push_back(const T (&buf)[S]) noexcept
+  constexpr void push_back(const T (&buf)[S]) noexcept(noexcept(ErrFun{}("")))
   {
     push_back(buf, S);
   }
 
   template < bool B, typename F, typename T2, std::size_t M >
-  constexpr void push_back(const static_vector< T2, M, B, F > &v) noexcept
+  constexpr void push_back(const static_vector< T2, M, B, F > &v) noexcept(
+      noexcept(ErrFun{}("")))
   {
     push_back(v.cbegin(), v.size());
   }
@@ -235,7 +238,7 @@ public:
     curr_idx_ = 0;
   }
 
-  constexpr void pop_back() noexcept
+  constexpr void pop_back() noexcept(noexcept(ErrFun{}("")))
   {
     if (CheckBounds)
       if (empty())
