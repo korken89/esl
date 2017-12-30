@@ -22,15 +22,30 @@ private:
 public:
   static_assert(N > 1, "Size must be larger than 1");
 
+  //
+  // Constructors
+  //
   constexpr vector() noexcept
   {
+    // repeat works like loop-unrolling
     esl::repeat< N >([&](auto i) {
       storage_[i] = T(0);  // op
     });
   }
 
+  template < typename... Ts,
+             typename = std::enable_if_t< details::all_true<
+                 std::is_convertible< Ts, T >::value... >::value > >
+  constexpr vector(Ts&&... vals) noexcept
+      : storage_{static_cast< T >(std::forward< Ts >(vals))...}
+  {
+    static_assert(sizeof...(Ts) == N,
+                  "Number of arguments does not match the size of the vector");
+  }
+
+  // Same or different sized vector
   template < std::size_t M >
-  constexpr vector(vector< T, M > v)
+  constexpr vector(vector< T, M > v) noexcept
   {
     static_assert(M <= N, "Size too big");
 
@@ -43,15 +58,9 @@ public:
     });
   }
 
-  constexpr vector(const std::array< T, N >& arr) noexcept
-  {
-    esl::repeat< N >([&](auto i) {
-      storage_[i] = arr[i];  // op
-    });
-  }
-
+  // Same or different sized array
   template < std::size_t M >
-  constexpr vector(const std::array< T, M >& arr)
+  constexpr vector(const std::array< T, M >& arr) noexcept
   {
     static_assert(M <= N, "Size too big");
 
@@ -64,15 +73,7 @@ public:
     });
   }
 
-  template < typename... Ts,
-             typename = std::enable_if_t< details::all_true<
-                 std::is_convertible< Ts, T >::value... >::value > >
-  constexpr vector(Ts&&... vals)
-      : storage_{static_cast< T >(std::forward< Ts >(vals))...}
-  {
-    static_assert(sizeof...(Ts) == N, "Size mismatch");
-  }
-
+  // Same or different sized raw array
   template < std::size_t M >
   constexpr vector(T (&arr)[M]) noexcept
   {
@@ -85,36 +86,6 @@ public:
     esl::repeat< N - M >([&](auto i) {
       storage_[M + i] = T(0);  // op
     });
-  }
-
-  constexpr auto& x() noexcept
-  {
-    return storage_[0];
-  }
-
-  constexpr const auto& x() const noexcept
-  {
-    return storage_[0];
-  }
-
-  constexpr auto& y() noexcept
-  {
-    return storage_[1];
-  }
-
-  constexpr const auto& y() const noexcept
-  {
-    return storage_[1];
-  }
-
-  constexpr auto& z() noexcept
-  {
-    return storage_[2];
-  }
-
-  constexpr const auto& z() const noexcept
-  {
-    return storage_[2];
   }
 
   //
@@ -135,7 +106,7 @@ public:
   constexpr vector< T, 3 > cross(const vector< T, M >& rhs) const noexcept
   {
     static_assert((M == 3) && (N == 3),
-                  "Cross product only works for size 3 vectors");
+                  "Cross product only makes sense if both vectors are size 3");
 
     return {this->storage_[1] * rhs[2] - this->storage_[2] * rhs[1],
             this->storage_[2] * rhs[0] - this->storage_[0] * rhs[2],
@@ -144,7 +115,7 @@ public:
 
   constexpr T sum() const noexcept
   {
-    T s = T(0);
+    auto s = T(0);
 
     esl::repeat< N >([&](auto i) {
       s += this->storage_[i];  // op
@@ -155,7 +126,7 @@ public:
 
   constexpr T norm_squared() const noexcept
   {
-    T s = T(0);
+    auto s = T(0);
 
     esl::repeat< N >([&](auto i) {
       s += this->storage_[i] * this->storage_[i];  // op
@@ -171,11 +142,11 @@ public:
 
   constexpr void normalize() noexcept
   {
-    const T nrm = norm();
+    const auto nrm = norm();
 
     if (nrm != T(0))
     {
-      const T norm_inv = T(1) / nrm;
+      const auto norm_inv = T(1) / nrm;
       *this *= norm_inv;
     }
   }
@@ -216,12 +187,12 @@ public:
   //
   // Access
   //
-  constexpr auto& operator[](int idx) noexcept
+  constexpr T& operator[](int idx) noexcept
   {
     return storage_[idx];
   }
 
-  constexpr const auto& operator[](int idx) const noexcept
+  constexpr const T& operator[](int idx) const noexcept
   {
     return storage_[idx];
   }
@@ -234,6 +205,36 @@ public:
   constexpr const T* data() const noexcept
   {
     return storage_;
+  }
+
+  constexpr T& x() noexcept
+  {
+    return storage_[0];
+  }
+
+  constexpr const T& x() const noexcept
+  {
+    return storage_[0];
+  }
+
+  constexpr T& y() noexcept
+  {
+    return storage_[1];
+  }
+
+  constexpr const T& y() const noexcept
+  {
+    return storage_[1];
+  }
+
+  constexpr T& z() noexcept
+  {
+    return storage_[2];
+  }
+
+  constexpr const T& z() const noexcept
+  {
+    return storage_[2];
   }
 
   //
