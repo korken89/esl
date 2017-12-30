@@ -22,6 +22,50 @@ TEST(test_vector, test_make)
   ASSERT_EQ(3, vec2[2]);
 }
 
+TEST(test_vector, test_make_from_raw_array)
+{
+  int a[] = {1, 2, 3};
+  esl::vector3i vec3(a);
+
+  ASSERT_EQ(1, vec3[0]);
+  ASSERT_EQ(2, vec3[1]);
+  ASSERT_EQ(3, vec3[2]);
+
+  esl::vector3i vec4{a};
+
+  ASSERT_EQ(1, vec4[0]);
+  ASSERT_EQ(2, vec4[1]);
+  ASSERT_EQ(3, vec4[2]);
+
+  esl::vector3i vec5 = a;
+
+  ASSERT_EQ(1, vec5[0]);
+  ASSERT_EQ(2, vec5[1]);
+  ASSERT_EQ(3, vec5[2]);
+}
+
+TEST(test_vector, test_make_from_smaller_raw_array)
+{
+  int a[] = {1, 2};
+  esl::vector3i vec3(a);
+
+  ASSERT_EQ(1, vec3[0]);
+  ASSERT_EQ(2, vec3[1]);
+  ASSERT_EQ(0, vec3[2]);
+
+  esl::vector3i vec4{a};
+
+  ASSERT_EQ(1, vec4[0]);
+  ASSERT_EQ(2, vec4[1]);
+  ASSERT_EQ(0, vec4[2]);
+
+  esl::vector3i vec5 = a;
+
+  ASSERT_EQ(1, vec5[0]);
+  ASSERT_EQ(2, vec5[1]);
+  ASSERT_EQ(0, vec5[2]);
+}
+
 TEST(test_vector, test_make_from_array)
 {
   std::array< int, 3 > a{{1, 2, 3}};
@@ -44,7 +88,45 @@ TEST(test_vector, test_make_from_array)
   ASSERT_EQ(3, vec5[2]);
 }
 
+TEST(test_vector, test_make_from_smaller_array)
+{
+  std::array< int, 2 > a{{1, 2}};
+  esl::vector3i vec3(a);
+
+  ASSERT_EQ(1, vec3[0]);
+  ASSERT_EQ(2, vec3[1]);
+  ASSERT_EQ(0, vec3[2]);
+
+  esl::vector3i vec4{a};
+
+  ASSERT_EQ(1, vec4[0]);
+  ASSERT_EQ(2, vec4[1]);
+  ASSERT_EQ(0, vec4[2]);
+
+  esl::vector3i vec5 = a;
+
+  ASSERT_EQ(1, vec5[0]);
+  ASSERT_EQ(2, vec5[1]);
+  ASSERT_EQ(0, vec5[2]);
+}
+
 TEST(test_vector, test_make_from_vector)
+{
+  esl::vector3i vec1{1, 2, 3};
+
+  esl::vector3i vec2{vec1};
+  esl::vector3i vec3 = vec1;
+
+  ASSERT_EQ(1, vec2[0]);
+  ASSERT_EQ(2, vec2[1]);
+  ASSERT_EQ(3, vec2[2]);
+
+  ASSERT_EQ(1, vec3[0]);
+  ASSERT_EQ(2, vec3[1]);
+  ASSERT_EQ(3, vec3[2]);
+}
+
+TEST(test_vector, test_make_from_smaller_vector)
 {
   esl::vector3i vec1{1, 2, 3};
 

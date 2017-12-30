@@ -24,7 +24,9 @@ public:
 
   constexpr vector() noexcept
   {
-    esl::repeat< N >([&](auto i) { storage_[i] = T(0); });
+    esl::repeat< N >([&](auto i) {
+      storage_[i] = T(0);  // op
+    });
   }
 
   template < std::size_t M >
@@ -32,14 +34,34 @@ public:
   {
     static_assert(M <= N, "Size too big");
 
-    esl::repeat< M >([&](auto i) { storage_[i] = v[i]; });
+    esl::repeat< M >([&](auto i) {
+      storage_[i] = v[i];  // op
+    });
 
-    esl::repeat< N - M >([&](auto i) { storage_[M + i] = T(0); });
+    esl::repeat< N - M >([&](auto i) {
+      storage_[M + i] = T(0);  // op
+    });
   }
 
   constexpr vector(const std::array< T, N >& arr) noexcept
   {
-    esl::repeat< N >([&](auto i) { storage_[i] = arr[i]; });
+    esl::repeat< N >([&](auto i) {
+      storage_[i] = arr[i];  // op
+    });
+  }
+
+  template < std::size_t M >
+  constexpr vector(const std::array< T, M >& arr)
+  {
+    static_assert(M <= N, "Size too big");
+
+    esl::repeat< M >([&](auto i) {
+      storage_[i] = arr[i];  // op
+    });
+
+    esl::repeat< N - M >([&](auto i) {
+      storage_[M + i] = T(0);  // op
+    });
   }
 
   template < typename... Ts,
@@ -54,9 +76,15 @@ public:
   template < std::size_t M >
   constexpr vector(T (&arr)[M]) noexcept
   {
-    static_assert(M == N, "Size mismatch");
+    static_assert(M <= N, "Size too big");
 
-    esl::repeat< N >([&](auto i) { storage_[i] = arr[i]; });
+    esl::repeat< M >([&](auto i) {
+      storage_[i] = arr[i];  // op
+    });
+
+    esl::repeat< N - M >([&](auto i) {
+      storage_[M + i] = T(0);  // op
+    });
   }
 
   constexpr auto& x() noexcept
@@ -96,8 +124,9 @@ public:
   {
     vector v;
 
-    esl::repeat< N >(
-        [&](auto i) { v.storage_[i] = this->storage_[i] * rhs.storage_[i]; });
+    esl::repeat< N >([&](auto i) {
+      v.storage_[i] = this->storage_[i] * rhs.storage_[i];  // op
+    });
 
     return v;
   }
@@ -117,7 +146,9 @@ public:
   {
     T s = T(0);
 
-    esl::repeat< N >([&](auto i) { s += this->storage_[i]; });
+    esl::repeat< N >([&](auto i) {
+      s += this->storage_[i];  // op
+    });
 
     return s;
   }
@@ -126,8 +157,9 @@ public:
   {
     T s = T(0);
 
-    esl::repeat< N >(
-        [&](auto i) { s += this->storage_[i] * this->storage_[i]; });
+    esl::repeat< N >([&](auto i) {
+      s += this->storage_[i] * this->storage_[i];  // op
+    });
 
     return s;
   }
@@ -152,8 +184,9 @@ public:
   {
     vector v;
 
-    esl::repeat< N >(
-        [&](auto i) { v.storage_[i] = this->storage_[i] * this->storage_[i]; });
+    esl::repeat< N >([&](auto i) {
+      v.storage_[i] = this->storage_[i] * this->storage_[i];  // op
+    });
 
     return v;
   }
@@ -162,8 +195,9 @@ public:
   {
     vector v;
 
-    esl::repeat< N >(
-        [&](auto i) { v.storage_[i] = std::sqrt(this->storage_[i]); });
+    esl::repeat< N >([&](auto i) {
+      v.storage_[i] = std::sqrt(this->storage_[i]);  // op
+    });
 
     return v;
   }
@@ -172,8 +206,9 @@ public:
   {
     vector v;
 
-    esl::repeat< N >(
-        [&](auto i) { v.storage_[i] = std::abs(this->storage_[i]); });
+    esl::repeat< N >([&](auto i) {
+      v.storage_[i] = std::abs(this->storage_[i]);  // op
+    });
 
     return v;
   }
@@ -204,37 +239,54 @@ public:
   //
   // Operators
   //
-  constexpr vector& operator=(const std::array< T, N >& arr) noexcept
+  template < std::size_t M >
+  constexpr vector& operator=(const std::array< T, M >& arr) noexcept
   {
-    esl::repeat< N >([&](auto i) { storage_[i] = arr[i]; });
+    static_assert(M <= N, "Size too big");
+
+    esl::repeat< M >([&](auto i) {
+      storage_[i] = arr[i];  // op
+    });
+
+    esl::repeat< N - M >([&](auto i) {
+      storage_[M + i] = T(0);  // op
+    });
 
     return *this;
   }
 
   constexpr vector& operator+=(const vector& rhs) noexcept
   {
-    esl::repeat< N >([&](auto i) { storage_[i] += rhs.storage_[i]; });
+    esl::repeat< N >([&](auto i) {
+      storage_[i] += rhs.storage_[i];  // op
+    });
 
     return *this;
   }
 
   constexpr vector& operator-=(const vector& rhs) noexcept
   {
-    esl::repeat< N >([&](auto i) { storage_[i] -= rhs.storage_[i]; });
+    esl::repeat< N >([&](auto i) {
+      storage_[i] -= rhs.storage_[i];  // op
+    });
 
     return *this;
   }
 
   constexpr vector& operator*=(const T& rhs) noexcept
   {
-    esl::repeat< N >([&](auto i) { storage_[i] *= rhs; });
+    esl::repeat< N >([&](auto i) {
+      storage_[i] *= rhs;  // op
+    });
 
     return *this;
   }
 
   constexpr vector& operator/=(const T& rhs) noexcept
   {
-    esl::repeat< N >([&](auto i) { storage_[i] /= rhs; });
+    esl::repeat< N >([&](auto i) {
+      storage_[i] /= rhs;  // op
+    });
 
     return *this;
   }
@@ -253,7 +305,9 @@ public:
 
   constexpr friend vector operator-(vector rhs) noexcept
   {
-    esl::repeat< N >([&](auto i) { rhs.storage_[i] = -rhs.storage_[i]; });
+    esl::repeat< N >([&](auto i) {
+      rhs.storage_[i] = -rhs.storage_[i];  // op
+    });
 
     return rhs;
   }
