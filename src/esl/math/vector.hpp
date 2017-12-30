@@ -240,22 +240,6 @@ public:
   //
   // Operators
   //
-  template < std::size_t M >
-  constexpr vector& operator=(const std::array< T, M >& arr) noexcept
-  {
-    static_assert(M <= N, "Size too big");
-
-    esl::repeat< M >([&](auto i) {
-      storage_[i] = arr[i];  // op
-    });
-
-    esl::repeat< N - M >([&](auto i) {
-      storage_[M + i] = T(0);  // op
-    });
-
-    return *this;
-  }
-
   constexpr vector& operator+=(const vector& rhs) noexcept
   {
     esl::repeat< N >([&](auto i) {
