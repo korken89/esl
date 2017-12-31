@@ -50,7 +50,7 @@ public:
                              !std::is_convertible< F, function_view >::value > >
   constexpr function_view(F&& fun) noexcept
   {
-    *this = function_view::from(fun);
+    *this = function_view::from(std::forward< F >(fun));
   }
 
   //
