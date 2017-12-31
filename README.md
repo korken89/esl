@@ -27,7 +27,7 @@ Currently there is a `static_vector` and a `ring_buffer` see the local [README](
 
 #### Delegate
 
-A light-weight `std::function` in a sense, designed for embedded use, see the local [README](src/esl/delegate/README.md) for more information and usage.
+A light-weight `std::function` in a sense, designed for embedded use, see the local [README](src/esl/callable/README.md) for more information and usage.
 
 #### Math functions
 

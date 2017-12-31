@@ -13,8 +13,7 @@
 #include <esl/math/vector.hpp>
 
 // Function/Method Delegate
-#include <esl/delegate/delegate.hpp>
-#include <esl/delegate/delegate_helper.hpp>
+#include <esl/callable/delegate.hpp>
 
 // Helpers
 #include <esl/helpers/singleton.hpp>
