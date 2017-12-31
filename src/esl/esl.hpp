@@ -14,6 +14,7 @@
 
 // Function/Method Delegate
 #include <esl/callable/delegate.hpp>
+#include <esl/callable/function_view.hpp>
 
 // Helpers
 #include <esl/helpers/singleton.hpp>
