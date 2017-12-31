@@ -31,6 +31,7 @@ TEST(test_function_view, function_test)
   int i  = 9;
   auto d = callback::from< foo >();
   auto d2 = callback::from(foo);
+  auto d3 = callback( [](int i){ return i * i; } );
 
   ASSERT_EQ(25, d(5));
   ASSERT_EQ(100, d(10));
@@ -39,6 +40,10 @@ TEST(test_function_view, function_test)
   ASSERT_EQ(25, d2(5));
   ASSERT_EQ(100, d2(10));
   ASSERT_EQ(81, d2(i));
+
+  ASSERT_EQ(25, d3(5));
+  ASSERT_EQ(100, d3(10));
+  ASSERT_EQ(81, d3(i));
 }
 
 TEST(test_function_view, method_test)

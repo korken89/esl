@@ -44,6 +44,16 @@ public:
   constexpr function_view& operator=(function_view&&) = default;
 
   //
+  // Construction from callable
+  //
+  template < typename F, typename = std::enable_if_t<
+                             !std::is_convertible< F, function_view >::value > >
+  constexpr function_view(F&& fun) noexcept
+  {
+    *this = function_view::from(fun);
+  }
+
+  //
   // Call using operator()
   //
   template < typename... Ts >
