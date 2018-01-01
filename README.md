@@ -25,9 +25,9 @@ To use this library, add `./src` to your includes and:
 
 Currently there is a `static_vector` and a `ring_buffer` see the local [README](src/esl/containers/README.md) for more information and usage.
 
-#### Delegate
+#### Callable
 
-A light-weight `std::function` in a sense, designed for embedded use, see the local [README](src/esl/callable/README.md) for more information and usage.
+Light-weight `std::function` in a sense with both an owning and non-owning implementation, designed for embedded use, see the local [README](src/esl/callable/README.md) for more information and usage.
 
 #### Math functions
 
@@ -43,10 +43,7 @@ Currently there is a `repeat` (compile-time loop unrolling), `singleton` helper 
 
 Uses the Boost Software License 1.0
 
-
-## TODO
-
-* Add documentation
+---
 
 ## IDEAS
 
