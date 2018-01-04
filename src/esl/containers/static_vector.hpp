@@ -136,14 +136,14 @@ public:
     return curr_idx_;
   }
 
-  constexpr std::size_t max_size() const noexcept
+  constexpr std::size_t capacity() const noexcept
   {
     return N;
   }
 
   constexpr std::size_t free() const noexcept
   {
-    return max_size() - size();
+    return capacity() - size();
   }
 
   constexpr bool empty() const noexcept

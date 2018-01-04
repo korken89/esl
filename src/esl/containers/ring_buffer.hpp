@@ -110,14 +110,14 @@ public:
     return (head_idx_ - tail_idx_ + N) % N;
   }
 
-  constexpr std::size_t max_size() const noexcept
+  constexpr std::size_t capacity() const noexcept
   {
     return N - 1;
   }
 
   constexpr std::size_t free() const noexcept
   {
-    return max_size() - size();
+    return capacity() - size();
   }
 
   constexpr bool empty() const noexcept
@@ -127,7 +127,7 @@ public:
 
   constexpr bool full() const noexcept
   {
-    return (size() == max_size());
+    return (size() == capacity());
   }
 
   //
