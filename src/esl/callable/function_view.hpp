@@ -80,6 +80,24 @@ public:
   // Helpers to create function_views
   //
 
+  // Make from Functions
+  constexpr static function_view from(Ret (*fptr)(Args...)) noexcept
+  {
+    return function_view{reinterpret_cast< void* >(fptr),  // save function
+                         [](void* object, Args... args) -> Ret {
+                           return reinterpret_cast< Ret (*)(Args...) >(object)(
+                               args...);  // cast back and call function
+                         }};
+  }
+
+  template < Ret (*Fptr)(Args...) >
+  constexpr static function_view from() noexcept
+  {
+    static_assert(Fptr != nullptr, "Function pointer must not be null");
+
+    return function_view::from(Fptr);
+  }
+
   // Make from Methods
   template < typename Obj, Ret (Obj::*Mptr)(Args...) >
   constexpr static function_view from(Obj& obj) noexcept
@@ -102,24 +120,6 @@ public:
           return (static_cast< std::add_pointer_t< Obj > >(object)->*Mptr)(
               args...);
         }};
-  }
-
-  // Make from Functions
-  constexpr static function_view from(Ret (*fptr)(Args...)) noexcept
-  {
-    return function_view{reinterpret_cast< void* >(fptr),  // save object
-                         [](void* object, Args... args) -> Ret {
-                           return reinterpret_cast< Ret (*)(Args...) >(object)(
-                               args...);  // call method
-                         }};
-  }
-
-  template < Ret (*Fptr)(Args...) >
-  constexpr static function_view from() noexcept
-  {
-    static_assert(Fptr != nullptr, "Function pointer must not be null");
-
-    return function_view::from(Fptr);
   }
 };
 }  // end namespace esl
