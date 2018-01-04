@@ -30,13 +30,8 @@ TEST(test_static_vector, test_push_back)
   vec.push_back(1);
   vec.push_back(1);
 
-  EXPECT_ANY_THROW({
-    vec.push_back(1);
-  });
-
-  EXPECT_ANY_THROW({
-    vec.emplace_back(2);
-  });
+  EXPECT_ANY_THROW( vec.push_back(1); );
+  EXPECT_ANY_THROW( vec.emplace_back(2); );
 }
 
 TEST(test_static_vector, test_pop_back)
@@ -46,9 +41,7 @@ TEST(test_static_vector, test_pop_back)
   vec.push_back(1);
   vec.pop_back();
 
-  EXPECT_ANY_THROW({
-    vec.pop_back();
-  });
+  EXPECT_ANY_THROW( vec.pop_back(); );
 }
 
 TEST(test_static_vector, test_size)
@@ -103,9 +96,7 @@ TEST(test_static_vector, test_size)
   ASSERT_EQ(false, vec.empty());
   ASSERT_EQ(false, vec.full());
 
-  EXPECT_ANY_THROW({
-    vec.push_back(a);
-  });
+  EXPECT_ANY_THROW( vec.push_back(a); );
 
   esl::static_vector< int, 10, true, test_throw > b;
   b.push_back(3);
@@ -128,17 +119,9 @@ TEST(test_static_vector, test_access)
 {
   esl::static_vector< int, 5, true, test_throw > vec;
 
-  EXPECT_ANY_THROW({
-    vec[0];
-  });
-
-  EXPECT_ANY_THROW({
-    vec.front();
-  });
-
-  EXPECT_ANY_THROW({
-    vec.back();
-  });
+  EXPECT_ANY_THROW( vec[0]; );
+  EXPECT_ANY_THROW( vec.front(); );
+  EXPECT_ANY_THROW( vec.back(); );
 
   vec.push_back(1);
   ASSERT_EQ(1, vec[0]);
@@ -229,17 +212,9 @@ TEST(test_static_vector, test_algorithm)
 
 void testfun_throw(const esl::static_vector< int, 5, true, test_throw >& v)
 {
-  EXPECT_ANY_THROW({
-    (void)v.front();
-  });
-
-  EXPECT_ANY_THROW({
-    (void)v.back();
-  });
-
-  EXPECT_ANY_THROW({
-    (void)v[10];
-  });
+  EXPECT_ANY_THROW( v.front(); );
+  EXPECT_ANY_THROW( v.back(); );
+  EXPECT_ANY_THROW( v[10]; );
 }
 
 void testfun(const esl::static_vector< int, 5, true, test_throw >& v)
