@@ -15,8 +15,7 @@
 
 namespace esl
 {
-template < typename T, std::size_t N, bool CheckBounds = false,
-           typename ErrFun = error_functions::noop >
+template < typename T, std::size_t N, typename ErrFun = error_functions::noop >
 class static_vector;
 
 template < typename >
@@ -24,17 +23,20 @@ struct is_static_vector : std::false_type
 {
 };
 
-template < typename T, std::size_t N, bool B, typename ErrFun >
-struct is_static_vector< static_vector< T, N, B, ErrFun > > : std::true_type
+template < typename T, std::size_t N, typename ErrFun >
+struct is_static_vector< static_vector< T, N, ErrFun > > : std::true_type
 {
 };
 
-template < typename T, std::size_t N, bool CheckBounds, typename ErrFun >
+template < typename T, std::size_t N, typename ErrFun >
 class static_vector
 {
 protected:
   std::aligned_storage_t< sizeof(T), alignof(T) > buffer_[N];
   std::size_t curr_idx_ = 0;
+
+  using CheckBounds = std::integral_constant<
+      bool, !std::is_same< ErrFun, error_functions::noop >::value >;
 
 public:
   //
@@ -65,7 +67,7 @@ public:
   //
   constexpr T &operator[](std::size_t idx) noexcept(noexcept(ErrFun{}("")))
   {
-    if (CheckBounds)
+    if (CheckBounds())
       if (idx >= size())
         ErrFun{}("operator[] out of bounds");
 
@@ -75,7 +77,7 @@ public:
   constexpr const T &operator[](std::size_t idx) const
       noexcept(noexcept(ErrFun{}("")))
   {
-    if (CheckBounds)
+    if (CheckBounds())
       if (idx >= size())
         ErrFun{}("operator[] out of bounds");
 
@@ -84,7 +86,7 @@ public:
 
   constexpr const T &front() const noexcept(noexcept(ErrFun{}("")))
   {
-    if (CheckBounds)
+    if (CheckBounds())
       if (empty())
         ErrFun{}("front on empty vector");
 
@@ -93,7 +95,7 @@ public:
 
   constexpr T &front() noexcept(noexcept(ErrFun{}("")))
   {
-    if (CheckBounds)
+    if (CheckBounds())
       if (empty())
         ErrFun{}("front on empty vector");
 
@@ -102,7 +104,7 @@ public:
 
   constexpr const T &back() const noexcept(noexcept(ErrFun{}("")))
   {
-    if (CheckBounds)
+    if (CheckBounds())
       if (empty())
         ErrFun{}("back on empty vector");
 
@@ -111,7 +113,7 @@ public:
 
   constexpr T &back() noexcept(noexcept(ErrFun{}("")))
   {
-    if (CheckBounds)
+    if (CheckBounds())
       if (empty())
         ErrFun{}("back on empty vector");
 
@@ -185,7 +187,7 @@ public:
   template < typename... Args >
   constexpr void emplace_back(Args &&... args) noexcept(noexcept(ErrFun{}("")))
   {
-    if (CheckBounds)
+    if (CheckBounds())
       if (full())
         ErrFun{}("emplace_back on full vector");
 
@@ -198,7 +200,7 @@ public:
                               !is_static_vector< std::decay_t< T1 > >::value > >
   constexpr void push_back(T1 &&val) noexcept(noexcept(ErrFun{}("")))
   {
-    if (CheckBounds)
+    if (CheckBounds())
       if (full())
         ErrFun{}("push_back on full vector");
 
@@ -209,7 +211,7 @@ public:
   constexpr void push_back(const T *ptr,
                            std::size_t n) noexcept(noexcept(ErrFun{}("")))
   {
-    if (CheckBounds)
+    if (CheckBounds())
       if (free() < n)
         ErrFun{}("push_back: array too large");
 
@@ -223,8 +225,8 @@ public:
     push_back(buf, S);
   }
 
-  template < bool B, typename F, typename T2, std::size_t M >
-  constexpr void push_back(const static_vector< T2, M, B, F > &v) noexcept(
+  template < typename F, typename T2, std::size_t M >
+  constexpr void push_back(const static_vector< T2, M, F > &v) noexcept(
       noexcept(ErrFun{}("")))
   {
     push_back(v.cbegin(), v.size());
@@ -240,7 +242,7 @@ public:
 
   constexpr void pop_back() noexcept(noexcept(ErrFun{}("")))
   {
-    if (CheckBounds)
+    if (CheckBounds())
       if (empty())
         ErrFun{}("pop_back on empty vector");
 

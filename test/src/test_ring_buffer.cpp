@@ -20,7 +20,7 @@ TEST(test_ring_buffer, test_push_back)
 {
   int i = 100;
 
-  esl::ring_buffer< int, 5, true, test_throw > buf;
+  esl::ring_buffer< int, 5, test_throw > buf;
 
   buf.push_back(1);
   buf.push_back(i);
@@ -43,7 +43,7 @@ TEST(test_ring_buffer, test_emplace_back)
 {
   int i = 100;
 
-  esl::ring_buffer< int, 5, true, test_throw > buf;
+  esl::ring_buffer< int, 5, test_throw > buf;
 
   buf.emplace_back(1);
   buf.emplace_back(i);
@@ -59,7 +59,7 @@ TEST(test_ring_buffer, test_emplace_back)
 
 TEST(test_ring_buffer, test_pop)
 {
-  esl::ring_buffer< int, 5, true, test_throw > buf;
+  esl::ring_buffer< int, 5, test_throw > buf;
 
   EXPECT_ANY_THROW( buf.pop(); );
 
@@ -71,7 +71,7 @@ TEST(test_ring_buffer, test_pop)
 
 TEST(test_ring_buffer, test_size_free_empty_full)
 {
-  esl::ring_buffer< int, 5, true, test_throw > buf;
+  esl::ring_buffer< int, 5, test_throw > buf;
 
   ASSERT_EQ(0, buf.size());
   ASSERT_EQ(4, buf.free());
@@ -130,7 +130,7 @@ TEST(test_ring_buffer, test_size_free_empty_full)
 
 TEST(test_ring_buffer, test_clear)
 {
-  esl::ring_buffer< int, 5, true, test_throw > buf;
+  esl::ring_buffer< int, 5, test_throw > buf;
 
   ASSERT_EQ(0, buf.size());
   ASSERT_EQ(4, buf.free());
@@ -158,7 +158,7 @@ TEST(test_ring_buffer, test_clear)
 
 TEST(test_ring_buffer, test_access)
 {
-  esl::ring_buffer< int, 5, true, test_throw > buf;
+  esl::ring_buffer< int, 5, test_throw > buf;
 
   EXPECT_ANY_THROW( buf.front(); );
   EXPECT_ANY_THROW( buf.back(); );
@@ -198,7 +198,7 @@ TEST(test_ring_buffer, test_access)
 
 TEST(test_ring_buffer, test_access_and_modify)
 {
-  esl::ring_buffer< int, 5, true, test_throw > buf;
+  esl::ring_buffer< int, 5, test_throw > buf;
 
   buf.push_back(1);
   ASSERT_EQ(1, buf.front());
@@ -214,13 +214,13 @@ TEST(test_ring_buffer, test_access_and_modify)
   ASSERT_EQ(0, buf.back());
 }
 
-void testconst_throw(const esl::ring_buffer< int, 5, true, test_throw > &buf)
+void testconst_throw(const esl::ring_buffer< int, 5, test_throw > &buf)
 {
   EXPECT_ANY_THROW( buf.front(); );
   EXPECT_ANY_THROW( buf.back(); );
 }
 
-void testconst(const esl::ring_buffer< int, 5, true, test_throw > &buf)
+void testconst(const esl::ring_buffer< int, 5, test_throw > &buf)
 {
   ASSERT_EQ(1, buf.front());
   ASSERT_EQ(2, buf.back());
@@ -228,7 +228,7 @@ void testconst(const esl::ring_buffer< int, 5, true, test_throw > &buf)
 
 TEST(test_ring_buffer, test_const_access)
 {
-  esl::ring_buffer< int, 5, true, test_throw > buf;
+  esl::ring_buffer< int, 5, test_throw > buf;
 
   testconst_throw(buf);
 

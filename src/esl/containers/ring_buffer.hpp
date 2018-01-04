@@ -15,8 +15,7 @@
 
 namespace esl
 {
-template < typename T, std::size_t N, bool CheckBounds = false,
-           typename ErrFun = error_functions::noop >
+template < typename T, std::size_t N, typename ErrFun = error_functions::noop >
 class ring_buffer;
 
 template < typename >
@@ -24,18 +23,21 @@ struct is_ring_buffer : std::false_type
 {
 };
 
-template < typename T, std::size_t N, bool B, typename ErrFun >
-struct is_ring_buffer< ring_buffer< T, N, B, ErrFun > > : std::true_type
+template < typename T, std::size_t N, typename ErrFun >
+struct is_ring_buffer< ring_buffer< T, N, ErrFun > > : std::true_type
 {
 };
 
-template < typename T, std::size_t N, bool CheckBounds, typename ErrFun >
+template < typename T, std::size_t N, typename ErrFun >
 class ring_buffer
 {
 protected:
   std::aligned_storage_t< sizeof(T), alignof(T) > buffer_[N];
   std::size_t head_idx_ = 0;
   std::size_t tail_idx_ = 0;
+
+  using CheckBounds = std::integral_constant<
+      bool, !std::is_same< ErrFun, error_functions::noop >::value >;
 
   constexpr void increment_head() noexcept
   {
@@ -68,7 +70,7 @@ public:
   //
   constexpr const T& front() const noexcept(noexcept(ErrFun{}("")))
   {
-    if (CheckBounds)
+    if (CheckBounds())
       if (empty())
         ErrFun{}("front on empty buffer");
 
@@ -77,7 +79,7 @@ public:
 
   constexpr T& front() noexcept(noexcept(ErrFun{}("")))
   {
-    if (CheckBounds)
+    if (CheckBounds())
       if (empty())
         ErrFun{}("front on empty buffer");
 
@@ -86,7 +88,7 @@ public:
 
   constexpr const T& back() const noexcept(noexcept(ErrFun{}("")))
   {
-    if (CheckBounds)
+    if (CheckBounds())
       if (empty())
         ErrFun{}("back on empty buffer");
 
@@ -95,7 +97,7 @@ public:
 
   constexpr T& back() noexcept(noexcept(ErrFun{}("")))
   {
-    if (CheckBounds)
+    if (CheckBounds())
       if (empty())
         ErrFun{}("back on empty buffer");
 
@@ -136,7 +138,7 @@ public:
   template < typename... Args >
   constexpr void emplace_back(Args&&... args) noexcept(noexcept(ErrFun{}("")))
   {
-    if (CheckBounds)
+    if (CheckBounds())
       if (full())
         ErrFun{}("emplace_back on full buffer");
 
@@ -149,7 +151,7 @@ public:
                               !is_ring_buffer< std::decay_t< T1 > >::value > >
   constexpr void push_back(T1&& val) noexcept(noexcept(ErrFun{}("")))
   {
-    if (CheckBounds)
+    if (CheckBounds())
       if (full())
         ErrFun{}("push_back on full buffer");
 
@@ -160,7 +162,7 @@ public:
   constexpr void push_back(const T* ptr,
                            std::size_t n) noexcept(noexcept(ErrFun{}("")))
   {
-    if (CheckBounds)
+    if (CheckBounds())
       if (free() < n)
         ErrFun{}("push_back: array too large");
 
@@ -198,7 +200,7 @@ public:
 
   constexpr void pop() noexcept(noexcept(ErrFun{}("")))
   {
-    if (CheckBounds)
+    if (CheckBounds())
       if (empty())
         ErrFun{}("pop on empty buffer");
 
