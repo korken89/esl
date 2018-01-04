@@ -33,6 +33,15 @@ TEST(test_ring_buffer, test_push_back)
 
   ASSERT_EQ(1, buf.front());
   ASSERT_EQ(7, buf.back());
+
+
+  EXPECT_ANY_THROW({
+    buf.push_back(1);
+  });
+
+  EXPECT_ANY_THROW({
+    buf.push_back(a);
+  });
 }
 
 TEST(test_ring_buffer, test_emplace_back)
@@ -46,14 +55,29 @@ TEST(test_ring_buffer, test_emplace_back)
 
   ASSERT_EQ(1, buf.front());
   ASSERT_EQ(100, buf.back());
+
+  buf.emplace_back(1);
+  buf.emplace_back(1);
+
+  EXPECT_ANY_THROW({
+    buf.emplace_back(1);
+  });
 }
 
 TEST(test_ring_buffer, test_pop)
 {
   esl::ring_buffer< int, 5, true, test_throw > buf;
 
+  EXPECT_ANY_THROW({
+    buf.pop();
+  });
+
   buf.push_back(1);
   buf.pop();
+
+  EXPECT_ANY_THROW({
+    buf.pop();
+  });
 }
 
 TEST(test_ring_buffer, test_size_free_empty_full)
@@ -147,6 +171,14 @@ TEST(test_ring_buffer, test_access)
 {
   esl::ring_buffer< int, 5, true, test_throw > buf;
 
+  EXPECT_ANY_THROW({
+    buf.front();
+  });
+
+  EXPECT_ANY_THROW({
+    buf.back();
+  });
+
   buf.push_back(1);
   ASSERT_EQ(1, buf.front());
   ASSERT_EQ(1, buf.back());
@@ -196,6 +228,35 @@ TEST(test_ring_buffer, test_access_and_modify)
   buf.back() -= 2;
   ASSERT_EQ(10, buf.front());
   ASSERT_EQ(0, buf.back());
+}
+
+void testconst_throw(const esl::ring_buffer< int, 5, true, test_throw > &buf)
+{
+  EXPECT_ANY_THROW({
+    buf.front();
+  });
+
+  EXPECT_ANY_THROW({
+    buf.back();
+  });
+}
+
+void testconst(const esl::ring_buffer< int, 5, true, test_throw > &buf)
+{
+  ASSERT_EQ(1, buf.front());
+  ASSERT_EQ(2, buf.back());
+}
+
+TEST(test_ring_buffer, test_const_access)
+{
+  esl::ring_buffer< int, 5, true, test_throw > buf;
+
+  testconst_throw(buf);
+
+  buf.push_back(1);
+  buf.push_back(2);
+
+  testconst(buf);
 }
 
 int main(int argc, char *argv[])
