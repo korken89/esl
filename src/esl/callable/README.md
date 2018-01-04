@@ -21,18 +21,32 @@ Defining a `delegate`:
 ```C++
 using cb = delegate< return_type (parameters...), storage size, alignment = alignof(void *) >;
 
-// Example
-using callback = delegate< int(int), sizeof(void *) >;
+// Example - define a delegate
+using my_delegate = delegate< int(int), sizeof(void *) >;
+
+auto d1 = my_delegate(<any callable>);
+
+// Lambdas without capture
+auto d2 = my_delegate([](int i){ return i * i; });
+
+// Lambdas can have capture
+auto d3 = my_delegate([&some_var](int i){ return i * i + some_var; });
 ```
 
-Storing a `delegate` (made from a function):
+#### Helpers
+
+A `delegate` made from a function:
 ```C++
 int bar(int);
 
-auto d1 = callback::from<bar>();
+// Compile-time known
+auto d1 = my_delegate::from<bar>();
+
+// Runtime known
+auto d2 = my_delegate(bar);
 ```
 
-Storing a `delegate` (made from a method):
+A `delegate` made from a method:
 ```C++
 struct foo {
   int bar(int);
@@ -40,20 +54,16 @@ struct foo {
 
 foo myFoo;
 
-auto d1 = callback::from<foo, &foo::bar>(myFoo);
-```
+// Compile-time known
+auto d1 = my_delegate::from<foo, &foo::bar>(myFoo);
 
-Storing a `delegate` (from lambda):
-```C++
-auto d1 = callback([](int i){ return i * i; });
-
-// Lambdas can have capture
-auto d2 = callback([&some_var](int i){ return i * i + some_var; });
+// Runtime known
+auto d2 = my_delegate::from(myFoo, &foo::bar);
 ```
 
 Invoking any of the previous:
 ```C++
-auto r = d1(10);
+auto r = dX(10);
 ```
 
 ## `function_view.hpp`
@@ -69,17 +79,25 @@ Defining a `function_view`:
 using cb = function_view< return_type (parameters...) >;
 
 // Example
-using callback = function_view< int(int) >;
+using my_func = function_view< int(int) >;
+
+auto d1 = my_func(<any callable that decays to a function pointer>);
 ```
 
-Storing a `function_view` (made from a function):
+#### Helpers
+
+A `function_view` made from a function:
 ```C++
 int bar(int);
 
-auto d1 = callback::from<bar>();
+// Compile-time known
+auto d1 = my_func::from<bar>();
+
+// Runtime known
+auto d2 = my_func::from(bar);
 ```
 
-Storing a `function_view` (made from a method):
+A `function_view` made from a method:
 ```C++
 struct foo {
   int bar(int);
@@ -87,10 +105,18 @@ struct foo {
 
 foo myFoo;
 
-auto d1 = callback::from<foo, &foo::bar>(myFoo);
+// Compile-time known
+auto d1 = my_func::from<foo, &foo::bar>(myFoo);
 ```
+
+A `function_view` made from a lambda **without** capture:
+```C++
+// Lambda without capture is implicitly convertible to a function pointer
+auto d1 = my_func::from([](int i){ return i * i; });
+```
+If the lambda needs capture, then `delegate` should be used.
 
 Invoking any of the previous:
 ```C++
-auto r = d1(10);
+auto r = dX(10);
 ```
