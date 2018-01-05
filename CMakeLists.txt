@@ -7,17 +7,32 @@ project(esl)
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 add_compile_options(-Wall -Wextra -Wpedantic -Werror)
 
-option(ENABLE_COVERAGE "Enable coverage reporting for gcc/clang" FALSE)
-option(ENABLE_CPP17 "Enable C++17 for gcc/clang" FALSE)
+option(ENABLE_COVERAGE "Enable coverage reporting" FALSE)
+option(ENABLE_CPP17 "Enable C++17" FALSE)
+option(ENABLE_UBSAN "Enable UB Sanitizer" FALSE)
+option(ENABLE_ASAN "Enable Address Sanitizer" FALSE)
+
+set(Extra_Link_Flags "")
 
 if (ENABLE_COVERAGE)
   add_compile_options(--coverage -O0)
+  set(Extra_Link_Flags ${Extra_Link_Flags} "--coverage")
 endif()
 
 if (ENABLE_CPP17)
   add_compile_options(-std=c++17)
 else()
   set(CMAKE_CXX_STANDARD 14)
+endif()
+
+if (ENABLE_UBSAN)
+  add_compile_options(-fsanitize=undefined)
+  set(Extra_Link_Flags ${Extra_Link_Flags} "-fsanitize=undefined")
+endif()
+
+if (ENABLE_ASAN)
+  add_compile_options(-fsanitize=address)
+  set(Extra_Link_Flags ${Extra_Link_Flags} "-fsanitize=address")
 endif()
 
 ######################################
@@ -44,7 +59,7 @@ enable_testing()
 #
 macro(perform_test str)
   add_executable(test_${str} test/src/test_${str}.cpp)
-  target_link_libraries(test_${str} ${GTEST_BOTH_LIBRARIES} --coverage)
+  target_link_libraries(test_${str} ${GTEST_BOTH_LIBRARIES} ${Extra_Link_Flags})
   add_test(NAME ${str} COMMAND test_${str})
 endmacro(perform_test)
 
