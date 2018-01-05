@@ -9,31 +9,19 @@ add_compile_options(-Wall -Wextra -Wpedantic -Werror)
 
 option(ENABLE_COVERAGE "Enable coverage reporting" FALSE)
 option(ENABLE_CPP17 "Enable C++17" FALSE)
-option(ENABLE_UBSAN "Enable UB Sanitizer" FALSE)
-option(ENABLE_ASAN "Enable Address Sanitizer" FALSE)
 
 set(Extra_Link_Flags "")
 
-if (ENABLE_COVERAGE)
-  add_compile_options(--coverage -O0)
-  set(Extra_Link_Flags ${Extra_Link_Flags} "--coverage")
-endif()
-
-if (ENABLE_CPP17)
-  add_compile_options(-std=c++17)
-else()
-  set(CMAKE_CXX_STANDARD 14)
-endif()
-
-if (ENABLE_UBSAN)
-  add_compile_options(-fsanitize=undefined)
-  set(Extra_Link_Flags ${Extra_Link_Flags} "-fsanitize=undefined")
-endif()
-
-if (ENABLE_ASAN)
-  add_compile_options(-fsanitize=address)
-  set(Extra_Link_Flags ${Extra_Link_Flags} "-fsanitize=address")
-endif()
+#if (ENABLE_COVERAGE)
+#  add_compile_options(--coverage -O0)
+#  set(Extra_Link_Flags ${Extra_Link_Flags} "--coverage")
+#endif()
+#
+#if (ENABLE_CPP17)
+#  add_compile_options(-std=c++17)
+#else()
+#  set(CMAKE_CXX_STANDARD 14)
+#endif()
 
 ######################################
 # Find packages needed
@@ -58,9 +46,47 @@ enable_testing()
 # Macro for tests
 #
 macro(perform_test str)
-  add_executable(test_${str} test/src/test_${str}.cpp)
-  target_link_libraries(test_${str} ${GTEST_BOTH_LIBRARIES} ${Extra_Link_Flags})
-  add_test(NAME ${str} COMMAND test_${str})
+
+  # UBSAN
+  add_executable(test_${str}_ubsan test/src/test_${str}.cpp)
+  set_target_properties(test_${str}_ubsan PROPERTIES COMPILE_FLAGS "-fsanitize=undefined -std=c++14 -g")
+  target_link_libraries(test_${str}_ubsan ${GTEST_BOTH_LIBRARIES} -fsanitize=undefined)
+  add_test(NAME ${str}_ubsan COMMAND test_${str}_ubsan)
+
+  # ASAN
+  add_executable(test_${str}_asan test/src/test_${str}.cpp)
+  set_target_properties(test_${str}_asan PROPERTIES COMPILE_FLAGS "-fsanitize=address -std=c++14 -g")
+  target_link_libraries(test_${str}_asan ${GTEST_BOTH_LIBRARIES} -fsanitize=address)
+  add_test(NAME ${str}_asan COMMAND test_${str}_asan)
+
+if (ENABLE_COVERAGE)
+  add_executable(test_${str}_cov test/src/test_${str}.cpp)
+  set_target_properties(test_${str}_cov PROPERTIES COMPILE_FLAGS "-std=c++14 -O0 --coverage")
+  target_link_libraries(test_${str}_cov ${GTEST_BOTH_LIBRARIES} --coverage)
+  add_test(NAME ${str}_cov COMMAND test_${str}_cov)
+endif()
+
+  if (ENABLE_CPP17)
+    # UBSAN
+    add_executable(test_${str}_ubsan_cpp17 test/src/test_${str}.cpp)
+    set_target_properties(test_${str}_ubsan_cpp17 PROPERTIES COMPILE_FLAGS "-fsanitize=undefined -std=c++17 -g")
+    target_link_libraries(test_${str}_ubsan_cpp17 ${GTEST_BOTH_LIBRARIES} -fsanitize=undefined)
+    add_test(NAME ${str}_ubsan_cpp17 COMMAND test_${str}_ubsan_cpp17)
+
+    # ASAN
+    add_executable(test_${str}_asan_cpp17 test/src/test_${str}.cpp)
+    set_target_properties(test_${str}_asan_cpp17 PROPERTIES COMPILE_FLAGS "-fsanitize=address -std=c++17 -g")
+    target_link_libraries(test_${str}_asan_cpp17 ${GTEST_BOTH_LIBRARIES} -fsanitize=address)
+    add_test(NAME ${str}_asan_cpp17 COMMAND test_${str}_asan_cpp17)
+
+    if (ENABLE_COVERAGE)
+      add_executable(test_${str}_cov_cpp17 test/src/test_${str}.cpp)
+      set_target_properties(test_${str}_cov_cpp17 PROPERTIES COMPILE_FLAGS "-std=c++17 -O0 --coverage")
+      target_link_libraries(test_${str}_cov_cpp17 ${GTEST_BOTH_LIBRARIES} --coverage)
+      add_test(NAME ${str}_cov_cpp17 COMMAND test_${str}_cov_cpp17)
+    endif()
+  endif()
+
 endmacro(perform_test)
 
 #

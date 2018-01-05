@@ -15,6 +15,7 @@ before_script:
   # -- workaround end
   - mkdir build
   - cd build
+  - export CLINKER=`which gold`
 
 #
 # More complete test matrix
@@ -29,7 +30,7 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test']
-          packages: ['libgtest-dev', 'cmake', 'cmake-data']
+          packages: ['libgtest-dev', 'cmake', 'cmake-data', 'binutils-gold']
       env:
         - TEST="Whitespace Checker"
       script:
@@ -50,14 +51,14 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-5', 'libgtest-dev', 'cmake', 'cmake-data']
+          packages: ['g++-7', 'libgtest-dev', 'cmake', 'cmake-data', 'binutils-gold']
       env:
-        - TEST="Coverage"
+        - TEST="Coverage (C++14, C++17)"
       script:
-        - cmake .. -DCMAKE_CXX_COMPILER=g++-5 -DENABLE_COVERAGE:BOOL=TRUE
+        - cmake .. -DCMAKE_CXX_COMPILER=g++-7 -DCMAKE_LINKER=$CLINKER -DENABLE_COVERAGE:BOOL=TRUE -DENABLE_CPP17:BOOL=TRUE
         - make -j2
         - ctest -VV
-        - bash <(curl -s https://codecov.io/bash) -x /usr/bin/gcov-5
+        - bash <(curl -s https://codecov.io/bash) -x /usr/bin/gcov-7
 
     #
     # Testing gcc 5
@@ -66,11 +67,11 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-5', 'libgtest-dev', 'cmake', 'cmake-data']
+          packages: ['g++-5', 'libgtest-dev', 'cmake', 'cmake-data', 'binutils-gold']
       env:
-        - TEST="g++-5"
+        - TEST="g++-5 (C++14, UBSAN, ASAN)"
       script:
-        - cmake .. -DCMAKE_CXX_COMPILER=g++-5 -DCMAKE_BUILD_TYPE=Debug
+        - cmake .. -DCMAKE_CXX_COMPILER=g++-5 -DCMAKE_LINKER=$CLINKER -DCMAKE_BUILD_TYPE=Debug
         - make -j2
         - ctest -VV
 
@@ -81,11 +82,11 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-6', 'libgtest-dev', 'cmake', 'cmake-data']
+          packages: ['g++-6', 'libgtest-dev', 'cmake', 'cmake-data', 'binutils-gold']
       env:
-        - TEST="g++-6"
+        - TEST="g++-6 (C++14, UBSAN, ASAN)"
       script:
-        - cmake .. -DCMAKE_CXX_COMPILER=g++-6 -DCMAKE_BUILD_TYPE=Debug
+        - cmake .. -DCMAKE_CXX_COMPILER=g++-6 -DCMAKE_LINKER=$CLINKER -DCMAKE_BUILD_TYPE=Debug
         - make -j2
         - ctest -VV
 
@@ -96,70 +97,11 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-7', 'libgtest-dev', 'cmake', 'cmake-data', 'binutils']
+          packages: ['g++-7', 'libgtest-dev', 'cmake', 'cmake-data', 'binutils-gold']
       env:
-        - TEST="g++-7 (C++14, ASAN)"
+        - TEST="g++-7 (C++14, C++17, UBSAN, ASAN)"
       script:
-        - cmake .. -DCMAKE_CXX_COMPILER=g++-7 -DCMAKE_BUILD_TYPE=Debug -DENABLE_ASAN:BOOL=TRUE
-        - make -j2
-        - ctest -VV
-    #
-    # Testing gcc 7
-    #
-    - os: linux
-      addons:
-        apt:
-          sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-7', 'libgtest-dev', 'cmake', 'cmake-data']
-      env:
-        - TEST="g++-7 (C++14, UBSAN)"
-      script:
-        - cmake .. -DCMAKE_CXX_COMPILER=g++-7 -DCMAKE_BUILD_TYPE=Debug -DENABLE_UBSAN:BOOL=TRUE
-        - make -j2
-        - ctest -VV
-
-    #
-    # Testing gcc 7
-    #
-    - os: linux
-      addons:
-        apt:
-          sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-7', 'libgtest-dev', 'cmake', 'cmake-data', 'binutils']
-      env:
-        - TEST="g++-7 (C++17, ASAN)"
-      script:
-        - cmake .. -DCMAKE_CXX_COMPILER=g++-7 -DCMAKE_BUILD_TYPE=Debug -DENABLE_CPP17:BOOL=TRUE -DENABLE_ASAN:BOOL=TRUE
-        - make -j2
-        - ctest -VV
-
-    #
-    # Testing gcc 7
-    #
-    - os: linux
-      addons:
-        apt:
-          sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-7', 'libgtest-dev', 'cmake', 'cmake-data']
-      env:
-        - TEST="g++-7 (C++17, UBSAN)"
-      script:
-        - cmake .. -DCMAKE_CXX_COMPILER=g++-7 -DCMAKE_BUILD_TYPE=Debug -DENABLE_CPP17:BOOL=TRUE -DENABLE_UBSAN:BOOL=TRUE
-        - make -j2
-        - ctest -VV
-
-    #
-    # Testing clang 4
-    #
-    - os: linux
-      addons:
-        apt:
-          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-trusty-4.0']
-          packages: ['g++-6', 'clang-4.0', 'libgtest-dev', 'cmake', 'cmake-data']
-      env:
-        - TEST="clang++-4.0"
-      script:
-        - cmake .. -DCMAKE_CXX_COMPILER=clang++-4.0 -DCMAKE_BUILD_TYPE=Debug
+        - cmake .. -DCMAKE_CXX_COMPILER=g++-7 -DCMAKE_LINKER=$CLINKER -DCMAKE_BUILD_TYPE=Debug -DENABLE_CPP17:BOOL=TRUE
         - make -j2
         - ctest -VV
 
@@ -172,53 +114,8 @@ matrix:
           sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-trusty-5.0']
           packages: ['g++-6', 'clang-5.0', 'libgtest-dev', 'cmake', 'cmake-data']
       env:
-        - TEST="clang++-5.0 (C++14, ASAN)"
+        - TEST="clang++-5.0 (C++14, C++17, UBSAN, ASAN)"
       script:
-        - cmake .. -DCMAKE_CXX_COMPILER=clang++-5.0 -DCMAKE_BUILD_TYPE=Debug -DENABLE_ASAN:BOOL=TRUE
-        - make -j2
-        - ctest -VV
-    #
-    # Testing clang 5
-    #
-    - os: linux
-      addons:
-        apt:
-          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-trusty-5.0']
-          packages: ['g++-6', 'clang-5.0', 'libgtest-dev', 'cmake', 'cmake-data']
-      env:
-        - TEST="clang++-5.0 (C++14, UBSAN)"
-      script:
-        - cmake .. -DCMAKE_CXX_COMPILER=clang++-5.0 -DCMAKE_BUILD_TYPE=Debug -DENABLE_UBSAN:BOOL=TRUE
-        - make -j2
-        - ctest -VV
-
-
-    #
-    # Testing clang 5
-    #
-    - os: linux
-      addons:
-        apt:
-          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-trusty-5.0']
-          packages: ['g++-6', 'clang-5.0', 'libgtest-dev', 'cmake', 'cmake-data']
-      env:
-        - TEST="clang++-5.0 (C++17, ASAN)"
-      script:
-        - cmake .. -DCMAKE_CXX_COMPILER=clang++-5.0 -DCMAKE_BUILD_TYPE=Debug -DENABLE_CPP17:BOOL=TRUE -DENABLE_ASAN:BOOL=TRUE
-        - make -j2
-        - ctest -VV
-
-    #
-    # Testing clang 5
-    #
-    - os: linux
-      addons:
-        apt:
-          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-trusty-5.0']
-          packages: ['g++-6', 'clang-5.0', 'libgtest-dev', 'cmake', 'cmake-data']
-      env:
-        - TEST="clang++-5.0 (C++17, UBSAN)"
-      script:
-        - cmake .. -DCMAKE_CXX_COMPILER=clang++-5.0 -DCMAKE_BUILD_TYPE=Debug -DENABLE_CPP17:BOOL=TRUE -DENABLE_UBSAN:BOOL=TRUE
+        - cmake .. -DCMAKE_CXX_COMPILER=clang++-5.0 -DCMAKE_BUILD_TYPE=Debug -DENABLE_CPP17:BOOL=TRUE
         - make -j2
         - ctest -VV
