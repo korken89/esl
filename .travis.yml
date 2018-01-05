@@ -56,7 +56,7 @@ matrix:
       script:
         - cmake .. -DCMAKE_CXX_COMPILER=g++-7 -DENABLE_COVERAGE:BOOL=TRUE -DENABLE_CPP17:BOOL=TRUE
         - make -j2
-        - ctest -VV
+        - ctest --output-on-failure
         - bash <(curl -s https://codecov.io/bash) -x /usr/bin/gcov-7
 
     #
@@ -72,7 +72,7 @@ matrix:
       script:
         - cmake .. -DCMAKE_CXX_COMPILER=g++-5 -DCMAKE_BUILD_TYPE=Debug
         - make -j2
-        - ctest -VV
+        - ctest --output-on-failure
 
     #
     # Testing gcc 6
@@ -87,7 +87,7 @@ matrix:
       script:
         - cmake .. -DCMAKE_CXX_COMPILER=g++-6 -DCMAKE_BUILD_TYPE=Debug
         - make -j2
-        - ctest -VV
+        - ctest --output-on-failure
 
     #
     # Testing gcc 7
@@ -102,7 +102,7 @@ matrix:
       script:
         - cmake .. -DCMAKE_CXX_COMPILER=g++-7 -DCMAKE_BUILD_TYPE=Debug -DENABLE_CPP17:BOOL=TRUE
         - make -j2
-        - ctest -VV
+        - ctest --output-on-failure
 
     #
     # Testing clang 5
@@ -117,4 +117,4 @@ matrix:
       script:
         - cmake .. -DCMAKE_CXX_COMPILER=clang++-5.0 -DCMAKE_BUILD_TYPE=Debug -DENABLE_CPP17:BOOL=TRUE
         - make -j2
-        - ctest -VV
+        - ctest --output-on-failure
