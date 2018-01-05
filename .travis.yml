@@ -96,7 +96,7 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-7', 'libgtest-dev', 'cmake', 'cmake-data']
+          packages: ['g++-7', 'libgtest-dev', 'cmake', 'cmake-data', 'binutils']
       env:
         - TEST="g++-7 (C++14, ASAN)"
       script:
@@ -125,7 +125,7 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-7', 'libgtest-dev', 'cmake', 'cmake-data']
+          packages: ['g++-7', 'libgtest-dev', 'cmake', 'cmake-data', 'binutils']
       env:
         - TEST="g++-7 (C++17, ASAN)"
       script:
