@@ -50,19 +50,19 @@ macro(perform_test str)
   # UBSAN
   add_executable(test_${str}_ubsan test/src/test_${str}.cpp)
   set_target_properties(test_${str}_ubsan PROPERTIES COMPILE_FLAGS "-fsanitize=undefined -std=c++14 -g")
-  target_link_libraries(test_${str}_ubsan ${GTEST_BOTH_LIBRARIES} -fsanitize=undefined)
+  target_link_libraries(test_${str}_ubsan ${GTEST_BOTH_LIBRARIES} -fsanitize=undefined -fuse-ld=gold)
   add_test(NAME ${str}_ubsan COMMAND test_${str}_ubsan)
 
   # ASAN
   add_executable(test_${str}_asan test/src/test_${str}.cpp)
   set_target_properties(test_${str}_asan PROPERTIES COMPILE_FLAGS "-fsanitize=address -std=c++14 -g")
-  target_link_libraries(test_${str}_asan ${GTEST_BOTH_LIBRARIES} -fsanitize=address)
+  target_link_libraries(test_${str}_asan ${GTEST_BOTH_LIBRARIES} -fsanitize=address -fuse-ld=gold)
   add_test(NAME ${str}_asan COMMAND test_${str}_asan)
 
 if (ENABLE_COVERAGE)
   add_executable(test_${str}_cov test/src/test_${str}.cpp)
   set_target_properties(test_${str}_cov PROPERTIES COMPILE_FLAGS "-std=c++14 -O0 --coverage")
-  target_link_libraries(test_${str}_cov ${GTEST_BOTH_LIBRARIES} --coverage)
+  target_link_libraries(test_${str}_cov ${GTEST_BOTH_LIBRARIES} --coverage -fuse-ld=gold)
   add_test(NAME ${str}_cov COMMAND test_${str}_cov)
 endif()
 
@@ -70,19 +70,19 @@ endif()
     # UBSAN
     add_executable(test_${str}_ubsan_cpp17 test/src/test_${str}.cpp)
     set_target_properties(test_${str}_ubsan_cpp17 PROPERTIES COMPILE_FLAGS "-fsanitize=undefined -std=c++17 -g")
-    target_link_libraries(test_${str}_ubsan_cpp17 ${GTEST_BOTH_LIBRARIES} -fsanitize=undefined)
+    target_link_libraries(test_${str}_ubsan_cpp17 ${GTEST_BOTH_LIBRARIES} -fsanitize=undefined -fuse-ld=gold)
     add_test(NAME ${str}_ubsan_cpp17 COMMAND test_${str}_ubsan_cpp17)
 
     # ASAN
     add_executable(test_${str}_asan_cpp17 test/src/test_${str}.cpp)
     set_target_properties(test_${str}_asan_cpp17 PROPERTIES COMPILE_FLAGS "-fsanitize=address -std=c++17 -g")
-    target_link_libraries(test_${str}_asan_cpp17 ${GTEST_BOTH_LIBRARIES} -fsanitize=address)
+    target_link_libraries(test_${str}_asan_cpp17 ${GTEST_BOTH_LIBRARIES} -fsanitize=address -fuse-ld=gold)
     add_test(NAME ${str}_asan_cpp17 COMMAND test_${str}_asan_cpp17)
 
     if (ENABLE_COVERAGE)
       add_executable(test_${str}_cov_cpp17 test/src/test_${str}.cpp)
       set_target_properties(test_${str}_cov_cpp17 PROPERTIES COMPILE_FLAGS "-std=c++17 -O0 --coverage")
-      target_link_libraries(test_${str}_cov_cpp17 ${GTEST_BOTH_LIBRARIES} --coverage)
+      target_link_libraries(test_${str}_cov_cpp17 ${GTEST_BOTH_LIBRARIES} --coverage -fuse-ld=gold)
       add_test(NAME ${str}_cov_cpp17 COMMAND test_${str}_cov_cpp17)
     endif()
   endif()
