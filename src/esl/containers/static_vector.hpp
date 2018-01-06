@@ -12,6 +12,7 @@
 #include <utility>
 
 #include "../helpers/error_functions.hpp"
+#include "../helpers/utils.hpp"
 
 namespace esl
 {
@@ -33,7 +34,7 @@ class static_vector
 {
 protected:
   std::aligned_storage_t< sizeof(T), alignof(T) > buffer_[N];
-  std::size_t curr_idx_ = 0;
+  esl::uint_least_t<N> curr_idx_ = 0;
 
   using CheckBounds = std::integral_constant<
       bool, !std::is_same< ErrFun, error_functions::noop >::value >;
