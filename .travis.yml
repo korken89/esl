@@ -15,6 +15,8 @@ before_script:
   # -- workaround end
   - mkdir build
   - cd build
+  # enable colored output
+  - export GTEST_COLOR=1
 
 #
 # More complete test matrix
