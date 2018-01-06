@@ -12,17 +12,6 @@ option(ENABLE_CPP17 "Enable C++17" FALSE)
 
 set(Extra_Link_Flags "")
 
-#if (ENABLE_COVERAGE)
-#  add_compile_options(--coverage -O0)
-#  set(Extra_Link_Flags ${Extra_Link_Flags} "--coverage")
-#endif()
-#
-#if (ENABLE_CPP17)
-#  add_compile_options(-std=c++17)
-#else()
-#  set(CMAKE_CXX_STANDARD 14)
-#endif()
-
 ######################################
 # Find packages needed
 ######################################
