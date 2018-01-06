@@ -9,6 +9,7 @@
 #include <cstdint>
 #include <memory>
 #include <utility>
+#include <limits>
 
 namespace esl
 {
@@ -43,5 +44,26 @@ constexpr void repeat(F&& fun) noexcept(noexcept(details::repeat_impl(
 {
   details::repeat_impl(std::make_index_sequence< N >{}, std::forward< F >(fun));
 }
+
+//
+// Checkers to get the smallest type that can hold the number
+//
+
+// Unsigned integers
+template < std::uint64_t N >
+using uint_least_t = std::conditional_t<
+    (N > std::numeric_limits< std::uint32_t >::max()), std::uint64_t,
+    std::conditional_t<
+        (N > std::numeric_limits< std::uint16_t >::max()), std::uint32_t,
+        std::conditional_t< (N > std::numeric_limits< std::uint8_t >::max()),
+                            std::uint16_t, std::uint8_t > > >;
+// Signed integers
+template < std::uint64_t N >
+using int_least_t = std::conditional_t<
+    (N > std::numeric_limits< std::int32_t >::max()), std::int64_t,
+    std::conditional_t<
+        (N > std::numeric_limits< std::int16_t >::max()), std::int32_t,
+        std::conditional_t< (N > std::numeric_limits< std::int8_t >::max()),
+                            std::int16_t, std::int8_t > > >;
 
 }  // namespace esl
