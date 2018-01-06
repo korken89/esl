@@ -319,28 +319,28 @@ public:
 //
 // Common definitions
 //
-using vector2i = vector< int32_t, 2 >;
-using vector2u = vector< uint32_t, 2 >;
+using vector2i = vector< std::int32_t, 2 >;
+using vector2u = vector< std::uint32_t, 2 >;
 using vector2f = vector< float, 2 >;
 using vector2d = vector< double, 2 >;
 
-using vector3i = vector< int32_t, 3 >;
-using vector3u = vector< uint32_t, 3 >;
+using vector3i = vector< std::int32_t, 3 >;
+using vector3u = vector< std::uint32_t, 3 >;
 using vector3f = vector< float, 3 >;
 using vector3d = vector< double, 3 >;
 
-using vector4i = vector< int32_t, 4 >;
-using vector4u = vector< uint32_t, 4 >;
+using vector4i = vector< std::int32_t, 4 >;
+using vector4u = vector< std::uint32_t, 4 >;
 using vector4f = vector< float, 4 >;
 using vector4d = vector< double, 4 >;
 
-using vector5i = vector< int32_t, 5 >;
-using vector5u = vector< uint32_t, 5 >;
+using vector5i = vector< std::int32_t, 5 >;
+using vector5u = vector< std::uint32_t, 5 >;
 using vector5f = vector< float, 5 >;
 using vector5d = vector< double, 5 >;
 
-using vector6i = vector< int32_t, 6 >;
-using vector6u = vector< uint32_t, 6 >;
+using vector6i = vector< std::int32_t, 6 >;
+using vector6u = vector< std::uint32_t, 6 >;
 using vector6f = vector< float, 6 >;
 using vector6d = vector< double, 6 >;
 
