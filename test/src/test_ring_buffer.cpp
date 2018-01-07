@@ -238,6 +238,13 @@ TEST(test_ring_buffer, test_const_access)
   testconst(buf);
 }
 
+TEST(test_ring_buffer, test_sizeof)
+{
+  ASSERT_EQ(7, sizeof(esl::ring_buffer< std::uint8_t, 5>));
+  ASSERT_EQ(12, sizeof(esl::ring_buffer< std::int16_t, 5>));
+  ASSERT_EQ(24, sizeof(esl::ring_buffer< std::int32_t, 5>));
+}
+
 int main(int argc, char *argv[])
 {
   ::testing::InitGoogleTest(&argc, argv);

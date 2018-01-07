@@ -238,6 +238,13 @@ TEST(test_static_vector, test_const)
   testfun(vec);
 }
 
+TEST(test_static_vector, test_sizeof)
+{
+  ASSERT_EQ(6, sizeof(esl::static_vector< std::uint8_t, 5>));
+  ASSERT_EQ(12, sizeof(esl::static_vector< std::int16_t, 5>));
+  ASSERT_EQ(24, sizeof(esl::static_vector< std::int32_t, 5>));
+}
+
 int main(int argc, char *argv[])
 {
   ::testing::InitGoogleTest(&argc, argv);
