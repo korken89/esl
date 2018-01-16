@@ -23,25 +23,25 @@ template < bool... Bools >
 using all_true =
     std::is_same< bool_pack< Bools..., true >, bool_pack< true, Bools... > >;
 
-//
-// Simple compile-time repeat implementation with index
-//
-template < typename F, std::size_t... Is >
-constexpr void repeat_impl(std::index_sequence< Is... >, F&& fun)
-{
-  (void)std::initializer_list< int >{
-      (fun(std::integral_constant< std::size_t, Is >{}), 0)...};
-}
-
 }  // namespace details
 
 //
 // Simple compile-time repeat implementation with index
 //
-template < std::size_t N, typename F >
-constexpr void repeat(F&& fun)
+template < typename Fun, std::size_t... Is >
+constexpr void repeat(std::index_sequence< Is... >, Fun&& fun)
 {
-  details::repeat_impl(std::make_index_sequence< N >{}, std::forward< F >(fun));
+  (void)std::initializer_list< int >{
+      (fun(std::integral_constant< std::size_t, Is >{}), 0)...};
+}
+
+//
+// Simple compile-time repeat implementation with index
+//
+template < std::size_t N, typename Fun >
+constexpr void repeat(Fun&& fun)
+{
+  repeat(std::make_index_sequence< N >{}, std::forward< Fun >(fun));
 }
 
 //
