@@ -26,11 +26,11 @@ using all_true =
 //
 // Simple compile-time repeat implementation with index
 //
-template < std::size_t... Is, typename F >
-constexpr void repeat_impl(std::index_sequence< Is... >, F&& fun) noexcept(
-    noexcept((void)std::initializer_list< std::size_t >{(fun(Is), Is)...}))
+template < typename F, std::size_t... Is >
+constexpr void repeat_impl(std::index_sequence< Is... >, F&& fun)
 {
-  (void)std::initializer_list< std::size_t >{(fun(Is), Is)...};
+  (void)std::initializer_list< int >{
+      (fun(std::integral_constant< std::size_t, Is >{}), 0)...};
 }
 
 }  // namespace details
@@ -39,8 +39,7 @@ constexpr void repeat_impl(std::index_sequence< Is... >, F&& fun) noexcept(
 // Simple compile-time repeat implementation with index
 //
 template < std::size_t N, typename F >
-constexpr void repeat(F&& fun) noexcept(noexcept(details::repeat_impl(
-    std::make_index_sequence< N >{}, std::forward< F >(fun))))
+constexpr void repeat(F&& fun)
 {
   details::repeat_impl(std::make_index_sequence< N >{}, std::forward< F >(fun));
 }
