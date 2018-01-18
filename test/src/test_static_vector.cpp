@@ -19,6 +19,12 @@ struct test_throw
 
 int i = 11;
 
+TEST(test_static_vector, test_begin_end)
+{
+  esl::static_vector< int, 5, test_throw > vec;
+  ASSERT_EQ(vec.begin(), vec.end());
+}
+
 TEST(test_static_vector, test_push_back)
 {
   esl::static_vector< int, 5, test_throw > vec;
@@ -243,6 +249,99 @@ TEST(test_static_vector, test_sizeof)
   ASSERT_EQ(6, sizeof(esl::static_vector< std::uint8_t, 5>));
   ASSERT_EQ(12, sizeof(esl::static_vector< std::int16_t, 5>));
   ASSERT_EQ(24, sizeof(esl::static_vector< std::int32_t, 5>));
+}
+
+TEST(test_static_vector, test_erase_elem)
+{
+  esl::static_vector< int, 5, test_throw > vec;
+
+  vec.push_back(1);
+  vec.push_back(2);
+  vec.push_back(3);
+  vec.push_back(4);
+  vec.push_back(5);
+
+  vec.erase(vec.begin() + 3);
+
+  ASSERT_EQ(4, vec.size());
+  ASSERT_EQ(1, vec[0]);
+  ASSERT_EQ(2, vec[1]);
+  ASSERT_EQ(3, vec[2]);
+  ASSERT_EQ(5, vec[3]);
+
+  vec.erase(vec.begin());
+
+  ASSERT_EQ(3, vec.size());
+  ASSERT_EQ(2, vec[0]);
+  ASSERT_EQ(3, vec[1]);
+  ASSERT_EQ(5, vec[2]);
+
+  vec.erase(vec.begin());
+  vec.erase(vec.begin());
+  vec.erase(vec.begin());
+
+  ASSERT_EQ(0, vec.size());
+
+  vec.push_back(6);
+  vec.push_back(7);
+  vec.push_back(8);
+
+  ASSERT_EQ(3, vec.size());
+
+  vec.erase(vec.begin() + 1);
+  ASSERT_EQ(2, vec.size());
+  ASSERT_EQ(6, vec[0]);
+  ASSERT_EQ(8, vec[1]);
+
+  vec.erase(vec.begin() + 1);
+  ASSERT_EQ(1, vec.size());
+  ASSERT_EQ(6, vec[0]);
+
+  vec.erase(vec.begin());
+
+  ASSERT_EQ(0, vec.size());
+}
+
+TEST(test_static_vector, test_erase_range)
+{
+  esl::static_vector< int, 5, test_throw > vec;
+
+  vec.push_back(1);
+  vec.push_back(2);
+  vec.push_back(3);
+  vec.push_back(4);
+  vec.push_back(5);
+
+  vec.erase(vec.begin()+1, vec.begin()+3);
+
+  ASSERT_EQ(3, vec.size());
+  ASSERT_EQ(1, vec[0]);
+  ASSERT_EQ(4, vec[1]);
+  ASSERT_EQ(5, vec[2]);
+
+  vec.erase(vec.begin()+1, vec.begin()+3);
+  ASSERT_EQ(1, vec.size());
+  ASSERT_EQ(1, vec[0]);
+
+  ASSERT_EQ(vec.end(), vec.erase(vec.begin(), vec.begin()));
+
+  vec.push_back(6);
+  vec.push_back(7);
+  vec.push_back(8);
+
+  ASSERT_EQ(4, vec.size());
+
+  vec.erase(vec.begin(), vec.end());
+
+  ASSERT_EQ(0, vec.size());
+}
+
+TEST(test_static_vector, test_erase_error)
+{
+  esl::static_vector< int, 5, test_throw > vec;
+
+  EXPECT_ANY_THROW( vec.erase(vec.begin() + 2) );
+  EXPECT_ANY_THROW( vec.erase(vec.begin() + 2, vec.begin()) );
 }
 
 int main(int argc, char *argv[])

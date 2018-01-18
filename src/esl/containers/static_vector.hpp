@@ -250,6 +250,52 @@ public:
     reinterpret_cast< T * >(&buffer_[curr_idx_])->~T();
     --curr_idx_;
   }
+
+  constexpr auto erase(T* begin, T* end)
+  {
+    if (CheckBounds())
+    {
+      if (begin < this->begin() || end > this->end())
+        ErrFun{}("erase out of bounds");
+
+      if (begin > end)
+        ErrFun{}("erase: begin > end");
+    }
+
+    // Save end pointer
+    auto vend = this->end();
+
+    if (begin == end || empty())
+      return vend;
+
+    auto dist = std::distance(begin, end);
+
+    // Call destructors
+    auto curr = begin;
+
+    for (; curr != end; ++curr)
+      curr->~T();
+
+    // Move elements
+    auto next = end;
+
+    while (next != vend)
+    {
+      *begin = *next;
+      ++begin;
+      ++next;
+    }
+
+    // Update count
+    curr_idx_ -= dist;
+
+    return end;
+  }
+
+  constexpr auto erase(T* element)
+  {
+    return erase(element, element + 1);
+  }
 };
 
 }  // namespace esl
