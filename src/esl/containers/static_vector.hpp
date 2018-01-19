@@ -272,7 +272,7 @@ public:
     if (begin == end || empty())
       return vend;
 
-    auto dist = std::distance(begin, end);
+    const auto dist = std::distance(begin, end);
 
     // Call destructors
     auto curr = begin;
