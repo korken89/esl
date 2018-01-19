@@ -250,6 +250,11 @@ TEST(test_static_vector, test_erase_elem)
   esl::allocator< esl::static_vector< int, test_throw >, 5 > vec;
 
   vec.push_back(1);
+
+  vec.erase(vec.begin());
+  ASSERT_EQ(0, vec.size());
+
+  vec.push_back(1);
   vec.push_back(2);
   vec.push_back(3);
   vec.push_back(4);
