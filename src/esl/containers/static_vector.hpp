@@ -11,12 +11,13 @@
 #include <array>
 #include <utility>
 
+#include "allocator.hpp"
 #include "../helpers/error_functions.hpp"
 #include "../helpers/utils.hpp"
 
 namespace esl
 {
-template < typename T, std::size_t N, typename ErrFun = error_functions::noop >
+template < typename T, typename ErrFun = error_functions::noop >
 class static_vector;
 
 template < typename >
@@ -24,43 +25,46 @@ struct is_static_vector : std::false_type
 {
 };
 
-template < typename T, std::size_t N, typename ErrFun >
-struct is_static_vector< static_vector< T, N, ErrFun > > : std::true_type
+template < typename T, typename ErrFun >
+struct is_static_vector< static_vector< T, ErrFun > > : std::true_type
 {
 };
 
-template < typename T, std::size_t N, typename ErrFun >
+template < typename T, typename ErrFun >
 class static_vector
 {
+public:
+  //
+  // Standard type definitions
+  //
+  using size_type      = std::size_t;
+  using value_type     = T;
+  using reference      = T &;
+  using iterator       = T *;
+  using const_iterator = const T *;
+
 protected:
-  std::aligned_storage_t< sizeof(T), alignof(T) > buffer_[N];
-  esl::uint_least_t<N> curr_idx_ = 0;
+  T *buffer_;
+  size_type curr_idx_ = 0;
+  size_type capacity_ = 0;
 
   using CheckBounds = std::integral_constant<
       bool, !std::is_same< ErrFun, error_functions::noop >::value >;
 
 public:
   //
-  // Standard type definitions
-  //
-  using base_type      = std::array< T, N >;
-  using size_type      = typename base_type::size_type;
-  using value_type     = typename base_type::value_type;
-  using reference      = typename base_type::reference;
-  using iterator       = typename base_type::iterator;
-  using const_iterator = typename base_type::const_iterator;
-
-  //
   // Constructor / Destructor
   //
-  constexpr static_vector() noexcept
+  constexpr static_vector(T *buffer, size_type capacity) noexcept
+      : buffer_{buffer},
+        capacity_{capacity}
   {
   }
 
   ~static_vector() noexcept
   {
     for (auto idx = 0U; idx < curr_idx_; ++idx)
-      reinterpret_cast< T * >(&buffer_[idx])->~T();
+      (&buffer_[idx])->~T();
   }
 
   //
@@ -72,7 +76,7 @@ public:
       if (idx >= size())
         ErrFun{}("operator[] out of bounds");
 
-    return *reinterpret_cast< T * >(&buffer_[idx]);
+    return buffer_[idx];
   }
 
   constexpr const T &operator[](std::size_t idx) const
@@ -82,7 +86,7 @@ public:
       if (idx >= size())
         ErrFun{}("operator[] out of bounds");
 
-    return *reinterpret_cast< const T * >(&buffer_[idx]);
+    return buffer_[idx];
   }
 
   constexpr const T &front() const noexcept(noexcept(ErrFun{}("")))
@@ -91,7 +95,7 @@ public:
       if (empty())
         ErrFun{}("front on empty vector");
 
-    return *reinterpret_cast< const T * >(&buffer_[0]);
+    return buffer_[0];
   }
 
   constexpr T &front() noexcept(noexcept(ErrFun{}("")))
@@ -100,7 +104,7 @@ public:
       if (empty())
         ErrFun{}("front on empty vector");
 
-    return *reinterpret_cast< T * >(&buffer_[0]);
+    return buffer_[0];
   }
 
   constexpr const T &back() const noexcept(noexcept(ErrFun{}("")))
@@ -109,7 +113,7 @@ public:
       if (empty())
         ErrFun{}("back on empty vector");
 
-    return *reinterpret_cast< const T * >(&buffer_[curr_idx_ - 1]);
+    return buffer_[curr_idx_ - 1];
   }
 
   constexpr T &back() noexcept(noexcept(ErrFun{}("")))
@@ -118,33 +122,33 @@ public:
       if (empty())
         ErrFun{}("back on empty vector");
 
-    return *reinterpret_cast< T * >(&buffer_[curr_idx_ - 1]);
+    return buffer_[curr_idx_ - 1];
   }
 
-  constexpr auto data() noexcept
+  constexpr T *data() noexcept
   {
-    return reinterpret_cast< T * >(&buffer_[0]);
+    return buffer_;
   }
 
-  constexpr auto data() const noexcept
+  constexpr const T *data() const noexcept
   {
-    return reinterpret_cast< const T * >(&buffer_[0]);
+    return buffer_;
   }
 
   //
   // Capacity
   //
-  constexpr std::size_t size() const noexcept
+  constexpr size_type size() const noexcept
   {
     return curr_idx_;
   }
 
-  constexpr std::size_t capacity() const noexcept
+  constexpr size_type capacity() const noexcept
   {
-    return N;
+    return capacity_;
   }
 
-  constexpr std::size_t free() const noexcept
+  constexpr size_type free() const noexcept
   {
     return capacity() - size();
   }
@@ -156,30 +160,30 @@ public:
 
   constexpr bool full() const noexcept
   {
-    return (curr_idx_ >= N);
+    return (curr_idx_ >= capacity_);
   }
 
   //
   // Iterators
   //
-  constexpr auto begin() noexcept
+  constexpr T *begin() noexcept
   {
-    return reinterpret_cast< T * >(&buffer_[0]);
+    return &buffer_[0];
   }
 
-  constexpr auto end() noexcept
+  constexpr T *end() noexcept
   {
-    return reinterpret_cast< T * >(&buffer_[curr_idx_]);
+    return &buffer_[curr_idx_];
   }
 
-  constexpr auto cbegin() const noexcept
+  constexpr const T *cbegin() const noexcept
   {
-    return reinterpret_cast< const T * >(&buffer_[0]);
+    return &buffer_[0];
   }
 
-  constexpr auto cend() const noexcept
+  constexpr const T *cend() const noexcept
   {
-    return reinterpret_cast< const T * >(&buffer_[curr_idx_]);
+    return &buffer_[curr_idx_];
   }
 
   //
@@ -198,19 +202,20 @@ public:
   }
 
   template < typename T1, typename = std::enable_if_t<
-                              !is_static_vector< std::decay_t< T1 > >::value > >
+                              !is_static_vector< std::decay_t< T1 > >::value &&
+                              !is_allocator< std::decay_t< T1 > >::value > >
   constexpr void push_back(T1 &&val) noexcept(noexcept(ErrFun{}("")))
   {
     if (CheckBounds())
       if (full())
         ErrFun{}("push_back on full vector");
 
-    *reinterpret_cast< T * >(&buffer_[curr_idx_]) = std::forward< T1 >(val);
+    buffer_[curr_idx_] = std::forward< T1 >(val);
     ++curr_idx_;
   }
 
   constexpr void push_back(const T *ptr,
-                           std::size_t n) noexcept(noexcept(ErrFun{}("")))
+                           size_type n) noexcept(noexcept(ErrFun{}("")))
   {
     if (CheckBounds())
       if (free() < n)
@@ -226,8 +231,8 @@ public:
     push_back(buf, S);
   }
 
-  template < typename F, typename T2, std::size_t M >
-  constexpr void push_back(const static_vector< T2, M, F > &v) noexcept(
+  template < typename F, typename T2 >
+  constexpr void push_back(const static_vector< T2, F > &v) noexcept(
       noexcept(ErrFun{}("")))
   {
     push_back(v.cbegin(), v.size());
@@ -236,7 +241,7 @@ public:
   constexpr void clear() noexcept
   {
     for (auto idx = 0U; idx < curr_idx_; ++idx)
-      reinterpret_cast< T * >(&buffer_[idx])->~T();
+      (&buffer_[idx])->~T();
 
     curr_idx_ = 0;
   }
@@ -247,11 +252,11 @@ public:
       if (empty())
         ErrFun{}("pop_back on empty vector");
 
-    reinterpret_cast< T * >(&buffer_[curr_idx_])->~T();
     --curr_idx_;
+    (&buffer_[curr_idx_])->~T();
   }
 
-  constexpr auto erase(T* begin, T* end)
+  constexpr auto erase(T *begin, T *end)
   {
     if (CheckBounds())
     {
@@ -292,7 +297,7 @@ public:
     return end;
   }
 
-  constexpr auto erase(T* element)
+  constexpr auto erase(T *element)
   {
     return erase(element, element + 1);
   }

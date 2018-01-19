@@ -5,9 +5,9 @@
 
 #include <algorithm>
 #include <numeric>
+#include <stdexcept>
 #include <gtest/gtest.h>
 #include <esl/containers/static_vector.hpp>
-#include <stdexcept>
 
 struct test_throw
 {
@@ -21,13 +21,13 @@ int i = 11;
 
 TEST(test_static_vector, test_begin_end)
 {
-  esl::static_vector< int, 5, test_throw > vec;
+  esl::allocator< esl::static_vector< int, test_throw >, 5 > vec;
   ASSERT_EQ(vec.begin(), vec.end());
 }
 
 TEST(test_static_vector, test_push_back)
 {
-  esl::static_vector< int, 5, test_throw > vec;
+  esl::allocator< esl::static_vector< int, test_throw >, 5 > vec;
 
   vec.push_back(1);
   vec.emplace_back(2);
@@ -42,7 +42,7 @@ TEST(test_static_vector, test_push_back)
 
 TEST(test_static_vector, test_pop_back)
 {
-  esl::static_vector< int, 5, test_throw > vec;
+  esl::allocator< esl::static_vector< int, test_throw >, 5 > vec;
 
   vec.push_back(1);
   vec.pop_back();
@@ -52,7 +52,7 @@ TEST(test_static_vector, test_pop_back)
 
 TEST(test_static_vector, test_size)
 {
-  esl::static_vector< int, 5, test_throw > vec;
+  esl::allocator< esl::static_vector< int, test_throw >, 5 > vec;
 
   ASSERT_EQ(0, vec.size());
   ASSERT_EQ(5, vec.free());
@@ -104,7 +104,8 @@ TEST(test_static_vector, test_size)
 
   EXPECT_ANY_THROW( vec.push_back(a); );
 
-  esl::static_vector< int, 10, test_throw > b;
+  esl::allocator< esl::static_vector< int, test_throw >, 10 > b;
+
   b.push_back(3);
   b.push_back(7);
 
@@ -123,7 +124,7 @@ TEST(test_static_vector, test_size)
 
 TEST(test_static_vector, test_access)
 {
-  esl::static_vector< int, 5, test_throw > vec;
+  esl::allocator< esl::static_vector< int, test_throw >, 5 > vec;
 
   EXPECT_ANY_THROW( vec[0]; );
   EXPECT_ANY_THROW( vec.front(); );
@@ -170,7 +171,7 @@ TEST(test_static_vector, test_access)
 
 TEST(test_static_vector, test_access_and_modify)
 {
-  esl::static_vector< int, 5, test_throw > vec;
+  esl::allocator< esl::static_vector< int, test_throw >, 5 > vec;
 
   vec.push_back(1);
   vec.push_back(2);
@@ -197,7 +198,7 @@ TEST(test_static_vector, test_access_and_modify)
 
 TEST(test_static_vector, test_algorithm)
 {
-  esl::static_vector< int, 5, test_throw > vec;
+  esl::allocator< esl::static_vector< int, test_throw >, 5 > vec;
 
   vec.push_back(19);
   vec.push_back(13);
@@ -216,14 +217,14 @@ TEST(test_static_vector, test_algorithm)
   ASSERT_EQ(41, sum);
 }
 
-void testfun_throw(const esl::static_vector< int, 5, test_throw >& v)
+void testfun_throw(const esl::static_vector< int, test_throw >& v)
 {
   EXPECT_ANY_THROW( v.front(); );
   EXPECT_ANY_THROW( v.back(); );
   EXPECT_ANY_THROW( v[10]; );
 }
 
-void testfun(const esl::static_vector< int, 5, test_throw >& v)
+void testfun(const esl::static_vector< int, test_throw >& v)
 {
   (void)v.data();
   (void)v.front();
@@ -233,7 +234,7 @@ void testfun(const esl::static_vector< int, 5, test_throw >& v)
 
 TEST(test_static_vector, test_const)
 {
-  esl::static_vector< int, 5, test_throw > vec;
+  esl::allocator< esl::static_vector< int, test_throw >, 5 > vec;
 
   testfun_throw(vec);
 
@@ -244,16 +245,9 @@ TEST(test_static_vector, test_const)
   testfun(vec);
 }
 
-TEST(test_static_vector, test_sizeof)
-{
-  ASSERT_EQ(6, sizeof(esl::static_vector< std::uint8_t, 5>));
-  ASSERT_EQ(12, sizeof(esl::static_vector< std::int16_t, 5>));
-  ASSERT_EQ(24, sizeof(esl::static_vector< std::int32_t, 5>));
-}
-
 TEST(test_static_vector, test_erase_elem)
 {
-  esl::static_vector< int, 5, test_throw > vec;
+  esl::allocator< esl::static_vector< int, test_throw >, 5 > vec;
 
   vec.push_back(1);
   vec.push_back(2);
@@ -304,7 +298,7 @@ TEST(test_static_vector, test_erase_elem)
 
 TEST(test_static_vector, test_erase_range)
 {
-  esl::static_vector< int, 5, test_throw > vec;
+  esl::allocator< esl::static_vector< int, test_throw >, 5 > vec;
 
   vec.push_back(1);
   vec.push_back(2);
@@ -338,7 +332,7 @@ TEST(test_static_vector, test_erase_range)
 
 TEST(test_static_vector, test_erase_error)
 {
-  esl::static_vector< int, 5, test_throw > vec;
+  esl::allocator< esl::static_vector< int, test_throw >, 5 > vec;
 
   EXPECT_ANY_THROW( vec.erase(vec.begin() + 2) );
   EXPECT_ANY_THROW( vec.erase(vec.begin() + 2, vec.begin()) );
