@@ -202,8 +202,7 @@ public:
   }
 
   template < typename T1, typename = std::enable_if_t<
-                              !is_static_vector< std::decay_t< T1 > >::value &&
-                              !is_allocator< std::decay_t< T1 > >::value > >
+                              std::is_convertible< T1, T >::value > >
   constexpr void push_back(T1 &&val) noexcept(noexcept(ErrFun{}("")))
   {
     if (CheckBounds())

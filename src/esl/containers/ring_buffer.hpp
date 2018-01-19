@@ -34,8 +34,8 @@ class ring_buffer
 {
 protected:
   std::aligned_storage_t< sizeof(T), alignof(T) > buffer_[N];
-  esl::uint_least_t<N> head_idx_ = 0;
-  esl::uint_least_t<N> tail_idx_ = 0;
+  esl::uint_least_t< N > head_idx_ = 0;
+  esl::uint_least_t< N > tail_idx_ = 0;
 
   using CheckBounds = std::integral_constant<
       bool, !std::is_same< ErrFun, error_functions::noop >::value >;
@@ -149,7 +149,7 @@ public:
   }
 
   template < typename T1, typename = std::enable_if_t<
-                              !is_ring_buffer< std::decay_t< T1 > >::value > >
+                              std::is_convertible< T1, T >::value > >
   constexpr void push_back(T1&& val) noexcept(noexcept(ErrFun{}("")))
   {
     if (CheckBounds())
