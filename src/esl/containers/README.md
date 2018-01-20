@@ -130,6 +130,7 @@ A `ring_buffer` with a max size which refers to a statically allocated buffer, t
 * `clear`
 * `pop`
 
+### Example
 
 ```C++
 using namespace esl;
