@@ -132,8 +132,20 @@ A `ring_buffer` with a max size which refers to a statically allocated buffer, t
 
 
 ```C++
-allocate< ring_buffer< int >, 8 > buf;
+using namespace esl;
 
-buf.push_back(1);
-buf.pop();
+void foo(ring_buffer< int > &buf)
+{
+  // ...
+}
+
+allocate< ring_buffer< int >, 16 > my_buf;
+//        ^^^^ Container ^^^  ^^ Buffer Size
+
+int main()
+{
+  foo(my_buf);
+
+  // ...
+}
 ```
