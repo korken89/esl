@@ -37,8 +37,8 @@ TEST(test_static_vector, test_push_back)
   vec.push_back(1);
   vec.push_back(1);
 
-  EXPECT_ANY_THROW( vec.push_back(1); );
-  EXPECT_ANY_THROW( vec.emplace_back(2); );
+  EXPECT_ANY_THROW(vec.push_back(1););
+  EXPECT_ANY_THROW(vec.emplace_back(2););
 }
 
 TEST(test_static_vector, test_pop_back)
@@ -48,7 +48,7 @@ TEST(test_static_vector, test_pop_back)
   vec.push_back(1);
   vec.pop_back();
 
-  EXPECT_ANY_THROW( vec.pop_back(); );
+  EXPECT_ANY_THROW(vec.pop_back(););
 }
 
 TEST(test_static_vector, test_size)
@@ -103,7 +103,7 @@ TEST(test_static_vector, test_size)
   ASSERT_EQ(false, vec.empty());
   ASSERT_EQ(false, vec.full());
 
-  EXPECT_ANY_THROW( vec.push_back(a); );
+  EXPECT_ANY_THROW(vec.push_back(a););
 
   esl::allocate< esl::static_vector< int, test_throw >, 10 > b;
 
@@ -127,9 +127,9 @@ TEST(test_static_vector, test_access)
 {
   esl::allocate< esl::static_vector< int, test_throw >, 5 > vec;
 
-  EXPECT_ANY_THROW( vec[0]; );
-  EXPECT_ANY_THROW( vec.front(); );
-  EXPECT_ANY_THROW( vec.back(); );
+  EXPECT_ANY_THROW(vec[0];);
+  EXPECT_ANY_THROW(vec.front(););
+  EXPECT_ANY_THROW(vec.back(););
 
   vec.push_back(1);
   ASSERT_EQ(1, vec[0]);
@@ -220,9 +220,9 @@ TEST(test_static_vector, test_algorithm)
 
 void testfun_throw(const esl::static_vector< int, test_throw >& v)
 {
-  EXPECT_ANY_THROW( v.front(); );
-  EXPECT_ANY_THROW( v.back(); );
-  EXPECT_ANY_THROW( v[10]; );
+  EXPECT_ANY_THROW(v.front(););
+  EXPECT_ANY_THROW(v.back(););
+  EXPECT_ANY_THROW(v[10];);
 }
 
 void testfun(const esl::static_vector< int, test_throw >& v)
@@ -312,14 +312,14 @@ TEST(test_static_vector, test_erase_range)
   vec.push_back(4);
   vec.push_back(5);
 
-  vec.erase(vec.begin()+1, vec.begin()+3);
+  vec.erase(vec.begin() + 1, vec.begin() + 3);
 
   ASSERT_EQ(3, vec.size());
   ASSERT_EQ(1, vec[0]);
   ASSERT_EQ(4, vec[1]);
   ASSERT_EQ(5, vec[2]);
 
-  vec.erase(vec.begin()+1, vec.begin()+3);
+  vec.erase(vec.begin() + 1, vec.begin() + 3);
   ASSERT_EQ(1, vec.size());
   ASSERT_EQ(1, vec[0]);
 
@@ -340,11 +340,11 @@ TEST(test_static_vector, test_erase_error)
 {
   esl::allocate< esl::static_vector< int, test_throw >, 5 > vec;
 
-  EXPECT_ANY_THROW( vec.erase(vec.begin() + 2) );
-  EXPECT_ANY_THROW( vec.erase(vec.begin() + 2, vec.begin()) );
+  EXPECT_ANY_THROW(vec.erase(vec.begin() + 2));
+  EXPECT_ANY_THROW(vec.erase(vec.begin() + 2, vec.begin()));
 }
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();

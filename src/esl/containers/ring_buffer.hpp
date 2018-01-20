@@ -17,7 +17,6 @@
 
 namespace esl
 {
-
 //
 // ring_buffer definition
 //
@@ -59,15 +58,14 @@ struct allocate_capacity_check< ring_buffer< T, F >, Capacity >
                 "ring_buffer only accepts capacity in powers of 2.");
 };
 
-
 template < typename T, typename ErrFun >
 class ring_buffer
 {
 protected:
-  T *buffer_;
+  T* buffer_;
   std::size_t head_idx_ = 0;
   std::size_t tail_idx_ = 0;
-  std::size_t mask_ = 0;
+  std::size_t mask_     = 0;
 
   using CheckBounds = std::integral_constant<
       bool, !std::is_same< ErrFun, error_functions::noop >::value >;
@@ -93,7 +91,7 @@ public:
   //
   // Constructor
   //
-  constexpr ring_buffer(T *buffer, size_type capacity) noexcept
+  constexpr ring_buffer(T* buffer, size_type capacity) noexcept
       : buffer_{buffer},
         mask_{capacity - 1}
   {
