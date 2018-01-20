@@ -25,6 +25,27 @@ public:
 };
 ```
 
+If a container needs to be used with `allocate`, then the following things should be done:
+
+* The container must have a type named `value_type`, the `aligned_storage` is based on this.
+* The container's constructor must be of the form `container(buffer, capacity, args...)`
+* If there a need to have constraints on the capacity, the following trait needs to be specialized:
+
+```C++
+template < typename, std::size_t >
+struct allocate_capacity_check : std::true_type
+{
+};
+
+// Example - max uint8
+template < typename T, std::size_t Capacity >
+struct allocate_capacity_check< my_container< T >, Capacity >
+    : std::integral_constant<bool, (Capacity < 256) >
+{
+  static_assert(Capacity < 256, "Capacity cannot be more than 256.");
+};
+```
+
 ## `static_vector.hpp`
 
 An vector with a max size, that is statically allocated. It supports most of the operations that `std::vector` has, which includes:
