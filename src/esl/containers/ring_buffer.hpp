@@ -10,6 +10,7 @@
 #include <cstring>
 #include <array>
 #include <utility>
+#include <tuple>
 
 #include "../helpers/error_functions.hpp"
 #include "../helpers/utils.hpp"
@@ -206,6 +207,10 @@ public:
         ErrFun{}("pop on empty buffer");
 
     increment_tail();
+  }
+
+  constexpr std::pair<T*, std::size_t> read_chunk(std::size_t read_size)
+  {
   }
 };
 

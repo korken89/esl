@@ -80,7 +80,10 @@ int main()
 
 A `ring_buffer` with a max size which refers to a statically allocated buffer. It has optional bounds checking.
 
-**Note:** This implementation has that the maximum number of elements that can be stored is N-1. This to not have a full/empty flag which couples the writing and reading, it is thread safe to read and write to the buffer.
+### Note
+
+* This implementation has that the maximum number of elements that can be stored is N-1. This to not have a full/empty flag which couples the writing and reading, it is thread safe to read and write to the buffer.
+* This implementation is designed for types without destructor.
 
 ### Usage
 
@@ -108,8 +111,9 @@ A `ring_buffer` with a max size which refers to a statically allocated buffer. I
 * `pop`
 
 
-The `static_vector` does not have storage itself, as can be seen from its constructor:
-
 ```C++
-static_vector(T *buffer, size_type capacity)
+ring_buffer< int, 5 > buf;
+
+buf.push_back(1);
+buf.pop();
 ```
