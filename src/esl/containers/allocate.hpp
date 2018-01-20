@@ -11,12 +11,22 @@
 
 namespace esl
 {
+template < typename, std::size_t >
+struct allocate_capacity_check : std::true_type
+{
+};
+
 //
 // Allocator for creating aligned buffers
 //
 template < typename Container, std::size_t Capacity >
 class allocate : public Container
 {
+  // Check the capacity check
+  static_assert(
+      allocate_capacity_check< Container, Capacity >::value,
+      "The capacity does not follow the requirement of the container.");
+
   using T = typename Container::value_type;
   std::aligned_storage_t< sizeof(T), alignof(T) > buffer_[Capacity];
 
