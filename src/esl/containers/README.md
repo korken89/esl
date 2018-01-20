@@ -4,7 +4,26 @@ Static sized containers, meant for use on embedded platforms without memory allo
 
 ## `allocate.hpp`
 
-A helper for generating storage for a `Container`, usage example in `static_vector`.
+A helper for generating storage for a `Container`, example:
+
+```C++
+allocate< my_container, 5 > c;
+```
+
+This will make allocate inherit from `my_container`, where `my_container` must define the `value_type`. `allocate` will create an `aligned_storage` based on `value_type` and the `size` that will be sent to the constructor of `container`. Conceptually like this:
+
+```C++
+template < typename Container, std::size_t Capacity >
+class allocate : public Container
+{
+  std::aligned_storage_t< ... > buffer_[Capacity];
+
+public:
+  allocate(args...) : Container(buffer_, Capacity, args...)
+  {
+  }
+};
+```
 
 ## `static_vector.hpp`
 
