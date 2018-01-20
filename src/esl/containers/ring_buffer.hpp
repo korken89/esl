@@ -54,10 +54,10 @@ public:
   //
   // Standard type definitions
   //
-  using base_type  = std::array< T, N >;
-  using size_type  = typename base_type::size_type;
-  using value_type = typename base_type::value_type;
-  using reference  = typename base_type::reference;
+  using base_type  = T[N];
+  using size_type  = std::size_t;
+  using value_type = T;
+  using reference  = T&;
 
   //
   // Constructor
@@ -108,17 +108,17 @@ public:
   //
   // Capacity
   //
-  constexpr std::size_t size() const noexcept
+  constexpr auto size() const noexcept
   {
     return (head_idx_ - tail_idx_ + N) % N;
   }
 
-  constexpr std::size_t capacity() const noexcept
+  constexpr auto capacity() const noexcept
   {
     return N - 1;
   }
 
-  constexpr std::size_t free() const noexcept
+  constexpr auto free() const noexcept
   {
     return capacity() - size();
   }

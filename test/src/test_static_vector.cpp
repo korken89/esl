@@ -21,13 +21,13 @@ int i = 11;
 
 TEST(test_static_vector, test_begin_end)
 {
-  esl::allocator< esl::static_vector< int, test_throw >, 5 > vec;
+  esl::allocate< esl::static_vector< int, test_throw >, 5 > vec;
   ASSERT_EQ(vec.begin(), vec.end());
 }
 
 TEST(test_static_vector, test_push_back)
 {
-  esl::allocator< esl::static_vector< int, test_throw >, 5 > vec;
+  esl::allocate< esl::static_vector< int, test_throw >, 5 > vec;
 
   vec.push_back(1);
   vec.emplace_back(2);
@@ -42,7 +42,7 @@ TEST(test_static_vector, test_push_back)
 
 TEST(test_static_vector, test_pop_back)
 {
-  esl::allocator< esl::static_vector< int, test_throw >, 5 > vec;
+  esl::allocate< esl::static_vector< int, test_throw >, 5 > vec;
 
   vec.push_back(1);
   vec.pop_back();
@@ -52,7 +52,7 @@ TEST(test_static_vector, test_pop_back)
 
 TEST(test_static_vector, test_size)
 {
-  esl::allocator< esl::static_vector< int, test_throw >, 5 > vec;
+  esl::allocate< esl::static_vector< int, test_throw >, 5 > vec;
 
   ASSERT_EQ(0, vec.size());
   ASSERT_EQ(5, vec.free());
@@ -104,7 +104,7 @@ TEST(test_static_vector, test_size)
 
   EXPECT_ANY_THROW( vec.push_back(a); );
 
-  esl::allocator< esl::static_vector< int, test_throw >, 10 > b;
+  esl::allocate< esl::static_vector< int, test_throw >, 10 > b;
 
   b.push_back(3);
   b.push_back(7);
@@ -124,7 +124,7 @@ TEST(test_static_vector, test_size)
 
 TEST(test_static_vector, test_access)
 {
-  esl::allocator< esl::static_vector< int, test_throw >, 5 > vec;
+  esl::allocate< esl::static_vector< int, test_throw >, 5 > vec;
 
   EXPECT_ANY_THROW( vec[0]; );
   EXPECT_ANY_THROW( vec.front(); );
@@ -171,7 +171,7 @@ TEST(test_static_vector, test_access)
 
 TEST(test_static_vector, test_access_and_modify)
 {
-  esl::allocator< esl::static_vector< int, test_throw >, 5 > vec;
+  esl::allocate< esl::static_vector< int, test_throw >, 5 > vec;
 
   vec.push_back(1);
   vec.push_back(2);
@@ -198,7 +198,7 @@ TEST(test_static_vector, test_access_and_modify)
 
 TEST(test_static_vector, test_algorithm)
 {
-  esl::allocator< esl::static_vector< int, test_throw >, 5 > vec;
+  esl::allocate< esl::static_vector< int, test_throw >, 5 > vec;
 
   vec.push_back(19);
   vec.push_back(13);
@@ -234,7 +234,7 @@ void testfun(const esl::static_vector< int, test_throw >& v)
 
 TEST(test_static_vector, test_const)
 {
-  esl::allocator< esl::static_vector< int, test_throw >, 5 > vec;
+  esl::allocate< esl::static_vector< int, test_throw >, 5 > vec;
 
   testfun_throw(vec);
 
@@ -247,7 +247,7 @@ TEST(test_static_vector, test_const)
 
 TEST(test_static_vector, test_erase_elem)
 {
-  esl::allocator< esl::static_vector< int, test_throw >, 5 > vec;
+  esl::allocate< esl::static_vector< int, test_throw >, 5 > vec;
 
   vec.push_back(1);
 
@@ -303,7 +303,7 @@ TEST(test_static_vector, test_erase_elem)
 
 TEST(test_static_vector, test_erase_range)
 {
-  esl::allocator< esl::static_vector< int, test_throw >, 5 > vec;
+  esl::allocate< esl::static_vector< int, test_throw >, 5 > vec;
 
   vec.push_back(1);
   vec.push_back(2);
@@ -337,7 +337,7 @@ TEST(test_static_vector, test_erase_range)
 
 TEST(test_static_vector, test_erase_error)
 {
-  esl::allocator< esl::static_vector< int, test_throw >, 5 > vec;
+  esl::allocate< esl::static_vector< int, test_throw >, 5 > vec;
 
   EXPECT_ANY_THROW( vec.erase(vec.begin() + 2) );
   EXPECT_ANY_THROW( vec.erase(vec.begin() + 2, vec.begin()) );
