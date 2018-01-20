@@ -97,12 +97,13 @@ int main()
 
 ## `ring_buffer.hpp`
 
-A `ring_buffer` with a max size which refers to a statically allocated buffer. It has optional bounds checking.
+A `ring_buffer` with a max size which refers to a statically allocated buffer, the same as `static_vector`. It has optional bounds checking.
 
 ### Note
 
 * This implementation has that the maximum number of elements that can be stored is N-1. This to not have a full/empty flag which couples the writing and reading, it is thread safe to read and write to the buffer.
 * This implementation is designed for types without destructor.
+* Only accepts sizes in powers of 2, will give compile error else (when using `allocate`).
 
 ### Usage
 
@@ -131,7 +132,7 @@ A `ring_buffer` with a max size which refers to a statically allocated buffer. I
 
 
 ```C++
-ring_buffer< int, 5 > buf;
+allocate< ring_buffer< int >, 8 > buf;
 
 buf.push_back(1);
 buf.pop();
