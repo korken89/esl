@@ -21,8 +21,10 @@ class allocate : public Container
   std::aligned_storage_t< sizeof(T), alignof(T) > buffer_[Capacity];
 
 public:
-  constexpr allocate() noexcept
-      : Container(reinterpret_cast< T* >(buffer_), Capacity)
+  template < typename... Ts >
+  constexpr allocate(Ts&&... args) noexcept
+      : Container(reinterpret_cast< T* >(buffer_), Capacity,
+                  std::forward< Ts >(args)...)
   {
   }
 };
