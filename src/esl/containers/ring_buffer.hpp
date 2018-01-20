@@ -209,9 +209,9 @@ public:
     increment_tail();
   }
 
-  constexpr std::pair<T*, std::size_t> read_chunk(std::size_t read_size)
-  {
-  }
+  // constexpr std::pair<T*, std::size_t> read_chunk(std::size_t read_size)
+  // {
+  // }
 };
 
 }  // namespace esl
