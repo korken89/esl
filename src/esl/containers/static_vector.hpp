@@ -11,9 +11,7 @@
 #include <array>
 #include <utility>
 
-#include "allocate.hpp"
 #include "../helpers/error_functions.hpp"
-#include "../helpers/utils.hpp"
 
 namespace esl
 {

@@ -7,6 +7,7 @@
 #include <numeric>
 #include <stdexcept>
 #include <gtest/gtest.h>
+#include <esl/containers/allocate.hpp>
 #include <esl/containers/static_vector.hpp>
 
 struct test_throw

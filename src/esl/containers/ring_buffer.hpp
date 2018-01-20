@@ -12,50 +12,80 @@
 #include <utility>
 #include <tuple>
 
+#include "allocate.hpp"
 #include "../helpers/error_functions.hpp"
-#include "../helpers/utils.hpp"
 
 namespace esl
 {
-template < typename T, std::size_t N, typename ErrFun = error_functions::noop >
+
+//
+// ring_buffer definition
+//
+template < typename T, typename ErrFun = error_functions::noop >
 class ring_buffer;
 
+//
+// is_ring_buffer helper
+//
 template < typename >
 struct is_ring_buffer : std::false_type
 {
 };
 
-template < typename T, std::size_t N, typename ErrFun >
-struct is_ring_buffer< ring_buffer< T, N, ErrFun > > : std::true_type
+template < typename T, typename ErrFun >
+struct is_ring_buffer< ring_buffer< T, ErrFun > > : std::true_type
 {
 };
 
-template < typename T, std::size_t N, typename ErrFun >
+namespace details
+{
+//
+// Checker for powers of 2
+//
+constexpr bool is_power_of_2(std::size_t x)
+{
+  return ((x != 0) && !(x & (x - 1)));
+}
+}
+
+//
+// allocate specialized trait to force ring_buffers to be power of 2
+//
+template < typename T, typename F, std::size_t Capacity >
+struct allocate_capacity_check< ring_buffer< T, F >, Capacity >
+    : std::integral_constant< bool, details::is_power_of_2(Capacity) >
+{
+  static_assert(details::is_power_of_2(Capacity),
+                "ring_buffer only accepts capacity in powers of 2.");
+};
+
+
+template < typename T, typename ErrFun >
 class ring_buffer
 {
 protected:
-  std::aligned_storage_t< sizeof(T), alignof(T) > buffer_[N];
-  esl::uint_least_t< N > head_idx_ = 0;
-  esl::uint_least_t< N > tail_idx_ = 0;
+  T *buffer_;
+  std::size_t head_idx_ = 0;
+  std::size_t tail_idx_ = 0;
+  std::size_t mask_ = 0;
 
   using CheckBounds = std::integral_constant<
       bool, !std::is_same< ErrFun, error_functions::noop >::value >;
 
   constexpr void increment_head() noexcept
   {
-    head_idx_ = (head_idx_ + 1) % N;
+    head_idx_ = (head_idx_ + 1) & mask_;
   }
 
   constexpr void increment_tail() noexcept
   {
-    tail_idx_ = (tail_idx_ + 1) % N;
+    tail_idx_ = (tail_idx_ + 1) & mask_;
   }
 
 public:
   //
   // Standard type definitions
   //
-  using base_type  = T[N];
   using size_type  = std::size_t;
   using value_type = T;
   using reference  = T&;
@@ -63,7 +93,9 @@ public:
   //
   // Constructor
   //
-  constexpr ring_buffer() noexcept
+  constexpr ring_buffer(T *buffer, size_type capacity) noexcept
+      : buffer_{buffer},
+        mask_{capacity - 1}
   {
   }
 
@@ -76,7 +108,7 @@ public:
       if (empty())
         ErrFun{}("front on empty buffer");
 
-    return *reinterpret_cast< const T* >(&buffer_[tail_idx_]);
+    return buffer_[tail_idx_];
   }
 
   constexpr T& front() noexcept(noexcept(ErrFun{}("")))
@@ -85,7 +117,7 @@ public:
       if (empty())
         ErrFun{}("front on empty buffer");
 
-    return *reinterpret_cast< T* >(&buffer_[tail_idx_]);
+    return buffer_[tail_idx_];
   }
 
   constexpr const T& back() const noexcept(noexcept(ErrFun{}("")))
@@ -94,7 +126,7 @@ public:
       if (empty())
         ErrFun{}("back on empty buffer");
 
-    return *reinterpret_cast< const T* >(&buffer_[head_idx_ - 1]);
+    return buffer_[head_idx_ - 1];
   }
 
   constexpr T& back() noexcept(noexcept(ErrFun{}("")))
@@ -103,7 +135,7 @@ public:
       if (empty())
         ErrFun{}("back on empty buffer");
 
-    return *reinterpret_cast< T* >(&buffer_[head_idx_ - 1]);
+    return buffer_[head_idx_ - 1];
   }
 
   //
@@ -111,12 +143,12 @@ public:
   //
   constexpr auto size() const noexcept
   {
-    return (head_idx_ - tail_idx_ + N) % N;
+    return (head_idx_ - tail_idx_ + mask_ + 1) & mask_;
   }
 
   constexpr auto capacity() const noexcept
   {
-    return N - 1;
+    return mask_;
   }
 
   constexpr auto free() const noexcept
@@ -157,7 +189,7 @@ public:
       if (full())
         ErrFun{}("push_back on full buffer");
 
-    *reinterpret_cast< T* >(&buffer_[head_idx_]) = std::forward< T1 >(val);
+    buffer_[head_idx_] = std::forward< T1 >(val);
     increment_head();
   }
 
@@ -168,7 +200,7 @@ public:
       if (free() < n)
         ErrFun{}("push_back: array too large");
 
-    const auto space_left_head = N - head_idx_;
+    const auto space_left_head = mask_ + 1 - head_idx_;
 
     if (space_left_head >= n)
     {

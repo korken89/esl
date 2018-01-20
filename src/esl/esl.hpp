@@ -6,6 +6,7 @@
 #pragma once
 
 // Containers
+#include <esl/containers/allocate.hpp>
 #include <esl/containers/ring_buffer.hpp>
 #include <esl/containers/static_vector.hpp>
 
