@@ -13,8 +13,8 @@
 // Math
 #include <esl/math/vector.hpp>
 
-// Function/Method Delegate
-#include <esl/callable/delegate.hpp>
+// Callable
+#include <esl/callable/function.hpp>
 #include <esl/callable/function_view.hpp>
 
 // Helpers

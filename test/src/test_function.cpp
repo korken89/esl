@@ -4,7 +4,7 @@
 //          http://www.boost.org/LICENSE_1_0.txt)
 
 #include <gtest/gtest.h>
-#include <esl/callable/delegate.hpp>
+#include <esl/callable/function.hpp>
 
 struct bar
 {
@@ -24,9 +24,9 @@ int foo(int i)
   return i * i;
 }
 
-using callback = esl::delegate< int(int), 3 * sizeof(void*) >;
+using callback = esl::function< int(int), 3 * sizeof(void*) >;
 
-TEST(test_delegate_new, constructor_test)
+TEST(test_function, constructor_test)
 {
   auto d = callback([](int i){ return i + 10; });
 
@@ -42,7 +42,7 @@ TEST(test_delegate_new, constructor_test)
   ASSERT_EQ(15, d3(5));
 }
 
-TEST(test_delegate_new, function_test)
+TEST(test_function, function_test)
 {
   int i  = 9;
   auto d = callback::from< foo >();
@@ -57,7 +57,7 @@ TEST(test_delegate_new, function_test)
   ASSERT_EQ(81, d2(i));
 }
 
-TEST(test_delegate_new, method_test)
+TEST(test_function, method_test)
 {
   bar a;
 
@@ -74,7 +74,7 @@ TEST(test_delegate_new, method_test)
   ASSERT_EQ(81, d2(i));
 }
 
-TEST(test_delegate_new, const_method_test)
+TEST(test_function, const_method_test)
 {
   int i = 9;
   bar a;
@@ -106,7 +106,7 @@ void callback_test(const callback& cb)
   ASSERT_EQ(81, d(i));
 }
 
-TEST(test_delegate_new, const_ref_test)
+TEST(test_function, const_ref_test)
 {
   bar a;
 
@@ -117,7 +117,7 @@ TEST(test_delegate_new, const_ref_test)
   callback_test(d2);
 }
 
-TEST(test_delegate_new, comparison_test)
+TEST(test_function, comparison_test)
 {
   bar a;
 
@@ -134,7 +134,7 @@ TEST(test_delegate_new, comparison_test)
   ASSERT_EQ(true, d != d2);
 }
 
-TEST(test_delegate_new, copy_test)
+TEST(test_function, copy_test)
 {
   bar a;
 

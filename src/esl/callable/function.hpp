@@ -21,10 +21,10 @@ namespace esl
 //
 template < typename, std::size_t Size = sizeof(void*),
            std::size_t Align = alignof(void*) >
-class delegate;
+class function;
 
 template < typename Ret, typename... Args, std::size_t Size, std::size_t Align >
-class delegate< Ret(Args...), Size, Align >
+class function< Ret(Args...), Size, Align >
 {
 private:
   //
@@ -85,24 +85,24 @@ private:
 
 public:
   // default constructors
-  constexpr delegate(const delegate&) = default;
-  constexpr delegate(delegate&&)      = default;
-  constexpr delegate()                = delete;  // There is no empty delegate
+  constexpr function(const function&) = default;
+  constexpr function(function&&)      = default;
+  constexpr function()                = delete;  // There is no empty function
 
   // assignment operators
-  constexpr delegate& operator=(const delegate&) = default;
-  constexpr delegate& operator=(delegate&&) = default;
+  constexpr function& operator=(const function&) = default;
+  constexpr function& operator=(function&&) = default;
 
   //
   // Explicit construction
   //
   template < typename F, typename = std::enable_if_t<
-                             !std::is_convertible< F, delegate >::value > >
-  explicit constexpr delegate(F&& fun)
+                             !std::is_convertible< F, function >::value > >
+  explicit constexpr function(F&& fun)
       : vtable_{make_vtable< std::decay_t< F > >()}
   {
     static_assert(sizeof(std::decay_t< F >) <= Size,
-                  "The callable does not fit inside the delegate");
+                  "The callable does not fit inside the function");
 
     new (&storage_) F{std::forward< F >(fun)};
   }
@@ -110,7 +110,7 @@ public:
   //
   // Delete stuff when done
   //
-  ~delegate()
+  ~function()
   {
     vtable_.destroy(&storage_);
   }
@@ -127,70 +127,70 @@ public:
   //
   // Operators
   //
-  constexpr bool operator==(const delegate& other) const noexcept
+  constexpr bool operator==(const function& other) const noexcept
   {
     return (vtable_.call == other.vtable_.call) &&
            (vtable_.destroy == other.vtable_.destroy);
   }
 
-  constexpr bool operator!=(const delegate& other) const noexcept
+  constexpr bool operator!=(const function& other) const noexcept
   {
     return !(*this == other);
   }
 
   //
-  // Helpers to create delegates
+  // Helpers to create function
   //
 
   // Make from Methods
   template < typename Obj >
-  constexpr static delegate from(Obj& obj, Ret (Obj::*mptr)(Args...)) noexcept
+  constexpr static function from(Obj& obj, Ret (Obj::*mptr)(Args...)) noexcept
   {
-    return delegate{[&obj, mptr](Args... args) -> Ret {
+    return function{[&obj, mptr](Args... args) -> Ret {
       return (obj.*mptr)(args...);  // call method
     }};
   }
 
   template < typename Obj, Ret (Obj::*mptr)(Args...) >
-  constexpr static delegate from(Obj& obj) noexcept
+  constexpr static function from(Obj& obj) noexcept
   {
-    return delegate{[&obj](Args... args) -> Ret {
+    return function{[&obj](Args... args) -> Ret {
       return (obj.*mptr)(args...);  // call method
     }};
   }
 
   // Make from Const methods
   template < typename Obj >
-  constexpr static delegate from(Obj& obj,
+  constexpr static function from(Obj& obj,
                                  Ret (Obj::*mptr)(Args...) const) noexcept
   {
-    return delegate{[&obj, mptr](Args... args) -> Ret {
+    return function{[&obj, mptr](Args... args) -> Ret {
       return (obj.*mptr)(args...);  // call method
     }};
   }
 
   template < typename Obj, Ret (Obj::*mptr)(Args...) const >
-  constexpr static delegate from(Obj& obj) noexcept
+  constexpr static function from(Obj& obj) noexcept
   {
-    return delegate{[&obj](Args... args) -> Ret {
+    return function{[&obj](Args... args) -> Ret {
       return (obj.*mptr)(args...);  // call method
     }};
   }
 
   // Make from Functions
-  constexpr static delegate from(Ret (&fptr)(Args...)) noexcept
+  constexpr static function from(Ret (&fptr)(Args...)) noexcept
   {
-    return delegate{[&fptr](Args... args) -> Ret {
+    return function{[&fptr](Args... args) -> Ret {
       return (fptr)(args...);  // call function
     }};
   }
 
   template < Ret (*fptr)(Args...) >
-  constexpr static delegate from() noexcept
+  constexpr static function from() noexcept
   {
     static_assert(fptr != nullptr, "Function pointer must not be null");
 
-    return delegate{[](Args... args) -> Ret {
+    return function{[](Args... args) -> Ret {
       return (*fptr)(args...);  // call function
     }};
   }

@@ -1,4 +1,4 @@
-# A fast and simple `delegate` and `function_view` implementation
+# A fast and simple `function` and `function_view` implementation
 
 ### Overall aims
 
@@ -7,7 +7,7 @@
 * No usage of dynamic memory allocation
 * No default constructor, there is no such thing as an empty callable
 
-## `delegate.hpp`
+## `function.hpp`
 
 ### Extras
 
@@ -17,36 +17,36 @@
 
 ### Usage
 
-Defining a `delegate`:
+Defining a `function`:
 ```C++
-using cb = delegate< return_type (parameters...), storage size, alignment = alignof(void *) >;
+using cb = function< return_type (parameters...), storage size, alignment = alignof(void *) >;
 
-// Example - define a delegate
-using my_delegate = delegate< int(int), sizeof(void *) >;
+// Example - define a function
+using my_function = function< int(int), sizeof(void *) >;
 
-auto d1 = my_delegate(<any callable>);
+auto d1 = my_function(<any callable>);
 
 // Lambdas without capture
-auto d2 = my_delegate([](int i){ return i * i; });
+auto d2 = my_function([](int i){ return i * i; });
 
 // Lambdas can have capture
-auto d3 = my_delegate([&some_var](int i){ return i * i + some_var; });
+auto d3 = my_function([&some_var](int i){ return i * i + some_var; });
 ```
 
 #### Helpers
 
-A `delegate` made from a function:
+A `function` made from a function:
 ```C++
 int bar(int);
 
 // Compile-time known
-auto d1 = my_delegate::from<bar>();
+auto d1 = my_function::from<bar>();
 
 // Runtime known
-auto d2 = my_delegate(bar);
+auto d2 = my_function(bar);
 ```
 
-A `delegate` made from a method:
+A `function` made from a method:
 ```C++
 struct foo {
   int bar(int);
@@ -55,10 +55,10 @@ struct foo {
 foo myFoo;
 
 // Compile-time known
-auto d1 = my_delegate::from<foo, &foo::bar>(myFoo);
+auto d1 = my_function::from<foo, &foo::bar>(myFoo);
 
 // Runtime known
-auto d2 = my_delegate::from(myFoo, &foo::bar);
+auto d2 = my_function::from(myFoo, &foo::bar);
 ```
 
 Invoking any of the previous:
@@ -114,7 +114,7 @@ A `function_view` made from a lambda **without** capture:
 // Lambda without capture is implicitly convertible to a function pointer
 auto d1 = my_func::from([](int i){ return i * i; });
 ```
-If the lambda needs capture, then `delegate` should be used.
+If the lambda needs capture, then `function` should be used.
 
 Invoking any of the previous:
 ```C++
