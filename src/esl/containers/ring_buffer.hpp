@@ -95,6 +95,14 @@ public:
       : buffer_{buffer},
         mask_{capacity - 1}
   {
+    if (CheckBounds())
+    {
+      if (!details::is_power_of_2(capacity))
+        ErrFun{}("construction with size not a power of 2");
+
+      if (buffer == nullptr)
+        ErrFun{}("construction with nullptr");
+    }
   }
 
   //
