@@ -102,19 +102,14 @@ public:
     const T qyw = this->y() * this->w();
     const T qzw = this->z() * this->w();
 
-    ret.x() = (qwsq + qxsq - qysq - qzsq) * v.x();
-    ret.x() += (T(2) * (qxy - qzw)) * v.y();
-    ret.x() += (T(2) * (qxz + qyw)) * v.z();
+    return {(qwsq + qxsq - qysq - qzsq) * v.x() + (T(2) * (qxy - qzw)) * v.y() +
+                (T(2) * (qxz + qyw)) * v.z(),
 
-    ret.y() = (T(2) * (qxy + qzw)) * v.x();
-    ret.y() += (qwsq - qxsq + qysq - qzsq) * v.y();
-    ret.y() += (T(2) * (qyz - qxw)) * v.z();
+            (T(2) * (qxy + qzw)) * v.x() + (qwsq - qxsq + qysq - qzsq) * v.y() +
+                (T(2) * (qyz - qxw)) * v.z(),
 
-    ret.z() = (T(2) * (qxz - qyw)) * v.x();
-    ret.z() += (T(2) * (qyz + qxw)) * v.y();
-    ret.z() += (qwsq - qxsq - qysq + qzsq) * v.z();
-
-    return ret;
+            (T(2) * (qxz - qyw)) * v.x() + (T(2) * (qyz + qxw)) * v.y() +
+                (qwsq - qxsq - qysq + qzsq) * v.z()};
   }
 
   constexpr quaternion& operator*=(const quaternion& rhs) noexcept
