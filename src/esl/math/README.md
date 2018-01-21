@@ -62,7 +62,7 @@ auto b = v1[0];
 
 ## `quaternion.hpp`
 
-An basic quaternion, inherits from `vector< T, 4 >` so all vector operations works as well. Note that the internal storage is `[x, y, z, w]`.
+An basic passive Hamilton quaternion, inherits from `vector< T, 4 >` so all vector operations works as well. Note that the internal storage is `[x, y, z, w]`.
 
 ### Example
 
@@ -80,7 +80,6 @@ auto q2 = esl::quaternionf(0, 2, 0, 4);
 auto q2 = esl::quaternionf(0, 2, 0, 4);
 
 auto q3 = q1.conj();
-auto v1 = q1.vec();
 auto q4 = q1 * q2;
 
 // Rotations (all 3 are the same)
@@ -90,4 +89,5 @@ auto v4 = v1 * q1;
 
 // Extra access
 auto a = v1.w();
+auto v1 = q1.vec();
 ```
