@@ -9,6 +9,8 @@
 #include <memory>
 #include <type_traits>
 
+#include "../helpers/feature_defs.hpp"
+
 // For Cortex-M, sizeof(void*) bytes local storage is enough for function
 // pointers and method pointers that are know at compile time.
 // For runtime method pointers, 3*sizeof(void*) is needed, or if
@@ -37,7 +39,7 @@ private:
   };
 
 // Check for constexpr lambdas
-#if !defined(__cpp_constexpr) || (__cpp_constexpr < 201603)
+#ifndef ESL_CONSTEXPR_LAMBDA_AVAILABLE
 
   // No constexpr lambdas, use statics to populate the vtable
   template < typename F >

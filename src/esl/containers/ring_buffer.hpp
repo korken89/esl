@@ -14,6 +14,7 @@
 
 #include "allocate.hpp"
 #include "../helpers/error_functions.hpp"
+#include "../helpers/feature_defs.hpp"
 
 namespace esl
 {
@@ -95,7 +96,7 @@ public:
       : buffer_{buffer},
         mask_{capacity - 1}
   {
-    if (CheckBounds())
+    if ESL_CONSTEXPR_IF (CheckBounds())
     {
       if (!details::is_power_of_2(capacity))
         ErrFun{}("construction with size not a power of 2");
@@ -110,7 +111,7 @@ public:
   //
   constexpr const T& front() const noexcept(noexcept(ErrFun{}("")))
   {
-    if (CheckBounds())
+    if ESL_CONSTEXPR_IF (CheckBounds())
       if (empty())
         ErrFun{}("front on empty buffer");
 
@@ -119,7 +120,7 @@ public:
 
   constexpr T& front() noexcept(noexcept(ErrFun{}("")))
   {
-    if (CheckBounds())
+    if ESL_CONSTEXPR_IF (CheckBounds())
       if (empty())
         ErrFun{}("front on empty buffer");
 
@@ -128,7 +129,7 @@ public:
 
   constexpr const T& back() const noexcept(noexcept(ErrFun{}("")))
   {
-    if (CheckBounds())
+    if ESL_CONSTEXPR_IF (CheckBounds())
       if (empty())
         ErrFun{}("back on empty buffer");
 
@@ -137,7 +138,7 @@ public:
 
   constexpr T& back() noexcept(noexcept(ErrFun{}("")))
   {
-    if (CheckBounds())
+    if ESL_CONSTEXPR_IF (CheckBounds())
       if (empty())
         ErrFun{}("back on empty buffer");
 
@@ -178,7 +179,7 @@ public:
   template < typename... Args >
   constexpr void emplace_back(Args&&... args) noexcept(noexcept(ErrFun{}("")))
   {
-    if (CheckBounds())
+    if ESL_CONSTEXPR_IF (CheckBounds())
       if (full())
         ErrFun{}("emplace_back on full buffer");
 
@@ -191,7 +192,7 @@ public:
                               std::is_convertible< T1, T >::value > >
   constexpr void push_back(T1&& val) noexcept(noexcept(ErrFun{}("")))
   {
-    if (CheckBounds())
+    if ESL_CONSTEXPR_IF (CheckBounds())
       if (full())
         ErrFun{}("push_back on full buffer");
 
@@ -202,7 +203,7 @@ public:
   constexpr void push_back(const T* ptr,
                            std::size_t n) noexcept(noexcept(ErrFun{}("")))
   {
-    if (CheckBounds())
+    if ESL_CONSTEXPR_IF (CheckBounds())
       if (free() < n)
         ErrFun{}("push_back: array too large");
 
@@ -240,7 +241,7 @@ public:
 
   constexpr void pop() noexcept(noexcept(ErrFun{}("")))
   {
-    if (CheckBounds())
+    if ESL_CONSTEXPR_IF (CheckBounds())
       if (empty())
         ErrFun{}("pop on empty buffer");
 

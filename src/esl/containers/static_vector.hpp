@@ -12,6 +12,7 @@
 #include <utility>
 
 #include "../helpers/error_functions.hpp"
+#include "../helpers/feature_defs.hpp"
 
 namespace esl
 {
@@ -70,7 +71,7 @@ public:
   //
   constexpr T &operator[](std::size_t idx) noexcept(noexcept(ErrFun{}("")))
   {
-    if (CheckBounds())
+    if ESL_CONSTEXPR_IF (CheckBounds())
       if (idx >= size())
         ErrFun{}("operator[] out of bounds");
 
@@ -80,7 +81,7 @@ public:
   constexpr const T &operator[](std::size_t idx) const
       noexcept(noexcept(ErrFun{}("")))
   {
-    if (CheckBounds())
+    if ESL_CONSTEXPR_IF (CheckBounds())
       if (idx >= size())
         ErrFun{}("operator[] out of bounds");
 
@@ -89,7 +90,7 @@ public:
 
   constexpr const T &front() const noexcept(noexcept(ErrFun{}("")))
   {
-    if (CheckBounds())
+    if ESL_CONSTEXPR_IF (CheckBounds())
       if (empty())
         ErrFun{}("front on empty vector");
 
@@ -98,7 +99,7 @@ public:
 
   constexpr T &front() noexcept(noexcept(ErrFun{}("")))
   {
-    if (CheckBounds())
+    if ESL_CONSTEXPR_IF (CheckBounds())
       if (empty())
         ErrFun{}("front on empty vector");
 
@@ -107,7 +108,7 @@ public:
 
   constexpr const T &back() const noexcept(noexcept(ErrFun{}("")))
   {
-    if (CheckBounds())
+    if ESL_CONSTEXPR_IF (CheckBounds())
       if (empty())
         ErrFun{}("back on empty vector");
 
@@ -116,7 +117,7 @@ public:
 
   constexpr T &back() noexcept(noexcept(ErrFun{}("")))
   {
-    if (CheckBounds())
+    if ESL_CONSTEXPR_IF (CheckBounds())
       if (empty())
         ErrFun{}("back on empty vector");
 
@@ -190,7 +191,7 @@ public:
   template < typename... Args >
   constexpr void emplace_back(Args &&... args) noexcept(noexcept(ErrFun{}("")))
   {
-    if (CheckBounds())
+    if ESL_CONSTEXPR_IF (CheckBounds())
       if (full())
         ErrFun{}("emplace_back on full vector");
 
@@ -203,7 +204,7 @@ public:
                               std::is_convertible< T1, T >::value > >
   constexpr void push_back(T1 &&val) noexcept(noexcept(ErrFun{}("")))
   {
-    if (CheckBounds())
+    if ESL_CONSTEXPR_IF (CheckBounds())
       if (full())
         ErrFun{}("push_back on full vector");
 
@@ -214,7 +215,7 @@ public:
   constexpr void push_back(const T *ptr,
                            size_type n) noexcept(noexcept(ErrFun{}("")))
   {
-    if (CheckBounds())
+    if ESL_CONSTEXPR_IF (CheckBounds())
       if (free() < n)
         ErrFun{}("push_back: array too large");
 
@@ -245,7 +246,7 @@ public:
 
   constexpr void pop_back() noexcept(noexcept(ErrFun{}("")))
   {
-    if (CheckBounds())
+    if ESL_CONSTEXPR_IF (CheckBounds())
       if (empty())
         ErrFun{}("pop_back on empty vector");
 
@@ -255,7 +256,7 @@ public:
 
   constexpr auto erase(T *begin, T *end)
   {
-    if (CheckBounds())
+    if ESL_CONSTEXPR_IF (CheckBounds())
     {
       if (begin < this->begin() || end > this->end())
         ErrFun{}("erase out of bounds");
