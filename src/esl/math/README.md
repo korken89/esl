@@ -1,6 +1,6 @@
 # A collection of math for C++
 
-## `vector`
+## `vector.hpp`
 
 An vector (in a mathematical sense) which works as expected.
 
@@ -58,4 +58,36 @@ auto s3 = v1.sum();
 // Some access
 auto a = v1.x();
 auto b = v1[0];
+```
+
+## `quaternion.hpp`
+
+An basic quaternion, inherits from `vector< T, 4 >` so all vector operations works as well. Note that the internal storage is `[x, y, z, w]`.
+
+### Example
+
+```C++
+// Basic definition
+using vtype = esl::quaternion< type >;
+
+// Predefined quaternions
+using quaternionf = quaternion< float >;
+using quaterniond = quaternion< double >;
+
+// Added operations
+auto q1 = esl::quaternionf(1, 2, 3, 4);
+auto q2 = esl::quaternionf(0, 2, 0, 4);
+auto q2 = esl::quaternionf(0, 2, 0, 4);
+
+auto q3 = q1.conj();
+auto v1 = q1.vec();
+auto q4 = q1 * q2;
+
+// Rotations (all 3 are the same)
+auto v2 = q1.rotate(v1);
+auto v3 = q1 * v1;
+auto v4 = v1 * q1;
+
+// Extra access
+auto a = v1.w();
 ```
