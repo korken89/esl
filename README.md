@@ -31,7 +31,7 @@ Light-weight `std::function` in a sense with both an owning and non-owning imple
 
 #### Math functions
 
-Currently there is a `vector` implementation (in a mathematical sense), see the local [README](src/esl/math/README.md) for more information and usage.
+Currently there is a `vector` (in a mathematical sense) and a `quaternion` implementation, see the local [README](src/esl/math/README.md) for more information and usage.
 
 #### Helper functions
 
