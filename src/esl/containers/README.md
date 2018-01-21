@@ -10,7 +10,7 @@ A helper for generating storage for a `Container`, example:
 allocate< my_container, 5 > c;
 ```
 
-This will make allocate inherit from `my_container`, where `my_container` must define the `value_type`. `allocate` will create an `aligned_storage` based on `value_type` and the `size` that will be sent to the constructor of `container`. Conceptually like this:
+This will make allocate inherit from `my_container`, where `allocate` will create an `aligned_storage` based on `value_type` and the `capacity`, that will be sent to the constructor of `my_container`. Conceptually like this:
 
 ```C++
 template < typename Container, std::size_t Capacity >
@@ -27,21 +27,24 @@ public:
 
 If a container needs to be used with `allocate`, then the following things should be done:
 
-* The container must have a type named `value_type`, the `aligned_storage` is based on this.
-* The container's constructor must be of the form `container(buffer, capacity, args...)`
-* If there a need to have constraints on the capacity, the following trait needs to be specialized:
+1. The container must have a type named `value_type`, the `aligned_storage` is based on this.
+2. The container's constructor must be of the form `container(buffer, capacity, args...)`
+3. (optional) If there a need to have constraints on the capacity, the following trait needs to be specialized:
 
 ```C++
+// Base case in allocate.hpp
 template < typename, std::size_t >
 struct allocate_capacity_check : std::true_type
 {
 };
 
-// Example - max uint8
+// Example extension - Capacity < 256 (for uint8)
 template < typename T, std::size_t Capacity >
 struct allocate_capacity_check< my_container< T >, Capacity >
     : std::integral_constant<bool, (Capacity < 256) >
 {
+  // Optional extra error message, speciallized for the specific case rather
+  // than the "generic" error message in allocate
   static_assert(Capacity < 256, "Capacity cannot be more than 256.");
 };
 ```
