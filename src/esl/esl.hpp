@@ -12,6 +12,7 @@
 
 // Math
 #include <esl/math/vector.hpp>
+#include <esl/math/quaternion.hpp>
 
 // Callable
 #include <esl/callable/function.hpp>

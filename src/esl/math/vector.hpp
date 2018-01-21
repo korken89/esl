@@ -9,14 +9,14 @@
 #include <cmath>
 #include <array>
 #include <type_traits>
-#include <esl/helpers/utils.hpp>
+#include "../helpers/utils.hpp"
 
 namespace esl
 {
 template < typename T, std::size_t N >
 class vector
 {
-private:
+protected:
   T storage_[N];
 
 public:
