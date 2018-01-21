@@ -1,8 +1,13 @@
+##          Copyright Emil Fresk 2017-2018.
+## Distributed under the Boost Software License, Version 1.0.
+##    (See accompanying file LICENSE.md or copy at
+##          http://www.boost.org/LICENSE_1_0.txt)
+
 cmake_minimum_required(VERSION 3.1)
 project(esl)
 
 ########################################
-# Enable C++14 and other C++ flags
+# C++ flags
 ########################################
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 add_compile_options(-Wall -Wextra -Wpedantic -Werror)
