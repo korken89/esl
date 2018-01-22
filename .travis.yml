@@ -57,7 +57,7 @@ matrix:
         - TEST="Style Checker"
       script:
         - |
-          find ./src -iname *.h -o -iname *.cpp -o -iname *.hpp -o -iname *.cc -o -iname *.c | xargs clang-format-5.0 -style=file -i
+          find ../src -iname *.h -o -iname *.cpp -o -iname *.hpp -o -iname *.cc -o -iname *.c | xargs clang-format-5.0 -style=file -i
           if [[ -n $(git diff --name-status) ]]; then
             echo "Run clang-format before submitting..."
             echo ""
