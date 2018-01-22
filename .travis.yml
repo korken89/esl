@@ -61,9 +61,9 @@ matrix:
           if [[ -n $(git diff --name-status) ]]; then
             echo "Run clang-format before submitting..."
             echo ""
-            echo "Files not conforming to style:"
+            echo "Files not conforming to style (git diff):"
             echo ""
-            git diff --name-status
+            git diff
             exit -1
           fi
 
