@@ -28,8 +28,8 @@ private:
   //
   // constructor - private so users must use factory functions
   //
-  constexpr function_view(void* obj, Caller caller) noexcept : object_(obj),
-                                                               caller_(caller)
+  constexpr function_view(void* obj, Caller caller) noexcept
+      : object_(obj), caller_(caller)
   {
   }
 
@@ -46,8 +46,9 @@ public:
   //
   // Construction from callable
   //
-  template < typename F, typename = std::enable_if_t<
-                             !std::is_convertible< F, function_view >::value > >
+  template < typename F,
+             typename = std::enable_if_t<
+                 !std::is_convertible< F, function_view >::value > >
   constexpr function_view(F&& fun) noexcept
   {
     *this = function_view::from(std::forward< F >(fun));

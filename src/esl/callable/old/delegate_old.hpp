@@ -57,8 +57,8 @@ private:
   }
 
   // constructor - private so users must use factory functions
-  constexpr delegate(void* obj, CallbackType callback) noexcept : obj_(obj),
-                                                                  cb_(callback)
+  constexpr delegate(void* obj, CallbackType callback) noexcept
+      : obj_(obj), cb_(callback)
   {
   }
 

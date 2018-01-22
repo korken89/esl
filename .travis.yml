@@ -51,13 +51,13 @@ matrix:
     - os: linux
       addons:
         apt:
-          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-trusty-5.0']
-          packages: ['clang-format-5.0', 'libgtest-dev', 'cmake', 'cmake-data']
+          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-trusty-4.0']
+          packages: ['clang-format-4.0', 'libgtest-dev', 'cmake', 'cmake-data']
       env:
         - TEST="Style Checker"
       script:
         - |
-          find ../src -iname *.h -o -iname *.cpp -o -iname *.hpp -o -iname *.cc -o -iname *.c | xargs clang-format-5.0 -style=file -i
+          find ../src -iname *.h -o -iname *.cpp -o -iname *.hpp -o -iname *.cc -o -iname *.c | xargs clang-format-4.0 -style=file -i
           if [[ -n $(git diff --name-status) ]]; then
             echo "Run clang-format before submitting..."
             echo ""

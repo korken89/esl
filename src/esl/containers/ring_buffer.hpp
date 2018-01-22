@@ -93,8 +93,7 @@ public:
   // Constructor
   //
   constexpr ring_buffer(T* buffer, size_type capacity) noexcept
-      : buffer_{buffer},
-        mask_{capacity - 1}
+      : buffer_{buffer}, mask_{capacity - 1}
   {
     if
       ESL_CONSTEXPR_IF(CheckBounds())
@@ -194,8 +193,9 @@ public:
     increment_head();
   }
 
-  template < typename T1, typename = std::enable_if_t<
-                              std::is_convertible< T1, T >::value > >
+  template <
+      typename T1,
+      typename = std::enable_if_t< std::is_convertible< T1, T >::value > >
   constexpr void push_back(T1&& val) noexcept(noexcept(ErrFun{}("")))
   {
     if

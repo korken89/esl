@@ -98,8 +98,9 @@ public:
   //
   // Explicit construction
   //
-  template < typename F, typename = std::enable_if_t<
-                             !std::is_convertible< F, function >::value > >
+  template < typename F,
+             typename = std::enable_if_t<
+                 !std::is_convertible< F, function >::value > >
   explicit constexpr function(F&& fun)
       : vtable_{make_vtable< std::decay_t< F > >()}
   {

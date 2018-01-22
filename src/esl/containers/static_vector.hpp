@@ -55,8 +55,7 @@ public:
   // Constructor / Destructor
   //
   constexpr static_vector(T *buffer, size_type capacity) noexcept
-      : buffer_{buffer},
-        capacity_{capacity}
+      : buffer_{buffer}, capacity_{capacity}
   {
   }
 
@@ -207,8 +206,9 @@ public:
     ++curr_idx_;
   }
 
-  template < typename T1, typename = std::enable_if_t<
-                              std::is_convertible< T1, T >::value > >
+  template <
+      typename T1,
+      typename = std::enable_if_t< std::is_convertible< T1, T >::value > >
   constexpr void push_back(T1 &&val) noexcept(noexcept(ErrFun{}("")))
   {
     if
