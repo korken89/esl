@@ -46,6 +46,28 @@ matrix:
           fi
 
     #
+    # Testing for style
+    #
+    - os: linux
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['libgtest-dev', 'cmake', 'cmake-data', 'binutils-gold']
+      env:
+        - TEST="Style Checker"
+      script:
+        - |
+          find ./src -iname *.h -o -iname *.cpp -o -iname *.hpp -o -iname *.cc -o -iname *.c | xargs clang-format -style=file -i
+          if [[ -n $(git diff --name-status) ]]; then
+            echo "Run clang-format before submitting..."
+            echo ""
+            echo "Files not conforming to style:"
+            echo ""
+            git diff --name-status
+            exit -1
+          fi
+
+    #
     # Coverage
     #
     - os: linux
