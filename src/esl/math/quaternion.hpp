@@ -136,18 +136,18 @@ public:
   }
 
   // Quaternion times vector is assumed to be a rotation
-  constexpr friend vector< T, 3 > operator*(const quaternion& lhs,
-                                            const vector< T, 3 >& rhs) noexcept
-  {
-    return lhs.rotate(rhs);
-  }
+  // constexpr friend vector< T, 3 > operator*(const quaternion& lhs,
+  //                                           const vector< T, 3 >& rhs) noexcept
+  // {
+  //   return lhs.rotate(rhs);
+  // }
 
   // Quaternion times vector is assumed to be a rotation
-  constexpr friend vector< T, 3 > operator*(const vector< T, 3 >& lhs,
-                                            const quaternion& rhs) noexcept
-  {
-    return rhs.rotate(lhs);
-  }
+  // constexpr friend vector< T, 3 > operator*(const vector< T, 3 >& lhs,
+  //                                           const quaternion& rhs) noexcept
+  // {
+  //   return rhs.rotate(lhs);
+  // }
 };
 
 //

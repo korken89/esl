@@ -105,13 +105,20 @@ TEST(test_quaternion, test_vector_math)
   q2.normalize();
 
   auto q3 = q1 * q2;
+  auto q4 = q1 * q2.conj();
 
   ASSERT_DOUBLE_EQ(1.0, q3.norm());
+  ASSERT_DOUBLE_EQ(1.0, q4.norm());
 
   ASSERT_DOUBLE_EQ(0.32530002431617777, q3[0]);
   ASSERT_DOUBLE_EQ(0.65060004863235532, q3[1]);
   ASSERT_DOUBLE_EQ(0.68313005106397318, q3[2]);
   ASSERT_DOUBLE_EQ(-0.065060004863235626, q3[3]);
+
+  ASSERT_DOUBLE_EQ(-0.09759000729485337, q4[0]);
+  ASSERT_DOUBLE_EQ(-0.19518001458970666, q4[1]);
+  ASSERT_DOUBLE_EQ(0, q4[2]);
+  ASSERT_DOUBLE_EQ(0.9759000729485332, q4[3]);
 }
 
 TEST(test_quaternion, test_vector_math_operators)
@@ -122,8 +129,8 @@ TEST(test_quaternion, test_vector_math_operators)
   esl::vector3d v{1, 1, 1};
 
   auto rv1 = q1.rotate( v );
-  auto rv2 = q1 * v;
-  auto rv3 = v * q1;
+  // auto rv2 = q1 * v;
+  // auto rv3 = v * q1;
 
   ASSERT_DOUBLE_EQ(v.norm(), rv1.norm());
   ASSERT_DOUBLE_EQ(v.norm(), rv2.norm());
@@ -133,13 +140,13 @@ TEST(test_quaternion, test_vector_math_operators)
   ASSERT_DOUBLE_EQ(1.3999999999999999, rv1[1]);
   ASSERT_DOUBLE_EQ(0.99999999999999978, rv1[2]);
 
-  ASSERT_DOUBLE_EQ(0.19999999999999984, rv2[0]);
-  ASSERT_DOUBLE_EQ(1.3999999999999999, rv2[1]);
-  ASSERT_DOUBLE_EQ(0.99999999999999978, rv2[2]);
+  // ASSERT_DOUBLE_EQ(0.19999999999999984, rv2[0]);
+  // ASSERT_DOUBLE_EQ(1.3999999999999999, rv2[1]);
+  // ASSERT_DOUBLE_EQ(0.99999999999999978, rv2[2]);
 
-  ASSERT_DOUBLE_EQ(0.19999999999999984, rv3[0]);
-  ASSERT_DOUBLE_EQ(1.3999999999999999, rv3[1]);
-  ASSERT_DOUBLE_EQ(0.99999999999999978, rv3[2]);
+  // ASSERT_DOUBLE_EQ(0.19999999999999984, rv3[0]);
+  // ASSERT_DOUBLE_EQ(1.3999999999999999, rv3[1]);
+  // ASSERT_DOUBLE_EQ(0.99999999999999978, rv3[2]);
 }
 
 void testconst(const esl::quaterniond& v)
