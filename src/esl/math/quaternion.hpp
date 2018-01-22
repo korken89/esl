@@ -104,10 +104,8 @@ public:
 
     return {(qwsq + qxsq - qysq - qzsq) * v.x() + (T(2) * (qxy - qzw)) * v.y() +
                 (T(2) * (qxz + qyw)) * v.z(),
-
             (T(2) * (qxy + qzw)) * v.x() + (qwsq - qxsq + qysq - qzsq) * v.y() +
                 (T(2) * (qyz - qxw)) * v.z(),
-
             (T(2) * (qxz - qyw)) * v.x() + (T(2) * (qyz + qxw)) * v.y() +
                 (qwsq - qxsq - qysq + qzsq) * v.z()};
   }
@@ -137,7 +135,8 @@ public:
 
   // Quaternion times vector is assumed to be a rotation
   // constexpr friend vector< T, 3 > operator*(const quaternion& lhs,
-  //                                           const vector< T, 3 >& rhs) noexcept
+  //                                           const vector< T, 3 >& rhs)
+  //                                           noexcept
   // {
   //   return lhs.rotate(rhs);
   // }

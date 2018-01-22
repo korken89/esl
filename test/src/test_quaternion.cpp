@@ -106,9 +106,13 @@ TEST(test_quaternion, test_vector_math)
 
   auto q3 = q1 * q2;
   auto q4 = q1 * q2.conj();
+  auto q5 = q1.conj() * q2;
+  auto q6 = q1.conj() * q2.conj();
 
   ASSERT_DOUBLE_EQ(1.0, q3.norm());
   ASSERT_DOUBLE_EQ(1.0, q4.norm());
+  ASSERT_DOUBLE_EQ(1.0, q5.norm());
+  ASSERT_DOUBLE_EQ(1.0, q6.norm());
 
   ASSERT_DOUBLE_EQ(0.32530002431617777, q3[0]);
   ASSERT_DOUBLE_EQ(0.65060004863235532, q3[1]);
@@ -119,6 +123,16 @@ TEST(test_quaternion, test_vector_math)
   ASSERT_DOUBLE_EQ(-0.19518001458970666, q4[1]);
   ASSERT_DOUBLE_EQ(0, q4[2]);
   ASSERT_DOUBLE_EQ(0.9759000729485332, q4[3]);
+
+  ASSERT_DOUBLE_EQ(0.19518001458970666, q5[0]);
+  ASSERT_DOUBLE_EQ(0, q5[1]);
+  ASSERT_DOUBLE_EQ(0.0975900072948533, q5[2]);
+  ASSERT_DOUBLE_EQ(0.9759000729485332, q5[3]);
+
+  ASSERT_DOUBLE_EQ(-0.422890031611031, q6[0]);
+  ASSERT_DOUBLE_EQ(-0.45542003404264869, q6[1]);
+  ASSERT_DOUBLE_EQ(-0.78072005835882652, q6[2]);
+  ASSERT_DOUBLE_EQ(-0.0650600048632356, q6[3]);
 }
 
 TEST(test_quaternion, test_vector_math_operators)
