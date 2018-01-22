@@ -26,7 +26,7 @@ public:
   {
   }
 
-  constexpr quaternion(T x, T y, T z, T w) : vector< T, 4 >(x, y, z, w)
+  constexpr quaternion(T w, T x, T y, T z) : vector< T, 4 >(x, y, z, w)
   {
   }
 
@@ -82,7 +82,7 @@ public:
 
   constexpr quaternion conj() const
   {
-    return quaternion(-x(), -y(), -z(), w());
+    return quaternion(w(), -x(), -y(), -z());
   }
 
   constexpr vector< T, 3 > rotate(vector< T, 3 > v) const
