@@ -9,9 +9,8 @@ namespace esl
 {
 namespace details
 {
-
 // Singleton generator
-template <class C>
+template < class C >
 struct singleton
 {
   static C& instance()
@@ -21,13 +20,13 @@ struct singleton
   }
 };
 
-} // namespace details
+}  // namespace details
 
 // Singleton helper
-template <class C>
+template < class C >
 constexpr C& get_singleton()
 {
-  return details::singleton<C>::instance();
+  return details::singleton< C >::instance();
 }
 
 }  // namespace esl

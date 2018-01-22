@@ -65,7 +65,7 @@ private:
 public:
   // default constructors
   delegate(const delegate&) = default;
-  delegate(delegate&&)      = default;
+  delegate(delegate&&) = default;
 
   // assignment operators
   delegate& operator=(const delegate&) = default;

@@ -7,7 +7,6 @@
 
 namespace esl
 {
-
 // Helper to extract function signature
 template < typename T >
 struct FunctionInfo;
@@ -35,20 +34,20 @@ struct MethodInfo< R (C::*)(A...) const > : MethodInfo< R (C::*)(A...) >
 {
 };
 
-} // namespace esl
+}  // namespace esl
 
 // Generate function delegate
-#define DELEGATE_FUNCTION(fptr)                               \
-  [&]() {                                                     \
-    using minfo = esl::FunctionInfo< decltype(fptr) >;        \
-    using del   = esl::delegate< typename minfo::Signature >; \
-    return del::from_function< (fptr) >();                    \
+#define DELEGATE_FUNCTION(fptr)                             \
+  [&]() {                                                   \
+    using minfo = esl::FunctionInfo< decltype(fptr) >;      \
+    using del = esl::delegate< typename minfo::Signature >; \
+    return del::from_function< (fptr) >();                  \
   }()
 
 // Generate method delegate
 #define DELEGATE_METHOD(mptr, obj)                                     \
   [&]() {                                                              \
     using minfo = esl::MethodInfo< decltype(mptr) >;                   \
-    using del   = esl::delegate< typename minfo::Signature >;          \
+    using del = esl::delegate< typename minfo::Signature >;            \
     return del::from_method< typename minfo::ClassType, (mptr) >(obj); \
   }()

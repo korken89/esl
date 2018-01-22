@@ -6,12 +6,11 @@
 #pragma once
 
 #if !defined(__cpp_constexpr) || (__cpp_constexpr < 201603)
-# define ESL_CONSTEXPR_LAMBDA_AVAILABLE
+#define ESL_CONSTEXPR_LAMBDA_AVAILABLE
 #endif
 
-
 #if !defined(__cpp_if_constexpr) || (__cpp_if_constexpr < 201606)
-# define ESL_CONSTEXPR_IF
+#define ESL_CONSTEXPR_IF
 #else
-# define ESL_CONSTEXPR_IF constexpr
+#define ESL_CONSTEXPR_IF constexpr
 #endif

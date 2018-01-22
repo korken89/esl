@@ -36,7 +36,7 @@ private:
 public:
   // default constructors
   constexpr function_view(const function_view&) = default;
-  constexpr function_view(function_view&&)      = default;
+  constexpr function_view(function_view&&) = default;
   constexpr function_view() = delete;  // There is no empty function_view
 
   // assignment operators

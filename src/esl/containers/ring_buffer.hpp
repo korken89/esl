@@ -66,7 +66,7 @@ protected:
   T* buffer_;
   std::size_t head_idx_ = 0;
   std::size_t tail_idx_ = 0;
-  std::size_t mask_     = 0;
+  std::size_t mask_ = 0;
 
   using CheckBounds = std::integral_constant<
       bool, !std::is_same< ErrFun, error_functions::noop >::value >;
@@ -85,9 +85,9 @@ public:
   //
   // Standard type definitions
   //
-  using size_type  = std::size_t;
+  using size_type = std::size_t;
   using value_type = T;
-  using reference  = T&;
+  using reference = T&;
 
   //
   // Constructor
@@ -96,14 +96,15 @@ public:
       : buffer_{buffer},
         mask_{capacity - 1}
   {
-    if ESL_CONSTEXPR_IF (CheckBounds())
-    {
-      if (!details::is_power_of_2(capacity))
-        ErrFun{}("construction with size not a power of 2");
+    if
+      ESL_CONSTEXPR_IF(CheckBounds())
+      {
+        if (!details::is_power_of_2(capacity))
+          ErrFun{}("construction with size not a power of 2");
 
-      if (buffer == nullptr)
-        ErrFun{}("construction with nullptr");
-    }
+        if (buffer == nullptr)
+          ErrFun{}("construction with nullptr");
+      }
   }
 
   //
@@ -111,36 +112,40 @@ public:
   //
   constexpr const T& front() const noexcept(noexcept(ErrFun{}("")))
   {
-    if ESL_CONSTEXPR_IF (CheckBounds())
-      if (empty())
-        ErrFun{}("front on empty buffer");
+    if
+      ESL_CONSTEXPR_IF(CheckBounds())
+    if (empty())
+      ErrFun{}("front on empty buffer");
 
     return buffer_[tail_idx_];
   }
 
   constexpr T& front() noexcept(noexcept(ErrFun{}("")))
   {
-    if ESL_CONSTEXPR_IF (CheckBounds())
-      if (empty())
-        ErrFun{}("front on empty buffer");
+    if
+      ESL_CONSTEXPR_IF(CheckBounds())
+    if (empty())
+      ErrFun{}("front on empty buffer");
 
     return buffer_[tail_idx_];
   }
 
   constexpr const T& back() const noexcept(noexcept(ErrFun{}("")))
   {
-    if ESL_CONSTEXPR_IF (CheckBounds())
-      if (empty())
-        ErrFun{}("back on empty buffer");
+    if
+      ESL_CONSTEXPR_IF(CheckBounds())
+    if (empty())
+      ErrFun{}("back on empty buffer");
 
     return buffer_[head_idx_ - 1];
   }
 
   constexpr T& back() noexcept(noexcept(ErrFun{}("")))
   {
-    if ESL_CONSTEXPR_IF (CheckBounds())
-      if (empty())
-        ErrFun{}("back on empty buffer");
+    if
+      ESL_CONSTEXPR_IF(CheckBounds())
+    if (empty())
+      ErrFun{}("back on empty buffer");
 
     return buffer_[head_idx_ - 1];
   }
@@ -179,9 +184,10 @@ public:
   template < typename... Args >
   constexpr void emplace_back(Args&&... args) noexcept(noexcept(ErrFun{}("")))
   {
-    if ESL_CONSTEXPR_IF (CheckBounds())
-      if (full())
-        ErrFun{}("emplace_back on full buffer");
+    if
+      ESL_CONSTEXPR_IF(CheckBounds())
+    if (full())
+      ErrFun{}("emplace_back on full buffer");
 
     // Use placement new
     new (&buffer_[head_idx_]) T(std::forward< Args >(args)...);
@@ -192,9 +198,10 @@ public:
                               std::is_convertible< T1, T >::value > >
   constexpr void push_back(T1&& val) noexcept(noexcept(ErrFun{}("")))
   {
-    if ESL_CONSTEXPR_IF (CheckBounds())
-      if (full())
-        ErrFun{}("push_back on full buffer");
+    if
+      ESL_CONSTEXPR_IF(CheckBounds())
+    if (full())
+      ErrFun{}("push_back on full buffer");
 
     buffer_[head_idx_] = std::forward< T1 >(val);
     increment_head();
@@ -203,9 +210,10 @@ public:
   constexpr void push_back(const T* ptr,
                            std::size_t n) noexcept(noexcept(ErrFun{}("")))
   {
-    if ESL_CONSTEXPR_IF (CheckBounds())
-      if (free() < n)
-        ErrFun{}("push_back: array too large");
+    if
+      ESL_CONSTEXPR_IF(CheckBounds())
+    if (free() < n)
+      ErrFun{}("push_back: array too large");
 
     const auto space_left_head = mask_ + 1 - head_idx_;
 
@@ -241,9 +249,10 @@ public:
 
   constexpr void pop() noexcept(noexcept(ErrFun{}("")))
   {
-    if ESL_CONSTEXPR_IF (CheckBounds())
-      if (empty())
-        ErrFun{}("pop on empty buffer");
+    if
+      ESL_CONSTEXPR_IF(CheckBounds())
+    if (empty())
+      ErrFun{}("pop on empty buffer");
 
     increment_tail();
   }

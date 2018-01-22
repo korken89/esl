@@ -36,10 +36,10 @@ public:
   //
   // Standard type definitions
   //
-  using size_type      = std::size_t;
-  using value_type     = T;
-  using reference      = T &;
-  using iterator       = T *;
+  using size_type = std::size_t;
+  using value_type = T;
+  using reference = T &;
+  using iterator = T *;
   using const_iterator = const T *;
 
 protected:
@@ -71,9 +71,10 @@ public:
   //
   constexpr T &operator[](std::size_t idx) noexcept(noexcept(ErrFun{}("")))
   {
-    if ESL_CONSTEXPR_IF (CheckBounds())
-      if (idx >= size())
-        ErrFun{}("operator[] out of bounds");
+    if
+      ESL_CONSTEXPR_IF(CheckBounds())
+    if (idx >= size())
+      ErrFun{}("operator[] out of bounds");
 
     return buffer_[idx];
   }
@@ -81,45 +82,50 @@ public:
   constexpr const T &operator[](std::size_t idx) const
       noexcept(noexcept(ErrFun{}("")))
   {
-    if ESL_CONSTEXPR_IF (CheckBounds())
-      if (idx >= size())
-        ErrFun{}("operator[] out of bounds");
+    if
+      ESL_CONSTEXPR_IF(CheckBounds())
+    if (idx >= size())
+      ErrFun{}("operator[] out of bounds");
 
     return buffer_[idx];
   }
 
   constexpr const T &front() const noexcept(noexcept(ErrFun{}("")))
   {
-    if ESL_CONSTEXPR_IF (CheckBounds())
-      if (empty())
-        ErrFun{}("front on empty vector");
+    if
+      ESL_CONSTEXPR_IF(CheckBounds())
+    if (empty())
+      ErrFun{}("front on empty vector");
 
     return buffer_[0];
   }
 
   constexpr T &front() noexcept(noexcept(ErrFun{}("")))
   {
-    if ESL_CONSTEXPR_IF (CheckBounds())
-      if (empty())
-        ErrFun{}("front on empty vector");
+    if
+      ESL_CONSTEXPR_IF(CheckBounds())
+    if (empty())
+      ErrFun{}("front on empty vector");
 
     return buffer_[0];
   }
 
   constexpr const T &back() const noexcept(noexcept(ErrFun{}("")))
   {
-    if ESL_CONSTEXPR_IF (CheckBounds())
-      if (empty())
-        ErrFun{}("back on empty vector");
+    if
+      ESL_CONSTEXPR_IF(CheckBounds())
+    if (empty())
+      ErrFun{}("back on empty vector");
 
     return buffer_[curr_idx_ - 1];
   }
 
   constexpr T &back() noexcept(noexcept(ErrFun{}("")))
   {
-    if ESL_CONSTEXPR_IF (CheckBounds())
-      if (empty())
-        ErrFun{}("back on empty vector");
+    if
+      ESL_CONSTEXPR_IF(CheckBounds())
+    if (empty())
+      ErrFun{}("back on empty vector");
 
     return buffer_[curr_idx_ - 1];
   }
@@ -191,9 +197,10 @@ public:
   template < typename... Args >
   constexpr void emplace_back(Args &&... args) noexcept(noexcept(ErrFun{}("")))
   {
-    if ESL_CONSTEXPR_IF (CheckBounds())
-      if (full())
-        ErrFun{}("emplace_back on full vector");
+    if
+      ESL_CONSTEXPR_IF(CheckBounds())
+    if (full())
+      ErrFun{}("emplace_back on full vector");
 
     // Use placement new
     new (&buffer_[curr_idx_]) T(std::forward< Args >(args)...);
@@ -204,9 +211,10 @@ public:
                               std::is_convertible< T1, T >::value > >
   constexpr void push_back(T1 &&val) noexcept(noexcept(ErrFun{}("")))
   {
-    if ESL_CONSTEXPR_IF (CheckBounds())
-      if (full())
-        ErrFun{}("push_back on full vector");
+    if
+      ESL_CONSTEXPR_IF(CheckBounds())
+    if (full())
+      ErrFun{}("push_back on full vector");
 
     buffer_[curr_idx_] = std::forward< T1 >(val);
     ++curr_idx_;
@@ -215,9 +223,10 @@ public:
   constexpr void push_back(const T *ptr,
                            size_type n) noexcept(noexcept(ErrFun{}("")))
   {
-    if ESL_CONSTEXPR_IF (CheckBounds())
-      if (free() < n)
-        ErrFun{}("push_back: array too large");
+    if
+      ESL_CONSTEXPR_IF(CheckBounds())
+    if (free() < n)
+      ErrFun{}("push_back: array too large");
 
     std::memcpy(&buffer_[curr_idx_], ptr, n * sizeof(T));
     curr_idx_ += n;
@@ -246,9 +255,10 @@ public:
 
   constexpr void pop_back() noexcept(noexcept(ErrFun{}("")))
   {
-    if ESL_CONSTEXPR_IF (CheckBounds())
-      if (empty())
-        ErrFun{}("pop_back on empty vector");
+    if
+      ESL_CONSTEXPR_IF(CheckBounds())
+    if (empty())
+      ErrFun{}("pop_back on empty vector");
 
     --curr_idx_;
     (&buffer_[curr_idx_])->~T();
@@ -256,14 +266,15 @@ public:
 
   constexpr auto erase(T *begin, T *end)
   {
-    if ESL_CONSTEXPR_IF (CheckBounds())
-    {
-      if (begin < this->begin() || end > this->end())
-        ErrFun{}("erase out of bounds");
+    if
+      ESL_CONSTEXPR_IF(CheckBounds())
+      {
+        if (begin < this->begin() || end > this->end())
+          ErrFun{}("erase out of bounds");
 
-      if (begin > end)
-        ErrFun{}("erase: begin > end");
-    }
+        if (begin > end)
+          ErrFun{}("erase: begin > end");
+      }
 
     // Save end pointer
     auto vend = this->end();

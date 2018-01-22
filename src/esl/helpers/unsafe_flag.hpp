@@ -44,7 +44,7 @@ public:
   // Set all flags
   constexpr void set() noexcept
   {
-    for (auto i   = 0U; i < N32 - 1; ++i)
+    for (auto i = 0U; i < N32 - 1; ++i)
       storage_[i] = 0xffffffff;
 
     storage_[N32 - 1] = top_mask;
@@ -59,7 +59,7 @@ public:
   // Reset all flags
   constexpr void reset() noexcept
   {
-    for (auto i   = 0U; i < N32; ++i)
+    for (auto i = 0U; i < N32; ++i)
       storage_[i] = 0;
   }
 

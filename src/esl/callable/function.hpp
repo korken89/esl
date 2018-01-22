@@ -88,8 +88,8 @@ private:
 public:
   // default constructors
   constexpr function(const function&) = default;
-  constexpr function(function&&)      = default;
-  constexpr function()                = delete;  // There is no empty function
+  constexpr function(function&&) = default;
+  constexpr function() = delete;  // There is no empty function
 
   // assignment operators
   constexpr function& operator=(const function&) = default;

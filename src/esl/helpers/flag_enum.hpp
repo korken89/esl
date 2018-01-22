@@ -19,7 +19,7 @@ namespace esl
 // Used to replace "flags |= some_flag" or "flags &= ~some_flag" type of code
 // with a type safe alternative.
 //
-template <typename Enum>
+template < typename Enum >
 class flag_enum
 {
 private:
@@ -54,8 +54,7 @@ public:
 
     // A way to unroll the input pack of flags
     (void)std::initializer_list< int >{
-        ((void)flags_.set(static_cast< std::size_t >(flags)), 0)...
-    };
+        ((void)flags_.set(static_cast< std::size_t >(flags)), 0)...};
   }
 
   // Clear all flags
@@ -80,8 +79,7 @@ public:
     static_assert(sizeof...(Flags) > 0, "At least one flag is required.");
 
     (void)std::initializer_list< int >{
-        ((void)flags_.reset(static_cast< std::size_t >(flags)), 0)...
-    };
+        ((void)flags_.reset(static_cast< std::size_t >(flags)), 0)...};
   }
 
   // Checks if all the specified flags are set
@@ -97,8 +95,7 @@ public:
     bool ret = true;
 
     (void)std::initializer_list< int >{
-        (ret &= flags_[static_cast< std::size_t >(flags)], 0)...
-    };
+        (ret &= flags_[static_cast< std::size_t >(flags)], 0)...};
 
     return ret;
   }
@@ -116,8 +113,7 @@ public:
     bool ret = false;
 
     (void)std::initializer_list< int >{
-        (ret |= flags_[static_cast< std::size_t >(flags)], 0)...
-    };
+        (ret |= flags_[static_cast< std::size_t >(flags)], 0)...};
 
     return ret;
   }
@@ -129,4 +125,4 @@ public:
   }
 };
 
-} // namespace esl
+}  // namespace esl
