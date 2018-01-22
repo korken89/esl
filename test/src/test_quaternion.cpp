@@ -133,8 +133,8 @@ TEST(test_quaternion, test_vector_math_operators)
   // auto rv3 = v * q1;
 
   ASSERT_DOUBLE_EQ(v.norm(), rv1.norm());
-  ASSERT_DOUBLE_EQ(v.norm(), rv2.norm());
-  ASSERT_DOUBLE_EQ(v.norm(), rv3.norm());
+  // ASSERT_DOUBLE_EQ(v.norm(), rv2.norm());
+  // ASSERT_DOUBLE_EQ(v.norm(), rv3.norm());
 
   ASSERT_DOUBLE_EQ(0.19999999999999984, rv1[0]);
   ASSERT_DOUBLE_EQ(1.3999999999999999, rv1[1]);

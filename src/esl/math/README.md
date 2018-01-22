@@ -82,10 +82,8 @@ auto q2 = esl::quaternionf(0, 2, 0, 4);
 auto q3 = q1.conj();
 auto q4 = q1 * q2;
 
-// Rotations (all 3 are the same)
+// Rotate vector
 auto v2 = q1.rotate(v1);
-auto v3 = q1 * v1;
-auto v4 = v1 * q1;
 
 // Extra access
 auto a = v1.w();
