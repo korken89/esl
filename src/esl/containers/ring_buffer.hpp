@@ -193,9 +193,8 @@ public:
     increment_head();
   }
 
-  template <
-      typename T1,
-      typename = std::enable_if_t< std::is_convertible< T1, T >::value > >
+  template < typename T1, typename = std::enable_if_t<
+                              std::is_convertible< T1, T >::value > >
   constexpr void push_back(T1&& val) noexcept(noexcept(ErrFun{}("")))
   {
     if

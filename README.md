@@ -5,7 +5,7 @@ Active WIP.
 
 ## Status
 
-[![codecov](https://codecov.io/gh/korken89/esl/branch/master/graph/badge.svg)](https://codecov.io/gh/korken89/esl) [![Build Status](https://travis-ci.org/korken89/esl.svg?branch=master)](https://travis-ci.org/korken89/esl) [![LICENSE](https://img.shields.io/badge/license-BSL%201.0-blue.svg)](LICENSE.md)
+[![codecov](https://codecov.io/gh/korken89/esl/branch/master/graph/badge.svg)](https://codecov.io/gh/korken89/esl) [![CircleCI](https://circleci.com/gh/korken89/esl.svg?style=svg)](https://circleci.com/gh/korken89/esl) [![LICENSE](https://img.shields.io/badge/license-BSL%201.0-blue.svg)](LICENSE.md)
 
 ## Standard
 

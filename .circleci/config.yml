@@ -1,0 +1,124 @@
+version: 3
+jobs:
+  stylechecker:
+    docker:
+      - image: ubuntu:artful
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: |
+            apt-get update -y
+            apt-get install git clang-format-5.0 -y
+      - run:
+          name: Style checker
+          command: |
+            bash scripts/style_checker.sh
+            bash scripts/whitespace_checker.sh
+  test_coverage:
+    docker:
+      - image: ubuntu:artful
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: |
+              apt-get update -y
+              apt-get install -y libgtest-dev cmake g++ g++-7 curl
+      - run:
+          name: Coverage (C++14, C++17)
+          command: |
+              bash scripts/make_gtest_circleci.sh
+              mkdir build
+              cd build
+              cmake .. -DCMAKE_CXX_COMPILER=g++-7 -DENABLE_COVERAGE:BOOL=TRUE -DENABLE_CPP17:BOOL=TRUE
+              make -j2
+              ctest --output-on-failure
+              bash <(curl -s https://codecov.io/bash) -x /usr/bin/gcov-7
+  test_gcc5:
+    docker:
+      - image: ubuntu:artful
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: |
+              apt-get update -y
+              apt-get install -y libgtest-dev cmake g++ g++-5
+      - run:
+          name: g++-5 (C++14, UBSAN, ASAN)
+          command: |
+              bash scripts/make_gtest_circleci.sh
+              mkdir build
+              cd build
+              cmake .. -DCMAKE_CXX_COMPILER=g++-5 -DCMAKE_BUILD_TYPE=Debug
+              make -j2
+              ctest --output-on-failure
+  test_gcc6:
+    docker:
+      - image: ubuntu:artful
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: |
+              apt-get update -y
+              apt-get install -y libgtest-dev cmake g++ g++-6
+      - run:
+          name: g++-6 (C++14, UBSAN, ASAN)
+          command: |
+              bash scripts/make_gtest_circleci.sh
+              mkdir build
+              cd build
+              cmake .. -DCMAKE_CXX_COMPILER=g++-6 -DCMAKE_BUILD_TYPE=Debug
+              make -j2
+              ctest --output-on-failure
+  test_gcc7:
+    docker:
+      - image: ubuntu:artful
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: |
+              apt-get update -y
+              apt-get install -y libgtest-dev cmake g++ g++-7
+      - run:
+          name: g++-7 (C++14, C++17, UBSAN, ASAN)
+          command: |
+              bash scripts/make_gtest_circleci.sh
+              mkdir build
+              cd build
+              cmake .. -DCMAKE_CXX_COMPILER=g++-7 -DCMAKE_BUILD_TYPE=Debug -DENABLE_CPP17:BOOL=TRUE
+              make -j2
+              ctest --output-on-failure
+  test_clang5:
+    docker:
+      - image: ubuntu:artful
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: |
+              apt-get update -y
+              apt-get install -y libgtest-dev cmake g++ clang-5.0
+      - run:
+          name: clang++-5.0 (C++14, C++17, UBSAN, ASAN)
+          command: |
+              bash scripts/make_gtest_circleci.sh
+              mkdir build
+              cd build
+              cmake .. -DCMAKE_CXX_COMPILER=clang++-5.0 -DCMAKE_BUILD_TYPE=Debug -DENABLE_CPP17:BOOL=TRUE
+              make -j2
+              ctest --output-on-failure
+
+workflows:
+  version: 2
+  check-and-test:
+    jobs:
+      - stylechecker
+      - test_coverage
+      - test_gcc5
+      - test_gcc6
+      - test_gcc7
+      - test_clang5

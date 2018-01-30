@@ -35,38 +35,19 @@ matrix:
       env:
         - TEST="Whitespace Checker"
       script:
-        - |
-          if [[ -n $(git diff-tree --check $(git hash-object -t tree /dev/null) HEAD) ]]; then
-            echo "Remove whitespaces before submitting..."
-            echo ""
-            echo "Git check results:"
-            echo ""
-            git diff-tree --check $(git hash-object -t tree /dev/null) HEAD
-            exit -1
-          fi
-
+        - bash ../scripts/whitespace_checker.sh
     #
     # Testing for style
     #
     - os: linux
       addons:
         apt:
-          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-trusty-4.0']
-          packages: ['clang-format-4.0', 'libgtest-dev', 'cmake', 'cmake-data']
+          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-trusty-5.0']
+          packages: ['clang-format-5.0', 'libgtest-dev', 'cmake', 'cmake-data']
       env:
         - TEST="Style Checker"
       script:
-        - |
-          find ../src -iname *.h -o -iname *.cpp -o -iname *.hpp -o -iname *.cc -o -iname *.c | xargs clang-format-4.0 -style=file -i
-          if [[ -n $(git diff --name-status) ]]; then
-            echo "Run clang-format before submitting..."
-            echo ""
-            echo "Files not conforming to style (git diff):"
-            echo ""
-            git diff
-            exit -1
-          fi
-
+        - bash ../scripts/style_checker.sh
     #
     # Coverage
     #
