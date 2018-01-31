@@ -92,7 +92,8 @@ public:
   //
   // Constructor
   //
-  constexpr ring_buffer(T* buffer, size_type capacity) noexcept
+  constexpr ring_buffer(T* buffer,
+                        size_type capacity) noexcept(noexcept(ErrFun{}("")))
       : buffer_{buffer}, mask_{capacity - 1}
   {
     if

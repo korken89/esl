@@ -17,6 +17,15 @@ struct test_throw
   }
 };
 
+TEST(test_ring_buffer, test_construction_errors)
+{
+  using rb = esl::ring_buffer< int, test_throw >;
+  EXPECT_ANY_THROW(rb buf(nullptr, 8));
+
+  int data[3];
+  EXPECT_ANY_THROW(rb buf(data, 3));
+}
+
 TEST(test_ring_buffer, test_push_back)
 {
   int i = 100;
