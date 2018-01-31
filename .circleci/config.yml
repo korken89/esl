@@ -24,7 +24,7 @@ jobs:
           name: Install dependencies
           command: |
               apt-get update -y
-              apt-get install -y libgtest-dev cmake g++ g++-7 curl
+              apt-get install -y libgtest-dev cmake g++ g++-7 curl git
       - run:
           name: Coverage (C++14, C++17)
           command: |
