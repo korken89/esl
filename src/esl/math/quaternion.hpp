@@ -87,20 +87,18 @@ public:
 
   constexpr vector< T, 3 > rotate(vector< T, 3 > v) const
   {
-    vector< T, 3 > ret;
-
     // Rotation from the rotation matrix equations directly applied on v.
-    const T qwsq = this->w() * this->w();
-    const T qxsq = this->x() * this->x();
-    const T qysq = this->y() * this->y();
-    const T qzsq = this->z() * this->z();
+    const T qwsq = w() * w();
+    const T qxsq = x() * x();
+    const T qysq = y() * y();
+    const T qzsq = z() * z();
 
-    const T qxy = this->x() * this->y();
-    const T qxz = this->x() * this->z();
-    const T qxw = this->x() * this->w();
-    const T qyz = this->y() * this->z();
-    const T qyw = this->y() * this->w();
-    const T qzw = this->z() * this->w();
+    const T qxy = x() * y();
+    const T qxz = x() * z();
+    const T qxw = x() * w();
+    const T qyz = y() * z();
+    const T qyw = y() * w();
+    const T qzw = z() * w();
 
     return {(qwsq + qxsq - qysq - qzsq) * v.x() + (T(2) * (qxy - qzw)) * v.y() +
                 (T(2) * (qxz + qyw)) * v.z(),
@@ -114,14 +112,10 @@ public:
   {
     quaternion p{*this};
 
-    this->x() =
-        p.w() * rhs.x() + p.x() * rhs.w() + p.y() * rhs.z() - p.z() * rhs.y();
-    this->y() =
-        p.w() * rhs.y() - p.x() * rhs.z() + p.y() * rhs.w() + p.z() * rhs.x();
-    this->z() =
-        p.w() * rhs.z() + p.x() * rhs.y() - p.y() * rhs.x() + p.z() * rhs.w();
-    this->w() =
-        p.w() * rhs.w() - p.x() * rhs.x() - p.y() * rhs.y() - p.z() * rhs.z();
+    x() = p.w() * rhs.x() + p.x() * rhs.w() + p.y() * rhs.z() - p.z() * rhs.y();
+    y() = p.w() * rhs.y() - p.x() * rhs.z() + p.y() * rhs.w() + p.z() * rhs.x();
+    z() = p.w() * rhs.z() + p.x() * rhs.y() - p.y() * rhs.x() + p.z() * rhs.w();
+    w() = p.w() * rhs.w() - p.x() * rhs.x() - p.y() * rhs.y() - p.z() * rhs.z();
 
     return *this;
   }
