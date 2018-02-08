@@ -77,7 +77,6 @@ using quaterniond = quaternion< double >;
 // Added operations
 auto q1 = esl::quaternionf(1, 2, 3, 4); // w, x, y, z
 auto q2 = esl::quaternionf(0, 2, 0, 4); // w, x, y, z
-auto q2 = esl::quaternionf(0, 2, 0, 4); // w, x, y, z
 
 auto q3 = q1.conj();
 auto q4 = q1 * q2;
@@ -87,6 +86,6 @@ auto q4 = q1.conj() * q2;
 auto v2 = q1.rotate(v1);
 
 // Extra access
-auto a = v1.w();
-auto v1 = q1.vec();
+auto a = q1.w(); // Read the w component
+auto v1 = q1.vec(); // Get the vector component
 ```
