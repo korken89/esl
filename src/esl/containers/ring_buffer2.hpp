@@ -1,8 +1,6 @@
 #pragma once
 
 #include <atomic>
-#include <cstdint>
-#include <cstring>
 
 template < typename T, unsigned N >
 class ring_buffer
@@ -13,7 +11,7 @@ class ring_buffer
   T buffer_[N];
 
   template < typename V >
-  auto increment(V val, V inc = V(1))
+  auto increment(V val, V inc = V(1)) const noexcept
   {
     return (val + inc) % N;
   }
@@ -38,7 +36,7 @@ public:
     return N - 1;
   }
 
-  bool push(T item)
+  bool push(T item) const noexcept
   {
     const auto current_head = head_idx_.load(std::memory_order_relaxed);
     const auto next_head = increment(current_head);
@@ -54,7 +52,7 @@ public:
     return false;
   }
 
-  bool push(const T *items, unsigned num)
+  bool push(const T *items, unsigned num) const noexcept
   {
     const auto current_head = head_idx_.load(std::memory_order_acquire);
     const auto current_tail = tail_idx_.load(std::memory_order_relaxed);
@@ -96,7 +94,7 @@ public:
     return true;
   }
 
-  bool pop(T &item)
+  bool pop(T &item) const noexcept
   {
     const auto current_tail = tail_idx_.load(std::memory_order_relaxed);
 
@@ -109,12 +107,12 @@ public:
     return true;
   }
 
-  unsigned pop_chunk(T *destination, unsigned num)
+  unsigned pop_chunk(T *destination, unsigned num) const noexcept
   {
     const auto current_head = head_idx_.load(std::memory_order_relaxed);
     const auto current_tail = tail_idx_.load(std::memory_order_acquire);
 
-    if (num == 0)
+    if (num == 0 || destination == nullptr)
       return 0;  // No data read
 
     if (current_tail == current_head)
