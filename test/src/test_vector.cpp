@@ -126,6 +126,22 @@ TEST(test_vector, test_make_from_vector)
   ASSERT_EQ(3, vec3[2]);
 }
 
+TEST(test_vector, test_make_from_vector_different_type)
+{
+  esl::vector3i vec1{1, 2, 3};
+
+  esl::vector3f vec2{vec1};
+  esl::vector3f vec3 = vec1;
+
+  ASSERT_EQ(1.0, vec2[0]);
+  ASSERT_EQ(2.0, vec2[1]);
+  ASSERT_EQ(3.0, vec2[2]);
+
+  ASSERT_EQ(1.0, vec3[0]);
+  ASSERT_EQ(2.0, vec3[1]);
+  ASSERT_EQ(3.0, vec3[2]);
+}
+
 TEST(test_vector, test_make_from_smaller_vector)
 {
   esl::vector2i vec1{1, 2};

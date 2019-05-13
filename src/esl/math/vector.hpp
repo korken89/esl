@@ -44,13 +44,15 @@ public:
   }
 
   // Same or different sized vector
-  template < std::size_t M >
-  constexpr vector(vector< T, M > v) noexcept
+  template <
+      typename T2, std::size_t M,
+      typename = std::enable_if_t< std::is_convertible< T, T2 >::value > >
+  constexpr vector(vector< T2, M > v) noexcept
   {
     static_assert(M <= N, "Size too big");
 
     esl::repeat< M >([&](auto i) {
-      storage_[i] = v[i];  // op
+      storage_[i] = static_cast< T >(v[i]);  // op
     });
 
     esl::repeat< N - M >([&](auto i) {
