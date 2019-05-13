@@ -2,7 +2,7 @@ version: 3
 jobs:
   stylechecker:
     docker:
-      - image: ubuntu:artful
+      - image: ubuntu:bionic
     steps:
       - checkout
       - run:
@@ -17,7 +17,7 @@ jobs:
             bash scripts/whitespace_checker.sh
   test_coverage:
     docker:
-      - image: ubuntu:artful
+      - image: ubuntu:bionic
     steps:
       - checkout
       - run:
@@ -37,7 +37,7 @@ jobs:
               bash <(curl -s https://codecov.io/bash) -x /usr/bin/gcov-7
   test_gcc5:
     docker:
-      - image: ubuntu:artful
+      - image: ubuntu:bionic
     steps:
       - checkout
       - run:
@@ -56,7 +56,7 @@ jobs:
               ctest --output-on-failure
   test_gcc6:
     docker:
-      - image: ubuntu:artful
+      - image: ubuntu:bionic
     steps:
       - checkout
       - run:
@@ -75,7 +75,7 @@ jobs:
               ctest --output-on-failure
   test_gcc7:
     docker:
-      - image: ubuntu:artful
+      - image: ubuntu:bionic
     steps:
       - checkout
       - run:
@@ -94,7 +94,7 @@ jobs:
               ctest --output-on-failure
   test_clang5:
     docker:
-      - image: ubuntu:artful
+      - image: ubuntu:bionic
     steps:
       - checkout
       - run:
